@@ -22,6 +22,8 @@
                 <tr>
                     <th>Nombre</th>
                     <th>Descripción</th>
+                    <th>Creación</th>
+                    <th>Actualización</th>
                     <th width="20">Editar</th>
                     <th width="20">Eliminar</th>
                 </tr>
@@ -55,6 +57,8 @@ $(document).ready(function() {
         columns: [
             { data: "name" },
             { data: "description" },
+            { data: "created_at" },
+            { data: "updated_at" },
             { data: "edit", orderable: false, searchable: false },
             { data: "delete", orderable: false, searchable: false },
         ],
