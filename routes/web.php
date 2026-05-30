@@ -1,6 +1,11 @@
+<?php
+
 use App\Http\Controllers\admin\AdminController;
 use App\Http\Controllers\admin\VehicleColorController;
 use App\Http\Controllers\admin\BrandModelController;
+use App\Http\Controllers\admin\BrandController;
+use App\Http\Controllers\admin\VehicleController;
+use App\Http\Controllers\admin\VehicleTypeController;
 
 use Illuminate\Support\Facades\Route;
 
@@ -23,7 +28,16 @@ Route::middleware([
     Route::resource('admin/colors', VehicleColorController::class)
     ->names('admin.colors');
 
+    Route::resource('admin/brands', BrandController::class)
+    ->names('admin.brands');
+
     Route::resource('admin/models', BrandModelController::class)
     ->names('admin.models');
+
+    Route::resource('admin/vehicles', VehicleController::class)
+    ->names('admin.vehicles');
+
+    Route::resource('admin/vehicle-types', VehicleTypeController::class)
+    ->names('admin.vehicle-types');
 
 });

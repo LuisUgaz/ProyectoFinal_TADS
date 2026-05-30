@@ -20,6 +20,12 @@ class BrandModelController extends Controller
                 ->addColumn('brand_name', function ($model) {
                     return $model->brand ? $model->brand->name : 'N/A';
                 })
+                ->addColumn('created_at', function ($model) {
+                    return $model->created_at->format('d/m/Y H:i');
+                })
+                ->addColumn('updated_at', function ($model) {
+                    return $model->updated_at->format('d/m/Y H:i');
+                })
                 ->addColumn('edit', function ($model) {
                     return '<button class="btn btn-sm btn-warning btn-editar" id="' . $model->id . '">
                                 <i class="fas fa-pen"></i>

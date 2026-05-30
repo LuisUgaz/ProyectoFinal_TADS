@@ -1,6 +1,6 @@
 @extends('adminlte::page')
 
-@section('title', 'Colores')
+@section('title', 'Vehículos')
 
 @section('plugins.Datatables', true)
 @section('plugins.Sweetalert2', true)
@@ -11,21 +11,21 @@
 <div class="card">
     <div class="card-header">
         <button type="button" class="btn btn-primary btn-sm float-right" id="btn-nuevo">
-            <i class="fas fa-plus"></i> Nuevo Color
+            <i class="fas fa-plus"></i> Nuevo Vehículo
         </button>
-        <h4><i class="fas fa-palette"></i> Lista de Colores</h4>
+        <h4><i class="fas fa-truck"></i> Lista de Vehículos</h4>
     </div>
 
     <div class="card-body">
         <table class="table table-striped table-hover" id="datatable">
             <thead>
                 <tr>
+                    <th>Placa</th>
+                    <th>Marca y Modelo</th>
+                    <th>Tipo</th>
                     <th>Color</th>
-                    <th>Nombre</th>
-                    <th>Código</th>
-                    <th>Descripción</th>
-                    <th>Creación</th>
-                    <th>Actualización</th>
+                    <th>Año</th>
+                    <th>Estado</th>
                     <th width="20">Editar</th>
                     <th width="20">Eliminar</th>
                 </tr>
@@ -35,10 +35,10 @@
 </div>
 
 <div class="modal fade" id="FormModal" tabindex="-1" role="dialog">
-    <div class="modal-dialog modal-dialog-centered" role="document">
+    <div class="modal-dialog modal-lg modal-dialog-centered" role="document">
         <div class="modal-content">
             <div class="modal-header bg-primary text-white">
-                <h5 class="modal-title">Formulario de Color</h5>
+                <h5 class="modal-title">Formulario de Vehículo</h5>
                 <button type="button" class="close text-white" data-dismiss="modal">
                     <span>&times;</span>
                 </button>
@@ -55,14 +55,14 @@ $(document).ready(function() {
     $('#datatable').DataTable({
         processing: true,
         serverSide: true,
-        ajax: "{{ route('admin.colors.index') }}",
+        ajax: "{{ route('admin.vehicles.index') }}",
         columns: [
-            { data: "color_preview", orderable: false, searchable: false },
-            { data: "name" },
-            { data: "code" },
-            { data: "description" },
-            { data: "created_at" },
-            { data: "updated_at" },
+            { data: "plate" },
+            { data: "full_model" },
+            { data: "type_name" },
+            { data: "color_info" },
+            { data: "year" },
+            { data: "status" },
             { data: "edit", orderable: false, searchable: false },
             { data: "delete", orderable: false, searchable: false },
         ],
@@ -74,10 +74,10 @@ $(document).ready(function() {
 
 $('#btn-nuevo').click(function() {
     $.ajax({
-        url: "{{ route('admin.colors.create') }}",
+        url: "{{ route('admin.vehicles.create') }}",
         type: "GET",
         success: function(response) {
-            $('#FormModal .modal-title').html('<i class="fas fa-palette"></i> Nuevo Color');
+            $('#FormModal .modal-title').html('<i class="fas fa-truck"></i> Nuevo Vehículo');
             $('#FormModal .modal-body').html(response);
             $('#FormModal').modal("show");
 
@@ -93,10 +93,10 @@ $(document).on('click', '.btn-editar', function() {
     let id = $(this).attr("id");
 
     $.ajax({
-        url: "{{ route('admin.colors.edit', 'id') }}".replace('id', id),
+        url: "{{ route('admin.vehicles.edit', 'id') }}".replace('id', id),
         type: "GET",
         success: function(response) {
-            $('#FormModal .modal-title').html('<i class="fas fa-pen"></i> Modificar Color');
+            $('#FormModal .modal-title').html('<i class="fas fa-pen"></i> Modificar Vehículo');
             $('#FormModal .modal-body').html(response);
             $('#FormModal').modal("show");
 

@@ -1,6 +1,6 @@
 @extends('adminlte::page')
 
-@section('title', 'Colores')
+@section('title', 'Marcas')
 
 @section('plugins.Datatables', true)
 @section('plugins.Sweetalert2', true)
@@ -11,18 +11,17 @@
 <div class="card">
     <div class="card-header">
         <button type="button" class="btn btn-primary btn-sm float-right" id="btn-nuevo">
-            <i class="fas fa-plus"></i> Nuevo Color
+            <i class="fas fa-plus"></i> Nueva Marca
         </button>
-        <h4><i class="fas fa-palette"></i> Lista de Colores</h4>
+        <h4><i class="fas fa-tags"></i> Lista de Marcas</h4>
     </div>
 
     <div class="card-body">
         <table class="table table-striped table-hover" id="datatable">
             <thead>
                 <tr>
-                    <th>Color</th>
+                    <th>Logo</th>
                     <th>Nombre</th>
-                    <th>Código</th>
                     <th>Descripción</th>
                     <th>Creación</th>
                     <th>Actualización</th>
@@ -38,7 +37,7 @@
     <div class="modal-dialog modal-dialog-centered" role="document">
         <div class="modal-content">
             <div class="modal-header bg-primary text-white">
-                <h5 class="modal-title">Formulario de Color</h5>
+                <h5 class="modal-title">Formulario de Marca</h5>
                 <button type="button" class="close text-white" data-dismiss="modal">
                     <span>&times;</span>
                 </button>
@@ -55,11 +54,10 @@ $(document).ready(function() {
     $('#datatable').DataTable({
         processing: true,
         serverSide: true,
-        ajax: "{{ route('admin.colors.index') }}",
+        ajax: "{{ route('admin.brands.index') }}",
         columns: [
-            { data: "color_preview", orderable: false, searchable: false },
+            { data: "logo", orderable: false, searchable: false },
             { data: "name" },
-            { data: "code" },
             { data: "description" },
             { data: "created_at" },
             { data: "updated_at" },
@@ -74,10 +72,10 @@ $(document).ready(function() {
 
 $('#btn-nuevo').click(function() {
     $.ajax({
-        url: "{{ route('admin.colors.create') }}",
+        url: "{{ route('admin.brands.create') }}",
         type: "GET",
         success: function(response) {
-            $('#FormModal .modal-title').html('<i class="fas fa-palette"></i> Nuevo Color');
+            $('#FormModal .modal-title').html('<i class="fas fa-tags"></i> Nueva Marca');
             $('#FormModal .modal-body').html(response);
             $('#FormModal').modal("show");
 
@@ -93,10 +91,10 @@ $(document).on('click', '.btn-editar', function() {
     let id = $(this).attr("id");
 
     $.ajax({
-        url: "{{ route('admin.colors.edit', 'id') }}".replace('id', id),
+        url: "{{ route('admin.brands.edit', 'id') }}".replace('id', id),
         type: "GET",
         success: function(response) {
-            $('#FormModal .modal-title').html('<i class="fas fa-pen"></i> Modificar Color');
+            $('#FormModal .modal-title').html('<i class="fas fa-pen"></i> Modificar Marca');
             $('#FormModal .modal-body').html(response);
             $('#FormModal').modal("show");
 

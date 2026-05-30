@@ -1,0 +1,1 @@
+@include('admin.vehicle-types.template.form')

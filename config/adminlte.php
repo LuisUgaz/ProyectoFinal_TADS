@@ -313,19 +313,14 @@ return [
                     'icon' => 'fas fa-palette',
                 ],
                 [
-                    'text' => 'Modelos',
-                    'url'  => 'admin/models',
-                    'icon' => 'fas fa-car',
-                ],
-                [
                     'text' => 'Marcas',
                     'url'  => 'admin/brands',
                     'icon' => 'fas fa-tags',
                 ],
                 [
                     'text' => 'Modelos',
-                    'url'  => 'admin/vehicle-models',
-                    'icon' => 'fas fa-wrench',
+                    'url'  => 'admin/models',
+                    'icon' => 'fas fa-car',
                 ],
                 [
                     'text' => 'Tipo de Vehículos',

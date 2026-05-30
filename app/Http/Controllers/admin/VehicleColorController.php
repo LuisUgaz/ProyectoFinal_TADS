@@ -18,6 +18,12 @@ class VehicleColorController extends Controller
                 ->addColumn('color_preview', function ($color) {
                     return '<div style="width:35px;height:25px;border-radius:4px;border:1px solid #ccc;background:' . $color->code . ';"></div>';
                 })
+                ->addColumn('created_at', function ($color) {
+                    return $color->created_at->format('d/m/Y H:i');
+                })
+                ->addColumn('updated_at', function ($color) {
+                    return $color->updated_at->format('d/m/Y H:i');
+                })
                 ->addColumn('edit', function ($color) {
                     return '<button class="btn btn-sm btn-warning btn-editar" id="' . $color->id . '">
                                 <i class="fas fa-pen"></i>
