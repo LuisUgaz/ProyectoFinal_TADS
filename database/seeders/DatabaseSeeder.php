@@ -75,18 +75,23 @@ class DatabaseSeeder extends Seeder
                 ]
             ],
         ];
+// 4. Marcas y Modelos
+foreach ($brands as $bData) {
+    $brand = Brand::updateOrCreate(
+        ['name' => $bData['name']],
+        ['description' => $bData['description']]
+    );
 
-        foreach ($brands as $bData) {
-            $brand = Brand::create([
-                'name' => $bData['name'],
-                'description' => $bData['description'],
-                'logo' => null
-            ]);
-
-            foreach ($bData['models'] as $mData) {
-                $brand->models()->create($mData);
-            }
-        }
+    foreach ($bData['models'] as $mData) {
+        $brand->models()->updateOrCreate(
+            ['code' => $mData['code']],
+            [
+                'name' => $mData['name'],
+                'description' => $mData['description']
+            ]
+        );
+    }
+}
 
         // 5. Vehículos (Generación de 5 vehículos de prueba)
         $allModels = BrandModel::all();

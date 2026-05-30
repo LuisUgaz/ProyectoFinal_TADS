@@ -20,16 +20,18 @@ class BrandController extends Controller
 
                 ->addColumn('logo', function ($brand) {
 
-                    if ($brand->logo) {
+                    if ($brand->logo && Storage::disk('public')->exists($brand->logo)) {
                         return '<img src="' . asset('storage/' . $brand->logo) . '"
+                                class="img-thumbnail"
                                 width="50"
                                 height="50"
                                 style="object-fit:contain;">';
                     }
 
-                    return '<img src="' . asset('img/no-image.png') . '"
-                            width="50"
-                            height="50">';
+                    return '<div class="bg-light d-flex align-items-center justify-content-center border rounded" 
+                                 style="width:50px; height:50px;">
+                                <i class="fas fa-image text-muted"></i>
+                            </div>';
                 })
 
                 ->addColumn('created_at', function ($brand) {
@@ -128,15 +130,14 @@ class BrandController extends Controller
             ]);
 
             if ($request->hasFile('logo')) {
-
-                if ($brand->logo &&
-                    Storage::disk('public')->exists($brand->logo)) {
-
+                // Eliminar logo anterior si existe
+                if ($brand->logo && Storage::disk('public')->exists($brand->logo)) {
                     Storage::disk('public')->delete($brand->logo);
                 }
 
-                $brand->logo = $request->file('logo')
-                    ->store('brands', 'public');
+                // Guardar nuevo logo
+                $path = $request->file('logo')->store('brands', 'public');
+                $brand->logo = $path;
             }
 
             $brand->name = $request->name;

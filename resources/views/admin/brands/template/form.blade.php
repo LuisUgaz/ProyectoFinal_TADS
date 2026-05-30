@@ -24,11 +24,18 @@
            accept="image/*">
 
     @isset($brand)
-        @if($brand->logo)
-            <div class="mt-2">
+        <div class="mt-2" id="preview-container">
+            @if($brand->logo)
+                <label class="text-muted d-block">Imagen actual:</label>
                 <img src="{{ asset('storage/'.$brand->logo) }}"
-                     width="80">
-            </div>
-        @endif
+                     class="img-thumbnail"
+                     width="120"
+                     alt="Logo de {{ $brand->name }}">
+            @else
+                <div class="alert alert-info py-1 px-2" style="font-size: 0.85rem;">
+                    <i class="fas fa-info-circle"></i> No hay ninguna imagen registrada para esta marca.
+                </div>
+            @endif
+        </div>
     @endisset
 </div>
