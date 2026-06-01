@@ -20,6 +20,7 @@
         <table class="table table-striped table-hover" id="datatable">
             <thead>
                 <tr>
+                    <th>Código</th>
                     <th>Placa</th>
                     <th>Marca y Modelo</th>
                     <th>Tipo</th>
@@ -57,6 +58,7 @@ $(document).ready(function() {
         serverSide: true,
         ajax: "{{ route('admin.vehicles.index') }}",
         columns: [
+            { data: "code", defaultContent: "N/A" },
             { data: "plate" },
             { data: "full_model" },
             { data: "type_name" },

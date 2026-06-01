@@ -8,6 +8,7 @@ use App\Models\BrandModel;
 use App\Models\VehicleType;
 use App\Models\VehicleColor;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Storage;
 use Yajra\DataTables\Facades\DataTables;
 
 class VehicleController extends Controller
@@ -71,7 +72,14 @@ class VehicleController extends Controller
                 'vehicle_color_id' => 'required|exists:vehicle_colors,id',
                 'year' => 'required|integer|min:1900|max:' . (date('Y') + 1),
                 'mileage' => 'required|integer|min:0',
-                'status' => 'required'
+                'status' => 'required',
+                'code' => 'nullable|string|max:50',
+                'name' => 'nullable|string|max:255',
+                'load_capacity' => 'nullable|numeric|min:0',
+                'fuel_capacity' => 'nullable|numeric|min:0',
+                'compaction_capacity' => 'nullable|numeric|min:0',
+                'passenger_capacity' => 'nullable|integer|min:0',
+                'images.*' => 'image|mimes:jpeg,png,jpg,gif,svg|max:2048'
             ], [
                 'plate.required' => 'La placa es obligatoria.',
                 'plate.unique' => 'Esta placa ya está registrada.',
@@ -81,7 +89,14 @@ class VehicleController extends Controller
                 'year.required' => 'El año es obligatorio.'
             ]);
 
-            Vehicle::create($request->all());
+            $vehicle = Vehicle::create($request->all());
+
+            if ($request->hasFile('images')) {
+                foreach ($request->file('images') as $file) {
+                    $path = $file->store('vehicles', 'public');
+                    $vehicle->images()->create(['path' => $path]);
+                }
+            }
 
             return response()->json(['message' => 'Vehículo registrado correctamente'], 200);
         } catch (\Throwable $th) {
@@ -91,7 +106,7 @@ class VehicleController extends Controller
 
     public function edit(string $id)
     {
-        $vehicle = Vehicle::findOrFail($id);
+        $vehicle = Vehicle::with('images')->findOrFail($id);
         $models = BrandModel::with('brand')->get();
         $types = VehicleType::all();
         $colors = VehicleColor::all();
@@ -111,13 +126,27 @@ class VehicleController extends Controller
                 'vehicle_color_id' => 'required|exists:vehicle_colors,id',
                 'year' => 'required|integer|min:1900|max:' . (date('Y') + 1),
                 'mileage' => 'required|integer|min:0',
-                'status' => 'required'
+                'status' => 'required',
+                'code' => 'nullable|string|max:50',
+                'name' => 'nullable|string|max:255',
+                'load_capacity' => 'nullable|numeric|min:0',
+                'fuel_capacity' => 'nullable|numeric|min:0',
+                'compaction_capacity' => 'nullable|numeric|min:0',
+                'passenger_capacity' => 'nullable|integer|min:0',
+                'images.*' => 'image|mimes:jpeg,png,jpg,gif,svg|max:2048'
             ], [
                 'plate.required' => 'La placa es obligatoria.',
                 'plate.unique' => 'Esta placa ya está registrada.'
             ]);
 
             $vehicle->update($request->all());
+
+            if ($request->hasFile('images')) {
+                foreach ($request->file('images') as $file) {
+                    $path = $file->store('vehicles', 'public');
+                    $vehicle->images()->create(['path' => $path]);
+                }
+            }
 
             return response()->json(['message' => 'Vehículo actualizado correctamente'], 200);
         } catch (\Throwable $th) {
@@ -128,7 +157,15 @@ class VehicleController extends Controller
     public function destroy(string $id)
     {
         try {
-            $vehicle = Vehicle::findOrFail($id);
+            $vehicle = Vehicle::with('images')->findOrFail($id);
+            
+            // Eliminar archivos físicos
+            foreach ($vehicle->images as $image) {
+                if (Storage::disk('public')->exists($image->path)) {
+                    Storage::disk('public')->delete($image->path);
+                }
+            }
+
             $vehicle->delete();
 
             return response()->json(['message' => 'Vehículo eliminado correctamente'], 200);
