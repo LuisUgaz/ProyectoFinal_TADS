@@ -350,6 +350,11 @@ return [
                     'icon' => 'fas fa-user-tie',
                 ],
                 [
+                    'text' => 'Tipo de Personal',
+                    'url'  => 'admin/personnel-types',
+                    'icon' => 'fas fa-user-tie',
+                ],
+                [
                     'text' => 'Cargos',
                     'url'  => '#',
                     'icon' => 'fas fa-id-badge',

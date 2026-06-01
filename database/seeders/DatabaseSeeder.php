@@ -8,6 +8,7 @@ use App\Models\VehicleType;
 use App\Models\Brand;
 use App\Models\BrandModel;
 use App\Models\Vehicle;
+use App\Models\PersonnelType;
 use Illuminate\Database\Seeder;
 use Illuminate\Support\Facades\Hash;
 
@@ -75,23 +76,23 @@ class DatabaseSeeder extends Seeder
                 ]
             ],
         ];
-// 4. Marcas y Modelos
-foreach ($brands as $bData) {
-    $brand = Brand::updateOrCreate(
-        ['name' => $bData['name']],
-        ['description' => $bData['description']]
-    );
+        // 4. Marcas y Modelos
+        foreach ($brands as $bData) {
+            $brand = Brand::updateOrCreate(
+                ['name' => $bData['name']],
+                ['description' => $bData['description']]
+            );
 
-    foreach ($bData['models'] as $mData) {
-        $brand->models()->updateOrCreate(
-            ['code' => $mData['code']],
-            [
-                'name' => $mData['name'],
-                'description' => $mData['description']
-            ]
-        );
-    }
-}
+            foreach ($bData['models'] as $mData) {
+                $brand->models()->updateOrCreate(
+                    ['code' => $mData['code']],
+                    [
+                        'name' => $mData['name'],
+                        'description' => $mData['description']
+                    ]
+                );
+            }
+        }
 
         // 5. Vehículos (Generación de 5 vehículos de prueba)
         $allModels = BrandModel::all();
@@ -112,6 +113,25 @@ foreach ($brands as $bData) {
                 'mileage' => rand(1000, 50000),
                 'status' => 'Activo'
             ]);
+        }
+
+        // 6. Tipo de personal
+        $personnelTypes = [
+            [
+                'name' => 'Conductor',
+                'description' => 'Personal autorizado para conducir vehículos'
+            ],
+            [
+                'name' => 'Ayudante',
+                'description' => 'Personal de apoyo en las labores operativas'
+            ],
+        ];
+
+        foreach ($personnelTypes as $type) {
+            PersonnelType::updateOrCreate(
+                ['name' => $type['name']],
+                ['description' => $type['description']]
+            );
         }
     }
 }
