@@ -329,7 +329,7 @@ return [
                 ],
                 [
                     'text' => 'Vehículos',
-                    'url'  => '#',
+                    'url'  => 'admin/vehicles',
                     'icon' => 'fas fa-truck',
                 ],
                 [
