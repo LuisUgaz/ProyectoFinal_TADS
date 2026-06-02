@@ -21,11 +21,13 @@ class DatabaseSeeder extends Seeder
     public function run(): void
     {
         // 1. Usuario Administrador
-        User::factory()->create([
-            'name' => 'Administrador TADS',
-            'email' => 'test@example.com',
-            'password' => Hash::make('password'),
-        ]);
+        User::updateOrCreate(
+            ['email' => 'test@example.com'],
+            [
+                'name' => 'Administrador TADS',
+                'password' => Hash::make('password'),
+            ]
+        );
 
         // 2. Colores de Vehículos
         $colors = [
