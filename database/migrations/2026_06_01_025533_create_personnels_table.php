@@ -13,17 +13,22 @@ return new class extends Migration
     {
         Schema::create('personnels', function (Blueprint $table) {
             $table->id();
-            $table->string('dni')->unique();
-            $table->foreignId('personnel_type_id')->constrained('personnel_types')->onDelete('cascade');
+            $table->string('dni', 8)->unique();
+
+            $table->foreignId('personnel_type_id')
+                ->constrained('personnel_types')
+                ->onDelete('cascade');
+
             $table->string('names');
             $table->string('lastnames');
             $table->date('birthdate');
-            $table->string('phone');
+            $table->string('phone')->nullable();
             $table->string('email')->unique();
             $table->string('status')->default('Activo');
             $table->string('password');
             $table->string('address');
             $table->string('photo_path')->nullable();
+            $table->string('license_path')->nullable();
             $table->timestamps();
         });
     }

@@ -19,7 +19,8 @@ class Personnel extends Model
         'status',
         'password',
         'address',
-        'photo_path'
+        'photo_path',
+        'license_path',
     ];
 
     protected $hidden = ['password'];

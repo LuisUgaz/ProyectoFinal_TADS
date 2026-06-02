@@ -1,11 +1,12 @@
-<form action="{{ route('admin.brands.store') }}" method="POST" enctype="multipart/form-data">
+<form action="{{ route('admin.personnels.update', $personnel->id) }}" method="POST" enctype="multipart/form-data">
 
     @csrf
+    @method('PUT')
 
-    @include('admin.brands.template.form')
+    @include('admin.personnels.template.form')
 
     <button type="submit" class="btn btn-success btn-sm">
-        <i class="fas fa-save"></i> Guardar
+        <i class="fas fa-pen"></i> Actualizar
     </button>
 
     <button type="button" class="btn btn-danger btn-sm" data-dismiss="modal">

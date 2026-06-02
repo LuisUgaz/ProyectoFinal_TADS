@@ -304,7 +304,7 @@ return [
             'topnav_right' => true,
         ],
         [
-            'text' => 'Gestión de Vehículos',
+            'text' => 'Gestión de vehículos',
             'icon' => 'fas fa-car',
             'submenu' => [
                 [
@@ -320,17 +320,17 @@ return [
                 [
                     'text' => 'Modelos',
                     'url'  => 'admin/models',
-                    'icon' => 'fas fa-car',
+                    'icon' => 'fas fa-wrench',
                 ],
                 [
-                    'text' => 'Tipo de Vehículos',
+                    'text' => 'Tipo de vehículos',
                     'url'  => 'admin/vehicle-types',
-                    'icon' => 'fas fa-car-side',
+                    'icon' => 'fas fa-car',
                 ],
                 [
                     'text' => 'Vehículos',
                     'url'  => 'admin/vehicles',
-                    'icon' => 'fas fa-truck',
+                    'icon' => 'fas fa-car-side',
                 ],
                 [
                     'text' => 'Mantenimientos',
@@ -345,19 +345,29 @@ return [
             'icon' => 'fas fa-users',
             'submenu' => [
                 [
-                    'text' => 'Personal',
-                    'url'  => '#',
-                    'icon' => 'fas fa-user-tie',
-                ],
-                [
-                    'text' => 'Tipo de Personal',
+                    'text' => 'Tipos de personal',
                     'url'  => 'admin/personnel-types',
+                    'icon' => 'fas fa-user-tag',
+                ],
+                [
+                    'text' => 'Personal',
+                    'url'  => 'admin/personnels',
                     'icon' => 'fas fa-user-tie',
                 ],
                 [
-                    'text' => 'Cargos',
+                    'text' => 'Contratos',
                     'url'  => '#',
-                    'icon' => 'fas fa-id-badge',
+                    'icon' => 'fas fa-file-contract',
+                ],
+                [
+                    'text' => 'Asistencias',
+                    'url'  => '#',
+                    'icon' => 'fas fa-clipboard-check',
+                ],
+                [
+                    'text' => 'Vacaciones',
+                    'url'  => '#',
+                    'icon' => 'fas fa-plane-departure',
                 ],
             ],
         ],

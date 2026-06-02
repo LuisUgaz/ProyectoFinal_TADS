@@ -16,45 +16,29 @@
 
                     <div class="form-group-custom">
                         <label for="name">Nombre completo</label>
-                        <input id="name"
-                               class="form-control-custom"
-                               type="text"
-                               name="name"
-                               value="{{ old('name') }}"
-                               required
-                               autofocus
-                               autocomplete="name">
+                        <input id="name" class="form-control-custom" type="text" name="name"
+                            value="{{ old('name') }}" placeholder="Ingrese nombre completo" required autofocus
+                            autocomplete="name">
                     </div>
 
                     <div class="form-group-custom">
                         <label for="email">Correo electrónico</label>
-                        <input id="email"
-                               class="form-control-custom"
-                               type="email"
-                               name="email"
-                               value="{{ old('email') }}"
-                               required
-                               autocomplete="username">
+                        <input id="email" class="form-control-custom" type="email" name="email"
+                            value="{{ old('email') }}" placeholder="Ingrese correo electrónico" required
+                            autocomplete="username">
                     </div>
 
                     <div class="form-group-custom">
                         <label for="password">Contraseña</label>
-                        <input id="password"
-                               class="form-control-custom"
-                               type="password"
-                               name="password"
-                               required
-                               autocomplete="new-password">
+                        <input id="password" class="form-control-custom" type="password" name="password"
+                            placeholder="Ingrese contraseña" required autocomplete="new-password">
                     </div>
 
                     <div class="form-group-custom">
                         <label for="password_confirmation">Confirmar contraseña</label>
-                        <input id="password_confirmation"
-                               class="form-control-custom"
-                               type="password"
-                               name="password_confirmation"
-                               required
-                               autocomplete="new-password">
+                        <input id="password_confirmation" class="form-control-custom" type="password"
+                            name="password_confirmation" placeholder="Ingrese nuevamente la contraseña" required
+                            autocomplete="new-password">
                     </div>
 
                     <div class="auth-footer">

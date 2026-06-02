@@ -1,8 +1,8 @@
-<form action="{{ route('admin.brands.store') }}" method="POST" enctype="multipart/form-data">
+<form action="{{ route('admin.personnels.store') }}" method="POST" enctype="multipart/form-data">
 
     @csrf
 
-    @include('admin.brands.template.form')
+    @include('admin.personnels.template.form')
 
     <button type="submit" class="btn btn-success btn-sm">
         <i class="fas fa-save"></i> Guardar

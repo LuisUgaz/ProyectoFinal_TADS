@@ -18,6 +18,14 @@ class PersonnelTypeController extends Controller
 
             return DataTables::of($types)
 
+                ->addColumn('created_at', function ($type) {
+                    return $type->created_at->format('d/m/Y H:i');
+                })
+
+                ->addColumn('updated_at', function ($type) {
+                    return $type->updated_at->format('d/m/Y H:i');
+                })
+
                 ->addColumn('edit', function ($type) {
                     return '<button class="btn btn-sm btn-warning btn-editar"
                                 id="' . $type->id . '">

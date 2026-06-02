@@ -1,36 +1,26 @@
 <div class="form-group">
-    <label>Nombre</label>
-    <input type="text"
-           name="name"
-           class="form-control"
-           value="{{ $brand->name ?? '' }}"
-           required>
+    <label>Nombre de la Marca</label>
+    <input type="text" name="name" class="form-control" placeholder="Ingrese nombre de la marca"
+        value="{{ $brand->name ?? '' }}" required>
 </div>
 
 <div class="form-group">
     <label>Descripción</label>
-    <textarea name="description"
-              class="form-control"
-              rows="3"
-              required>{{ $brand->description ?? '' }}</textarea>
+    <textarea name="description" class="form-control" rows="3" placeholder="Ingrese una descripción de la marca"
+        required>{{ $brand->description ?? '' }}</textarea>
 </div>
 
 <div class="form-group">
-    <label>Logo</label>
+    <label>Logo de la Marca</label>
 
-    <input type="file"
-           name="logo"
-           class="form-control-file"
-           accept="image/*">
+    <input type="file" name="logo" class="form-control-file" accept="image/*">
 
     @isset($brand)
         <div class="mt-2" id="preview-container">
-            @if($brand->logo)
+            @if ($brand->logo)
                 <label class="text-muted d-block">Imagen actual:</label>
-                <img src="{{ asset('storage/'.$brand->logo) }}"
-                     class="img-thumbnail"
-                     width="120"
-                     alt="Logo de {{ $brand->name }}">
+                <img src="{{ asset('storage/' . $brand->logo) }}" class="img-thumbnail" width="120"
+                    alt="Logo de {{ $brand->name }}">
             @else
                 <div class="alert alert-info py-1 px-2" style="font-size: 0.85rem;">
                     <i class="fas fa-info-circle"></i> No hay ninguna imagen registrada para esta marca.

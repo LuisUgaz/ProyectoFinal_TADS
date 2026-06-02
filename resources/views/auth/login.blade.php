@@ -22,24 +22,15 @@
 
                     <div class="form-group-custom">
                         <label for="email">Correo electrónico</label>
-                        <input id="email"
-                               class="form-control-custom"
-                               type="email"
-                               name="email"
-                               value="{{ old('email') }}"
-                               required
-                               autofocus
-                               autocomplete="username">
+                        <input id="email" class="form-control-custom" type="email" name="email"
+                            value="{{ old('email') }}" placeholder="Ingrese correo electrónico" required autofocus
+                            autocomplete="username">
                     </div>
 
                     <div class="form-group-custom">
                         <label for="password">Contraseña</label>
-                        <input id="password"
-                               class="form-control-custom"
-                               type="password"
-                               name="password"
-                               required
-                               autocomplete="current-password">
+                        <input id="password" class="form-control-custom" type="password" name="password"
+                            placeholder="Ingrese contraseña" required autocomplete="current-password">
                     </div>
 
                     <div class="remember-row">

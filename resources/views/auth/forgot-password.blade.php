@@ -22,13 +22,8 @@
 
                     <div class="form-group-custom">
                         <label for="email">Correo electrónico</label>
-                        <input id="email"
-                               class="form-control-custom"
-                               type="email"
-                               name="email"
-                               value="{{ old('email') }}"
-                               required
-                               autofocus>
+                        <input id="email" class="form-control-custom" type="email" name="email"
+                            value="{{ old('email') }}" placeholder="Ingrese correo electrónico" required autofocus>
                     </div>
 
                     <div class="auth-footer">

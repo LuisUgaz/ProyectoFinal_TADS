@@ -9,6 +9,7 @@ use App\Models\Brand;
 use App\Models\BrandModel;
 use App\Models\Vehicle;
 use App\Models\PersonnelType;
+use App\Models\Personnel;
 use Illuminate\Database\Seeder;
 use Illuminate\Support\Facades\Hash;
 
@@ -40,7 +41,7 @@ class DatabaseSeeder extends Seeder
 
         // 3. Tipos de Vehículo
         $types = [
-            ['name' => 'Camión Recolector', 'description' => 'Vehículo principal de recolección de basura'],
+            ['name' => 'Camión recolector', 'description' => 'Vehículo principal de recolección de basura'],
             ['name' => 'Compactador', 'description' => 'Vehículo con sistema de compactado de residuos'],
             ['name' => 'Volquete', 'description' => 'Vehículo de carga pesada para escombros'],
             ['name' => 'Camioneta', 'description' => 'Vehículo de supervisión y transporte de personal'],
@@ -123,7 +124,7 @@ class DatabaseSeeder extends Seeder
             ],
             [
                 'name' => 'Ayudante',
-                'description' => 'Personal de apoyo en las labores operativas'
+                'description' => 'Personal de apoyo en la recolección'
             ],
         ];
 
@@ -133,5 +134,27 @@ class DatabaseSeeder extends Seeder
                 ['description' => $type['description']]
             );
         }
+
+        // 7. Personal
+        $conductor = PersonnelType::where('name', 'Conductor')->first();
+        $ayudante = PersonnelType::where('name', 'Ayudante')->first();
+
+        Personnel::updateOrCreate(
+            ['dni' => '87654321'],
+            [
+                'personnel_type_id' => $ayudante->id,
+                'names' => 'Pedro Fernando',
+                'lastnames' => 'Montenegro Quispe',
+                'birthdate' => '1995-09-16',
+                'phone' => '987654321',
+                'email' => 'pedro.montenegro@gmail.com',
+                'status' => 'Activo',
+                'password' => Hash::make('654321'),
+                'address' => 'Av. Grau 456',
+                'photo_path' => null,
+                'license_path' => null,
+            ]
+        );
+
     }
 }
