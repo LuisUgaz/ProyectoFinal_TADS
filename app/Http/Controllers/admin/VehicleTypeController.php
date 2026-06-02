@@ -95,6 +95,13 @@ class VehicleTypeController extends Controller
     {
         try {
             $type = VehicleType::findOrFail($id);
+
+            if ($type->vehicles()->count() > 0) {
+                return response()->json([
+                    'message' => 'No se puede eliminar el tipo de vehículo porque tiene vehículos asociados.'
+                ], 422);
+            }
+
             $type->delete();
 
             return response()->json(['message' => 'Tipo de vehículo eliminado correctamente'], 200);

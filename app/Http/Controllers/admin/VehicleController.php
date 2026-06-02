@@ -16,9 +16,25 @@ class VehicleController extends Controller
     public function index(Request $request)
     {
         if ($request->ajax()) {
-            $vehicles = Vehicle::with(['model.brand', 'type', 'color'])->get();
+            $vehicles = Vehicle::with(['model.brand', 'type', 'color', 'images'])->get();
 
             return DataTables::of($vehicles)
+                ->addColumn('image', function ($vehicle) {
+                    $firstImage = $vehicle->images->first();
+
+                    if ($firstImage && Storage::disk('public')->exists($firstImage->path)) {
+                        return '<img src="' . asset('storage/' . $firstImage->path) . '"
+                                class="img-thumbnail"
+                                width="50"
+                                height="50"
+                                style="object-fit:cover;border-radius:4px;">';
+                    }
+
+                    return '<div class="bg-light d-flex align-items-center justify-content-center border rounded"
+                                 style="width:50px; height:50px;">
+                                <i class="fas fa-image text-muted"></i>
+                            </div>';
+                })
                 ->addColumn('full_model', function ($vehicle) {
                     return ($vehicle->model && $vehicle->model->brand) 
                         ? $vehicle->model->brand->name . ' ' . $vehicle->model->name 
@@ -46,7 +62,7 @@ class VehicleController extends Controller
                                 <i class="fas fa-trash-alt"></i>
                             </button>';
                 })
-                ->rawColumns(['color_info', 'edit', 'delete'])
+                ->rawColumns(['image', 'color_info', 'edit', 'delete'])
                 ->make(true);
         }
 

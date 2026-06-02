@@ -47,6 +47,8 @@ class DatabaseSeeder extends Seeder
             ['name' => 'Compactador', 'description' => 'Vehículo con sistema de compactado de residuos'],
             ['name' => 'Volquete', 'description' => 'Vehículo de carga pesada para escombros'],
             ['name' => 'Camioneta', 'description' => 'Vehículo de supervisión y transporte de personal'],
+            ['name' => 'Motofurgón', 'description' => 'Vehículo ligero para recolección en pasajes estrechos'],
+            ['name' => 'Cisterna', 'description' => 'Vehículo para transporte de agua y riego de áreas verdes'],
         ];
         foreach ($types as $type) {
             VehicleType::create($type);
@@ -105,17 +107,20 @@ class DatabaseSeeder extends Seeder
         $plates = ['V1C-789', 'A5T-456', 'M9B-123', 'X4D-001', 'P2R-555'];
 
         for ($i = 0; $i < 5; $i++) {
-            Vehicle::create([
-                'brand_model_id' => $allModels->random()->id,
-                'vehicle_type_id' => $allTypes->random()->id,
-                'vehicle_color_id' => $allColors->random()->id,
-                'plate' => $plates[$i],
-                'year' => rand(2015, 2024),
-                'engine_number' => 'ENG-' . rand(100000, 999999),
-                'chassis_number' => 'CHS-' . rand(100000, 999999),
-                'mileage' => rand(1000, 50000),
-                'status' => 'Activo'
-            ]);
+            Vehicle::updateOrCreate(
+                ['plate' => $plates[$i]],
+                [
+                    'code' => 'VEH-' . strtoupper(\Illuminate\Support\Str::random(5)),
+                    'brand_model_id' => $allModels->random()->id,
+                    'vehicle_type_id' => $allTypes->random()->id,
+                    'vehicle_color_id' => $allColors->random()->id,
+                    'year' => rand(2015, 2024),
+                    'engine_number' => 'ENG-' . rand(100000, 999999),
+                    'chassis_number' => 'CHS-' . rand(100000, 999999),
+                    'mileage' => rand(1000, 50000),
+                    'status' => 'Activo'
+                ]
+            );
         }
 
         // 6. Tipo de personal
@@ -137,26 +142,91 @@ class DatabaseSeeder extends Seeder
             );
         }
 
-        // 7. Personal
-        $conductor = PersonnelType::where('name', 'Conductor')->first();
-        $ayudante = PersonnelType::where('name', 'Ayudante')->first();
+        // 7. Personal y Contratos
+        $conductorType = PersonnelType::where('name', 'Conductor')->first();
+        $ayudanteType = PersonnelType::where('name', 'Ayudante')->first();
 
-        Personnel::updateOrCreate(
-            ['dni' => '87654321'],
+        $personnelData = [
             [
-                'personnel_type_id' => $ayudante->id,
+                'dni' => '87654321',
+                'type_id' => $ayudanteType->id,
                 'names' => 'Pedro Fernando',
                 'lastnames' => 'Montenegro Quispe',
                 'birthdate' => '1995-09-16',
                 'phone' => '987654321',
                 'email' => 'pedro.montenegro@gmail.com',
-                'status' => 'Activo',
-                'password' => Hash::make('654321'),
                 'address' => 'Av. Grau 456',
-                'photo_path' => null,
-                'license_path' => null,
-            ]
-        );
+                'salary' => 1200.00,
+                'contract_type' => 'Permanente'
+            ],
+            [
+                'dni' => '12345678',
+                'type_id' => $conductorType->id,
+                'names' => 'Juan Alberto',
+                'lastnames' => 'Ramos Soto',
+                'birthdate' => '1985-05-20',
+                'phone' => '955443322',
+                'email' => 'juan.ramos@gmail.com',
+                'address' => 'Calle Las Flores 123',
+                'salary' => 2500.00,
+                'contract_type' => 'Nombrado'
+            ],
+            [
+                'dni' => '44556677',
+                'type_id' => $conductorType->id,
+                'names' => 'Carlos Mario',
+                'lastnames' => 'Vargas Llosa',
+                'birthdate' => '1990-12-10',
+                'phone' => '999888777',
+                'email' => 'carlos.vargas@gmail.com',
+                'address' => 'Urb. Los Pinos B-12',
+                'salary' => 2800.00,
+                'contract_type' => 'Temporal'
+            ],
+            [
+                'dni' => '11223344',
+                'type_id' => $ayudanteType->id,
+                'names' => 'Maria Elena',
+                'lastnames' => 'Paz Soldan',
+                'birthdate' => '1998-03-25',
+                'phone' => '912345678',
+                'email' => 'maria.paz@gmail.com',
+                'address' => 'Jr. Junin 789',
+                'salary' => 1100.00,
+                'contract_type' => 'Temporal'
+            ],
+        ];
 
+        foreach ($personnelData as $p) {
+            $personnel = Personnel::updateOrCreate(
+                ['dni' => $p['dni']],
+                [
+                    'personnel_type_id' => $p['type_id'],
+                    'names' => $p['names'],
+                    'lastnames' => $p['lastnames'],
+                    'birthdate' => $p['birthdate'],
+                    'phone' => $p['phone'],
+                    'email' => $p['email'],
+                    'status' => 'Activo',
+                    'password' => Hash::make($p['dni']), // DNI como password por defecto
+                    'address' => $p['address'],
+                    'photo_path' => null,
+                    'license_path' => null,
+                ]
+            );
+
+            // Crear Contrato para el personal
+            $personnel->contracts()->updateOrCreate(
+                ['personnel_id' => $personnel->id, 'is_active' => true],
+                [
+                    'type' => $p['contract_type'],
+                    'start_date' => now()->subMonths(rand(1, 12))->format('Y-m-d'),
+                    'end_date' => $p['contract_type'] == 'Temporal' ? now()->addMonths(6)->format('Y-m-d') : null,
+                    'salary' => $p['salary'],
+                    'probation_period' => '3 meses',
+                    'is_active' => true
+                ]
+            );
+        }
     }
 }

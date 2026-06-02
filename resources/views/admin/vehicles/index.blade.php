@@ -20,6 +20,7 @@
             <table class="table table-striped table-hover" id="datatable">
                 <thead>
                     <tr>
+                        <th>Imagen</th>
                         <th>Código</th>
                         <th>Placa</th>
                         <th>Marca y Modelo</th>
@@ -58,6 +59,11 @@
                 serverSide: true,
                 ajax: "{{ route('admin.vehicles.index') }}",
                 columns: [{
+                        data: "image",
+                        orderable: false,
+                        searchable: false
+                    },
+                    {
                         data: "code",
                         defaultContent: "N/A"
                     },
