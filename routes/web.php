@@ -8,6 +8,7 @@ use App\Http\Controllers\admin\VehicleController;
 use App\Http\Controllers\admin\VehicleTypeController;
 use App\Http\Controllers\admin\PersonnelTypeController;
 use App\Http\Controllers\admin\PersonnelController;
+use App\Http\Controllers\admin\ContractController;
 
 
 use Illuminate\Support\Facades\Route;
@@ -48,5 +49,8 @@ Route::middleware([
 
     Route::resource('admin/personnels', PersonnelController::class)
         ->names('admin.personnels');
+        
+    Route::resource('admin/contracts', ContractController::class)
+        ->names('admin.contracts');
 
 });

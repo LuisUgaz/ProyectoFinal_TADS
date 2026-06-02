@@ -356,6 +356,11 @@ return [
                 ],
                 [
                     'text' => 'Contratos',
+                    'url'  => 'admin/contracts',
+                    'icon' => 'fas fa-file-contract',
+                ],
+                [
+                    'text' => 'Cargos',
                     'url'  => '#',
                     'icon' => 'fas fa-file-contract',
                 ],
