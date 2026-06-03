@@ -7,7 +7,7 @@ use Illuminate\Database\Eloquent\Relations\BelongsTo;
 
 class VehicleImage extends Model
 {
-    protected $fillable = ['vehicle_id', 'path'];
+    protected $fillable = ['vehicle_id', 'path', 'is_profile'];
 
     public function vehicle(): BelongsTo
     {

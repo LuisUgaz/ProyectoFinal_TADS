@@ -342,7 +342,13 @@ class PersonnelController extends Controller
     {
         try {
 
-            $personnel = Personnel::findOrFail($id);
+            $personnel = Personnel::withCount('contracts')->findOrFail($id);
+
+            if ($personnel->contracts_count > 0) {
+                return response()->json([
+                    'message' => 'No se puede eliminar al personal porque tiene contratos registrados.'
+                ], 422);
+            }
 
             if ($personnel->photo_path && Storage::disk('public')->exists($personnel->photo_path)) {
                 Storage::disk('public')->delete($personnel->photo_path);

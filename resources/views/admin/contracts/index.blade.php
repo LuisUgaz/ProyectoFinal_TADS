@@ -4,6 +4,7 @@
 
 @section('plugins.Datatables', true)
 @section('plugins.Sweetalert2', true)
+@section('plugins.Select2', true)
 
 @section('content')
 
@@ -150,6 +151,12 @@
 
                 $('#FormModal').modal("show");
 
+                $('.select2').select2({
+                    theme: 'bootstrap4',
+                    width: '100%',
+                    dropdownParent: $('#FormModal')
+                });
+
                 $('#FormModal form').on("submit", function(e) {
 
                     e.preventDefault();
@@ -180,6 +187,12 @@
                 $('#FormModal .modal-body').html(response);
 
                 $('#FormModal').modal("show");
+
+                $('.select2').select2({
+                    theme: 'bootstrap4',
+                    width: '100%',
+                    dropdownParent: $('#FormModal')
+                });
 
                 $('#FormModal form').on("submit", function(e) {
 
@@ -250,7 +263,7 @@
 
         }).then((result) => {
 
-            if (result.isConfirmed) {
+            if (result.isConfirmed || result.value) {
 
                 $.ajax({
 

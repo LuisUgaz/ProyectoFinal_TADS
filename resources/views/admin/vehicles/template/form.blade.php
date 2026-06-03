@@ -172,12 +172,27 @@
     @if (isset($vehicle) && $vehicle->images->count() > 0)
         <div class="form-group">
             <label>Imágenes Actuales</label>
+            <input type="hidden" name="profile_image_id" id="profile_image_id" 
+                value="{{ $vehicle->images->where('is_profile', true)->first()->id ?? ($vehicle->images->first()->id ?? '') }}">
             <div class="row">
                 @foreach ($vehicle->images as $image)
                     <div class="col-md-3 mb-2">
-                        <div class="card shadow-sm">
+                        <div class="card shadow-sm h-100 img-card {{ $image->is_profile ? 'border-primary' : '' }}" 
+                            id="img-card-{{ $image->id }}">
                             <img src="{{ asset('storage/' . $image->path) }}" class="card-img-top"
                                 style="height: 100px; object-fit: cover;">
+                            <div class="card-body p-2 text-center">
+                                <div class="d-flex justify-content-center" style="gap: 10px;">
+                                    <button type="button" class="btn btn-sm {{ $image->is_profile ? 'btn-primary' : 'btn-outline-primary' }} btn-set-profile px-3"
+                                        title="Marcar como perfil" data-id="{{ $image->id }}">
+                                        <i class="fas fa-user"></i>
+                                    </button>
+                                    <button type="button" class="btn btn-sm btn-danger btn-delete-image px-3"
+                                        data-url="{{ route('admin.vehicles.delete-image', $image->id) }}" title="Eliminar imagen">
+                                        <i class="fas fa-trash"></i>
+                                    </button>
+                                </div>
+                            </div>
                         </div>
                     </div>
                 @endforeach
@@ -201,5 +216,66 @@
             fileName = this.files.length + ' archivos seleccionados';
         }
         $(this).next('.custom-file-label').addClass("selected").html(fileName);
+    });
+
+    $('.btn-set-profile').click(function() {
+        let btn = $(this);
+        let id = btn.data('id');
+
+        // Actualizar input oculto
+        $('#profile_image_id').val(id);
+
+        // Actualizar UI: remover clases de todos
+        $('.img-card').removeClass('border-primary');
+        $('.btn-set-profile').removeClass('btn-primary').addClass('btn-outline-primary');
+
+        // Aplicar a la seleccionada
+        $(`#img-card-${id}`).addClass('border-primary');
+        btn.removeClass('btn-outline-primary').addClass('btn-primary');
+    });
+
+    $('.btn-delete-image').click(function() {
+        let btn = $(this);
+        let url = btn.data('url');
+
+        Swal.fire({
+            title: "¿Eliminar imagen?",
+            text: "Esta acción no se puede deshacer",
+            icon: "warning",
+            showCancelButton: true,
+            confirmButtonText: "Sí, eliminar",
+            cancelButtonText: "Cancelar"
+        }).then((result) => {
+            if (result.isConfirmed || result.value) {
+                $.ajax({
+                    url: url,
+                    type: 'DELETE',
+                    data: {
+                        _token: "{{ csrf_token() }}"
+                    },
+                    success: function(response) {
+                        btn.closest('.col-md-3').remove();
+                        Swal.fire('Eliminado', response.message, 'success');
+                        
+                        // Si se eliminó la imagen de perfil, recargar el modal para ver el nuevo perfil asignado
+                        if (btn.closest('.card').hasClass('border-primary')) {
+                             let id = "{{ $vehicle->id ?? '' }}";
+                             if(id) {
+                                 $.ajax({
+                                    url: "{{ route('admin.vehicles.edit', 'id') }}".replace('id', id),
+                                    type: "GET",
+                                    success: function(response) {
+                                        $('#FormModal .modal-body').html(response);
+                                    }
+                                });
+                             }
+                        }
+                    },
+                    error: function(xhr) {
+                        Swal.fire('Error', 'No se pudo eliminar la imagen', 'error');
+                    }
+                });
+            }
+        });
     });
 </script>

@@ -10,4 +10,9 @@ class PersonnelType extends Model
         'name',
         'description'
     ];
+
+    public function personnels(): \Illuminate\Database\Eloquent\Relations\HasMany
+    {
+        return $this->hasMany(Personnel::class);
+    }
 }

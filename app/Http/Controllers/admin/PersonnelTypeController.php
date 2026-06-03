@@ -136,7 +136,13 @@ class PersonnelTypeController extends Controller
     {
         try {
 
-            $type = PersonnelType::findOrFail($id);
+            $type = PersonnelType::withCount('personnels')->findOrFail($id);
+
+            if ($type->personnels_count > 0) {
+                return response()->json([
+                    'message' => 'No se puede eliminar el tipo de personal porque tiene personal registrado con este tipo.'
+                ], 422);
+            }
 
             $protectedTypes = ['conductor', 'ayudante'];
 

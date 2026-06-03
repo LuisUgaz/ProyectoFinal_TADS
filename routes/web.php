@@ -40,6 +40,8 @@ Route::middleware([
 
     Route::resource('admin/vehicles', VehicleController::class)
         ->names('admin.vehicles');
+    Route::delete('admin/vehicles/image/{id}', [VehicleController::class, 'deleteImage'])
+        ->name('admin.vehicles.delete-image');
 
     Route::resource('admin/vehicle-types', VehicleTypeController::class)
         ->names('admin.vehicle-types');

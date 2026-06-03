@@ -12,6 +12,12 @@ class ContractController extends Controller
 {
     public function index(Request $request)
     {
+        // Desactivación automática de contratos vencidos
+        Contract::where('is_active', true)
+            ->whereNotNull('end_date')
+            ->where('end_date', '<', now()->format('Y-m-d'))
+            ->update(['is_active' => false]);
+
         if ($request->ajax()) {
             $contracts = Contract::with('personnel')->select('contracts.*');
 
@@ -59,7 +65,7 @@ class ContractController extends Controller
     public function store(Request $request)
     {
         try {
-            $request->validate([
+            $data = $request->validate([
                 'personnel_id' => 'required|exists:personnels,id',
                 'type' => 'required|in:Permanente,Nombrado,Temporal',
                 'start_date' => 'required|date',
@@ -69,13 +75,36 @@ class ContractController extends Controller
                 'is_active' => 'boolean'
             ]);
 
-            // Desactivar otros contratos activos del mismo personal si se marca como activo
-            if ($request->has('is_active') && $request->is_active) {
-                Contract::where('personnel_id', $request->personnel_id)
-                    ->update(['is_active' => false]);
+            $personnelId = $data['personnel_id'];
+            $is_active = $request->boolean('is_active');
+
+            // 1. Validar si ya existe un contrato activo para este personal
+            $activeContract = Contract::where('personnel_id', $personnelId)
+                ->where('is_active', true)
+                ->first();
+
+            if ($activeContract) {
+                return response()->json([
+                    'message' => 'Este personal ya cuenta con un contrato activo. Debe finalizarlo antes de registrar uno nuevo.'
+                ], 422);
             }
 
-            Contract::create($request->all());
+            // 2. Validar periodo de carencia de 2 meses desde el último contrato inactivo
+            $lastContract = Contract::where('personnel_id', $personnelId)
+                ->orderBy('end_date', 'desc')
+                ->first();
+
+            if ($lastContract && $lastContract->end_date) {
+                $minDate = $lastContract->end_date->addMonths(2);
+                if (now()->lessThan($minDate)) {
+                    return response()->json([
+                        'message' => 'Debe pasar un mínimo de dos meses desde la finalización del contrato anterior (Fecha permitida: ' . $minDate->format('d/m/Y') . ').'
+                    ], 422);
+                }
+            }
+
+            $data['is_active'] = $is_active;
+            Contract::create($data);
 
             return response()->json([
                 'message' => 'Contrato registrado correctamente'
@@ -100,7 +129,7 @@ class ContractController extends Controller
         try {
             $contract = Contract::findOrFail($id);
 
-            $request->validate([
+            $data = $request->validate([
                 'personnel_id' => 'required|exists:personnels,id',
                 'type' => 'required|in:Permanente,Nombrado,Temporal',
                 'start_date' => 'required|date',
@@ -110,14 +139,16 @@ class ContractController extends Controller
                 'is_active' => 'boolean'
             ]);
 
+            $data['is_active'] = $request->boolean('is_active');
+
             // Desactivar otros contratos si este se marca como activo
-            if ($request->is_active) {
-                Contract::where('personnel_id', $request->personnel_id)
+            if ($data['is_active']) {
+                Contract::where('personnel_id', $data['personnel_id'])
                     ->where('id', '!=', $id)
                     ->update(['is_active' => false]);
             }
 
-            $contract->update($request->all());
+            $contract->update($data);
 
             return response()->json([
                 'message' => 'Contrato actualizado correctamente'
@@ -134,6 +165,14 @@ class ContractController extends Controller
     {
         try {
             $contract = Contract::findOrFail($id);
+
+            // Verificación explícita del estado activo (soporta booleanos e integrales de la DB)
+            if ($contract->is_active == 1 || $contract->is_active === true) {
+                return response()->json([
+                    'message' => 'No se puede eliminar un contrato que se encuentra actualmente activo.'
+                ], 422);
+            }
+
             $contract->delete();
 
             return response()->json([

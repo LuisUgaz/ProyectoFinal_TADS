@@ -4,6 +4,7 @@ namespace App\Http\Controllers\admin;
 
 use App\Http\Controllers\Controller;
 use App\Models\Vehicle;
+use App\Models\VehicleImage;
 use App\Models\BrandModel;
 use App\Models\VehicleType;
 use App\Models\VehicleColor;
@@ -16,14 +17,16 @@ class VehicleController extends Controller
     public function index(Request $request)
     {
         if ($request->ajax()) {
-            $vehicles = Vehicle::with(['model.brand', 'type', 'color', 'images'])->get();
+            $vehicles = Vehicle::with(['model.brand', 'type', 'color', 'images' => function($query) {
+                $query->orderBy('is_profile', 'desc');
+            }])->get();
 
             return DataTables::of($vehicles)
                 ->addColumn('image', function ($vehicle) {
-                    $firstImage = $vehicle->images->first();
+                    $profileImage = $vehicle->images->where('is_profile', true)->first() ?: $vehicle->images->first();
 
-                    if ($firstImage && Storage::disk('public')->exists($firstImage->path)) {
-                        return '<img src="' . asset('storage/' . $firstImage->path) . '"
+                    if ($profileImage && Storage::disk('public')->exists($profileImage->path)) {
+                        return '<img src="' . asset('storage/' . $profileImage->path) . '"
                                 class="img-thumbnail"
                                 width="50"
                                 height="50"
@@ -108,9 +111,12 @@ class VehicleController extends Controller
             $vehicle = Vehicle::create($request->all());
 
             if ($request->hasFile('images')) {
-                foreach ($request->file('images') as $file) {
+                foreach ($request->file('images') as $index => $file) {
                     $path = $file->store('vehicles', 'public');
-                    $vehicle->images()->create(['path' => $path]);
+                    $vehicle->images()->create([
+                        'path' => $path,
+                        'is_profile' => ($index === 0) // La primera imagen será el perfil por defecto
+                    ]);
                 }
             }
 
@@ -157,14 +163,55 @@ class VehicleController extends Controller
 
             $vehicle->update($request->all());
 
+            // Manejar cambio de imagen de perfil
+            if ($request->has('profile_image_id')) {
+                $vehicle->images()->update(['is_profile' => false]);
+                $vehicle->images()->where('id', $request->profile_image_id)->update(['is_profile' => true]);
+            }
+
             if ($request->hasFile('images')) {
                 foreach ($request->file('images') as $file) {
                     $path = $file->store('vehicles', 'public');
-                    $vehicle->images()->create(['path' => $path]);
+                    
+                    // Si el vehículo no tenía imágenes previas, la primera nueva será el perfil
+                    $isProfile = $vehicle->images()->count() === 0;
+
+                    $vehicle->images()->create([
+                        'path' => $path,
+                        'is_profile' => $isProfile
+                    ]);
                 }
             }
 
             return response()->json(['message' => 'Vehículo actualizado correctamente'], 200);
+        } catch (\Throwable $th) {
+            return response()->json(['message' => 'Error: ' . $th->getMessage()], 500);
+        }
+    }
+
+    public function deleteImage(string $id)
+    {
+        try {
+            $image = VehicleImage::findOrFail($id);
+            $vehicleId = $image->vehicle_id;
+            $wasProfile = $image->is_profile;
+
+            // Eliminar archivo físico
+            if (Storage::disk('public')->exists($image->path)) {
+                Storage::disk('public')->delete($image->path);
+            }
+
+            $image->delete();
+
+            // Si era la imagen de perfil, asignar otra como perfil
+            if ($wasProfile) {
+                $nextImage = VehicleImage::where('vehicle_id', $vehicleId)->first();
+                if ($nextImage) {
+                    $nextImage->update(['is_profile' => true]);
+                }
+            }
+
+            return response()->json(['message' => 'Imagen eliminada correctamente'], 200);
         } catch (\Throwable $th) {
             return response()->json(['message' => 'Error: ' . $th->getMessage()], 500);
         }
