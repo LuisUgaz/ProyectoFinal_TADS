@@ -1,5 +1,5 @@
 <div class="form-group">
-    <label for="name">Nombre del Tipo de Personal</label>
+    <label for="name">Nombre del Tipo de Personal *</label>
 
     <input type="text" id="name" name="name" class="form-control"
         placeholder="Ingrese nombre del tipo de personal" value="{{ $type->name ?? '' }}" required>

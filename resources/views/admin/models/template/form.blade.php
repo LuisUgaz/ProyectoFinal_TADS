@@ -6,19 +6,19 @@
     @endif
 
     <div class="form-group">
-        <label for="name">Nombre del Modelo</label>
+        <label for="name">Nombre del Modelo *</label>
         <input type="text" name="name" id="name" class="form-control" placeholder="Ej: Corolla, Hilux..."
             value="{{ isset($model) ? $model->name : '' }}" required>
     </div>
 
     <div class="form-group">
-        <label for="code">Código del Modelo</label>
+        <label for="code">Código del Modelo *</label>
         <input type="text" name="code" id="code" class="form-control" placeholder="Ej: TOY-COR-2024"
             value="{{ isset($model) ? $model->code : '' }}" required>
     </div>
 
     <div class="form-group">
-        <label for="brand_id">Marca</label>
+        <label for="brand_id">Marca *</label>
         <select name="brand_id" id="brand_id" class="form-control" required>
             <option value="">Seleccione una marca</option>
             @foreach ($brands as $brand)

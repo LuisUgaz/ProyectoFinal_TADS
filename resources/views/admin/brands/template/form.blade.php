@@ -1,13 +1,12 @@
 <div class="form-group">
-    <label>Nombre de la Marca</label>
+    <label>Nombre de la Marca *</label>
     <input type="text" name="name" class="form-control" placeholder="Ingrese nombre de la marca"
         value="{{ $brand->name ?? '' }}" required>
 </div>
 
 <div class="form-group">
     <label>Descripción</label>
-    <textarea name="description" class="form-control" rows="3" placeholder="Ingrese una descripción de la marca"
-        required>{{ $brand->description ?? '' }}</textarea>
+    <textarea name="description" class="form-control" rows="3" placeholder="Ingrese una descripción de la marca">{{ $brand->description ?? '' }}</textarea>
 </div>
 
 <div class="form-group">

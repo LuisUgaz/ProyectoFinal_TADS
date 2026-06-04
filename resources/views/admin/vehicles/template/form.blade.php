@@ -8,21 +8,21 @@
     <div class="row">
         <div class="col-md-3">
             <div class="form-group">
-                <label for="code">Código Interno</label>
+                <label for="code">Código*</label>
                 <input type="text" name="code" id="code" class="form-control" placeholder="VEH-001"
-                    value="{{ isset($vehicle) ? $vehicle->code : '' }}">
+                    value="{{ isset($vehicle) ? $vehicle->code : '' }}" required>
             </div>
         </div>
         <div class="col-md-5">
             <div class="form-group">
-                <label for="name">Nombre / Alias</label>
+                <label for="name">Nombre del Vehículo*</label>
                 <input type="text" name="name" id="name" class="form-control"
-                    placeholder="Camión Recolector #1" value="{{ isset($vehicle) ? $vehicle->name : '' }}">
+                    placeholder="Camión Recolector #1" value="{{ isset($vehicle) ? $vehicle->name : '' }}" required>
             </div>
         </div>
         <div class="col-md-4">
             <div class="form-group">
-                <label for="plate">Placa</label>
+                <label for="plate">Placa *</label>
                 <input type="text" name="plate" id="plate" class="form-control" placeholder="ABC-123"
                     value="{{ isset($vehicle) ? $vehicle->plate : '' }}" required>
             </div>
@@ -32,7 +32,7 @@
     <div class="row">
         <div class="col-md-4">
             <div class="form-group">
-                <label for="brand_model_id">Marca y Modelo</label>
+                <label for="brand_model_id">Marca y Modelo *</label>
                 <select name="brand_model_id" id="brand_model_id" class="form-control" required>
                     <option value="">Seleccione...</option>
                     @foreach ($models as $model)
@@ -46,7 +46,7 @@
         </div>
         <div class="col-md-4">
             <div class="form-group">
-                <label for="vehicle_type_id">Tipo de Vehículo</label>
+                <label for="vehicle_type_id">Tipo de Vehículo *</label>
                 <select name="vehicle_type_id" id="vehicle_type_id" class="form-control" required>
                     <option value="">Seleccione...</option>
                     @foreach ($types as $type)
@@ -60,7 +60,7 @@
         </div>
         <div class="col-md-4">
             <div class="form-group">
-                <label for="vehicle_color_id">Color</label>
+                <label for="vehicle_color_id">Color *</label>
                 <select name="vehicle_color_id" id="vehicle_color_id" class="form-control" required>
                     <option value="">Seleccione...</option>
                     @foreach ($colors as $color)
@@ -77,30 +77,30 @@
     <div class="row">
         <div class="col-md-3">
             <div class="form-group">
-                <label for="year">Año</label>
+                <label for="year">Año *</label>
                 <input type="number" name="year" id="year" class="form-control" placeholder="2024"
                     value="{{ isset($vehicle) ? $vehicle->year : date('Y') }}" required>
             </div>
         </div>
         <div class="col-md-3">
             <div class="form-group">
-                <label for="load_capacity">Cap. Carga (Tn)</label>
+                <label for="load_capacity">Cap. Carga (Tn) *</label>
                 <input type="number" step="0.01" name="load_capacity" id="load_capacity" class="form-control"
-                    placeholder="0.00" value="{{ isset($vehicle) ? $vehicle->load_capacity : '' }}">
+                    placeholder="0.00" value="{{ isset($vehicle) ? $vehicle->load_capacity : '' }}" required>
             </div>
         </div>
         <div class="col-md-3">
             <div class="form-group">
-                <label for="fuel_capacity">Cap. Comb. (L)</label>
+                <label for="fuel_capacity">Cap. Combustible (L) *</label>
                 <input type="number" step="0.01" name="fuel_capacity" id="fuel_capacity" class="form-control"
-                    placeholder="0.00" value="{{ isset($vehicle) ? $vehicle->fuel_capacity : '' }}">
+                    placeholder="0.00" value="{{ isset($vehicle) ? $vehicle->fuel_capacity : '' }}" required>
             </div>
         </div>
         <div class="col-md-3">
             <div class="form-group">
-                <label for="passenger_capacity">Cap. Pasajeros</label>
+                <label for="passenger_capacity">Cap. Pasajeros *</label>
                 <input type="number" name="passenger_capacity" id="passenger_capacity" class="form-control"
-                    placeholder="0" value="{{ isset($vehicle) ? $vehicle->passenger_capacity : '' }}">
+                    placeholder="0" value="{{ isset($vehicle) ? $vehicle->passenger_capacity : '' }}" required>
             </div>
         </div>
     </div>
@@ -108,22 +108,22 @@
     <div class="row">
         <div class="col-md-3">
             <div class="form-group">
-                <label for="compaction_capacity">Cap. Compactación (Tn)</label>
+                <label for="compaction_capacity">Cap. Compactación (Tn) *</label>
                 <input type="number" step="0.01" name="compaction_capacity" id="compaction_capacity"
                     class="form-control" placeholder="0.00"
-                    value="{{ isset($vehicle) ? $vehicle->compaction_capacity : '' }}">
+                    value="{{ isset($vehicle) ? $vehicle->compaction_capacity : '' }}" required>
             </div>
         </div>
         <div class="col-md-3">
             <div class="form-group">
-                <label for="mileage">Kilometraje (Km)</label>
+                <label for="mileage">Kilometraje (Km) *</label>
                 <input type="number" name="mileage" id="mileage" class="form-control" placeholder="0"
                     value="{{ isset($vehicle) ? $vehicle->mileage : '0' }}" required>
             </div>
         </div>
         <div class="col-md-6">
             <div class="form-group">
-                <label for="status">Estado</label>
+                <label for="status">Estado *</label>
                 <select name="status" id="status" class="form-control" required>
                     <option value="Activo" {{ isset($vehicle) && $vehicle->status == 'Activo' ? 'selected' : '' }}>
                         Activo</option>
@@ -142,22 +142,22 @@
             <div class="form-group">
                 <label for="engine_number">Número de Motor</label>
                 <input type="text" name="engine_number" id="engine_number" class="form-control"
-                    placeholder="Opcional" value="{{ isset($vehicle) ? $vehicle->engine_number : '' }}">
+                    placeholder="Ingrese número de motor" value="{{ isset($vehicle) ? $vehicle->engine_number : '' }}">
             </div>
         </div>
         <div class="col-md-6">
             <div class="form-group">
                 <label for="chassis_number">Número de Chasis</label>
                 <input type="text" name="chassis_number" id="chassis_number" class="form-control"
-                    placeholder="Opcional" value="{{ isset($vehicle) ? $vehicle->chassis_number : '' }}">
+                    placeholder="Ingrese número de chasis" value="{{ isset($vehicle) ? $vehicle->chassis_number : '' }}">
             </div>
         </div>
     </div>
 
     <div class="form-group">
-        <label for="description">Descripción / Notas Adicionales</label>
+        <label for="description">Descripción</label>
         <textarea name="description" id="description" class="form-control" rows="2"
-            placeholder="Detalles técnicos, estado general, etc.">{{ isset($vehicle) ? $vehicle->description : '' }}</textarea>
+            placeholder="Ingrese una descripción del vehículo">{{ isset($vehicle) ? $vehicle->description : '' }}</textarea>
     </div>
 
     <div class="form-group">
@@ -172,23 +172,25 @@
     @if (isset($vehicle) && $vehicle->images->count() > 0)
         <div class="form-group">
             <label>Imágenes Actuales</label>
-            <input type="hidden" name="profile_image_id" id="profile_image_id" 
+            <input type="hidden" name="profile_image_id" id="profile_image_id"
                 value="{{ $vehicle->images->where('is_profile', true)->first()->id ?? ($vehicle->images->first()->id ?? '') }}">
             <div class="row">
                 @foreach ($vehicle->images as $image)
                     <div class="col-md-3 mb-2">
-                        <div class="card shadow-sm h-100 img-card {{ $image->is_profile ? 'border-primary' : '' }}" 
+                        <div class="card shadow-sm h-100 img-card {{ $image->is_profile ? 'border-primary' : '' }}"
                             id="img-card-{{ $image->id }}">
                             <img src="{{ asset('storage/' . $image->path) }}" class="card-img-top"
                                 style="height: 100px; object-fit: cover;">
                             <div class="card-body p-2 text-center">
                                 <div class="d-flex justify-content-center" style="gap: 10px;">
-                                    <button type="button" class="btn btn-sm {{ $image->is_profile ? 'btn-primary' : 'btn-outline-primary' }} btn-set-profile px-3"
+                                    <button type="button"
+                                        class="btn btn-sm {{ $image->is_profile ? 'btn-primary' : 'btn-outline-primary' }} btn-set-profile px-3"
                                         title="Marcar como perfil" data-id="{{ $image->id }}">
                                         <i class="fas fa-user"></i>
                                     </button>
                                     <button type="button" class="btn btn-sm btn-danger btn-delete-image px-3"
-                                        data-url="{{ route('admin.vehicles.delete-image', $image->id) }}" title="Eliminar imagen">
+                                        data-url="{{ route('admin.vehicles.delete-image', $image->id) }}"
+                                        title="Eliminar imagen">
                                         <i class="fas fa-trash"></i>
                                     </button>
                                 </div>
@@ -256,19 +258,21 @@
                     success: function(response) {
                         btn.closest('.col-md-3').remove();
                         Swal.fire('Eliminado', response.message, 'success');
-                        
+
                         // Si se eliminó la imagen de perfil, recargar el modal para ver el nuevo perfil asignado
                         if (btn.closest('.card').hasClass('border-primary')) {
-                             let id = "{{ $vehicle->id ?? '' }}";
-                             if(id) {
-                                 $.ajax({
-                                    url: "{{ route('admin.vehicles.edit', 'id') }}".replace('id', id),
+                            let id = "{{ $vehicle->id ?? '' }}";
+                            if (id) {
+                                $.ajax({
+                                    url: "{{ route('admin.vehicles.edit', 'id') }}"
+                                        .replace('id', id),
                                     type: "GET",
                                     success: function(response) {
-                                        $('#FormModal .modal-body').html(response);
+                                        $('#FormModal .modal-body').html(
+                                            response);
                                     }
                                 });
-                             }
+                            }
                         }
                     },
                     error: function(xhr) {

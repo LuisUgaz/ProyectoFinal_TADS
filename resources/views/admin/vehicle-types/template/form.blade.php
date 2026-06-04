@@ -6,7 +6,7 @@
     @endif
 
     <div class="form-group">
-        <label for="name">Nombre del Tipo de Vehículo</label>
+        <label for="name">Nombre del Tipo de Vehículo *</label>
         <input type="text" name="name" id="name" class="form-control"
             placeholder="Ingrese nombre del tipo de vehículo" value="{{ isset($type) ? $type->name : '' }}" required>
     </div>

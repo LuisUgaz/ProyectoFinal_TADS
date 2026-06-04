@@ -360,11 +360,6 @@ return [
                     'icon' => 'fas fa-file-contract',
                 ],
                 [
-                    'text' => 'Cargos',
-                    'url'  => '#',
-                    'icon' => 'fas fa-file-contract',
-                ],
-                [
                     'text' => 'Asistencias',
                     'url'  => '#',
                     'icon' => 'fas fa-clipboard-check',
@@ -382,14 +377,29 @@ return [
             'icon' => 'fas fa-calendar-alt',
             'submenu' => [
                 [
-                    'text' => 'Rutas',
-                    'url'  => '#',
-                    'icon' => 'fas fa-route',
-                ],
-                [
-                    'text' => 'Horarios',
+                    'text' => 'Turnos',
                     'url'  => '#',
                     'icon' => 'fas fa-clock',
+                ],
+                [
+                    'text' => 'Zonas',
+                    'url'  => '#',
+                    'icon' => 'fas fa-map-marker-alt',
+                ],
+                [
+                    'text' => 'Feriados',
+                    'url'  => '#',
+                    'icon' => 'fas fa-flag',
+                ],
+                [
+                    'text' => 'Grupos de personal',
+                    'url'  => '#',
+                    'icon' => 'fas fa-user-friends',
+                ],
+                [
+                    'text' => 'Programación',
+                    'url'  => '#',
+                    'icon' => 'fas fa-calendar-check',
                 ],
             ],
         ],
