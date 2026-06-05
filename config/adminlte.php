@@ -378,7 +378,7 @@ return [
             'submenu' => [
                 [
                     'text' => 'Turnos',
-                    'url'  => '#',
+                    'url'  => 'admin/shifts',
                     'icon' => 'fas fa-clock',
                 ],
                 [

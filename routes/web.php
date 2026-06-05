@@ -10,8 +10,7 @@ use App\Http\Controllers\admin\PersonnelTypeController;
 use App\Http\Controllers\admin\PersonnelController;
 use App\Http\Controllers\admin\ContractController;
 use App\Http\Controllers\admin\AttendanceController;
-
-
+use App\Http\Controllers\admin\ShiftController;
 use Illuminate\Support\Facades\Route;
 
 Route::get('/', function () {
@@ -61,5 +60,8 @@ Route::middleware([
 
     Route::resource('admin/attendances', AttendanceController::class)
         ->names('admin.attendances');
+
+    Route::resource('admin/shifts', ShiftController::class)
+        ->names('admin.shifts');
 
 });
