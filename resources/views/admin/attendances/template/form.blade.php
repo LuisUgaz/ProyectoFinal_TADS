@@ -109,7 +109,8 @@
 
 <div class="form-group">
     <label>Notas adicionales</label>
-    <textarea name="notes" class="form-control" rows="3" placeholder="Ingrese notas adicionales sobre la asistencia">{{ $attendance->notes ?? '' }}</textarea>
+    <textarea name="notes" class="form-control" rows="3"
+        placeholder="Ingrese notas adicionales sobre la asistencia">{{ $attendance->notes ?? '' }}</textarea>
 </div>
 
 <div class="alert alert-info py-2">

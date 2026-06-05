@@ -1,6 +1,6 @@
 @extends('adminlte::page')
 
-@section('title', 'Tipos de Vehículo')
+@section('title', 'Tipos de Vehículos')
 
 @section('plugins.Datatables', true)
 @section('plugins.Sweetalert2', true)

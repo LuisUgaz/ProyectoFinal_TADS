@@ -211,7 +211,7 @@ class DatabaseSeeder extends Seeder
                     'password' => Hash::make($p['dni']), // DNI como password por defecto
                     'address' => $p['address'],
                     'photo_path' => null,
-                    'license_path' => null,
+                    'license_number' => $p['type_id'] == $conductorType->id ? 'C' . $p['dni'] : null,
                 ]
             );
 

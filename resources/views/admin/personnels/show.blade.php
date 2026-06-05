@@ -18,9 +18,19 @@
                 <td>{{ $personnel->dni }}</td>
             </tr>
             <tr>
-                <th>Tipo de Personal</th>
+                <th>Tipo de personal</th>
                 <td>{{ $personnel->type->name ?? 'Sin tipo' }}</td>
             </tr>
+
+            @if (strtolower($personnel->type->name ?? '') == 'conductor')
+                <tr>
+                    <th>N° de licencia</th>
+                    <td>
+                        {{ $personnel->license_number ?: 'No registrada' }}
+                    </td>
+                </tr>
+            @endif
+
             <tr>
                 <th>Nombres</th>
                 <td>{{ $personnel->names }}</td>
@@ -57,25 +67,5 @@
             </tr>
 
         </table>
-
-        @if (strtolower($personnel->type->name ?? '') == 'conductor')
-            <hr>
-            <h6><i class="fas fa-id-card"></i> Licencia de conducir</h6>
-
-            @if ($personnel->license_path)
-                <a href="{{ asset('storage/' . $personnel->license_path) }}" target="_blank"
-                    class="btn btn-info btn-sm">
-                    <i class="fas fa-eye"></i> Ver licencia
-                </a>
-
-                <a href="{{ asset('storage/' . $personnel->license_path) }}" download class="btn btn-secondary btn-sm">
-                    <i class="fas fa-download"></i> Descargar
-                </a>
-            @else
-                <div class="alert alert-warning py-2">
-                    No se ha registrado licencia para este conductor.
-                </div>
-            @endif
-        @endif
     </div>
 </div>

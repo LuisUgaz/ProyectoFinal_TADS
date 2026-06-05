@@ -36,12 +36,12 @@
             <div class="small-box bg-info">
                 <div class="inner">
                     <h4>Vehículos</h4>
-                    <p>Colores, marcas, modelos y tipos</p>
+                    <p>Colores, marcas, modelos, tipos y vehículos</p>
                 </div>
                 <div class="icon">
                     <i class="fas fa-truck"></i>
                 </div>
-                <a href="#" class="small-box-footer">
+                <a href="{{ route('admin.vehicles.index') }}" class="small-box-footer">
                     Acceder <i class="fas fa-arrow-circle-right"></i>
                 </a>
             </div>
@@ -51,13 +51,13 @@
             <div class="small-box bg-success">
                 <div class="inner">
                     <h4>Personal</h4>
-                    <p>Gestión del equipo operativo</p>
+                    <p>Tipos, personal, contratos, asistencias y vacaciones</p>
                 </div>
                 <div class="icon">
                     <i class="fas fa-users"></i>
                 </div>
-                <a href="#" class="small-box-footer">
-                    Próximamente <i class="fas fa-clock"></i>
+                <a href="{{ route('admin.personnels.index') }}" class="small-box-footer">
+                    Acceder <i class="fas fa-arrow-circle-right"></i>
                 </a>
             </div>
         </div>
@@ -66,7 +66,7 @@
             <div class="small-box bg-warning">
                 <div class="inner">
                     <h4>Programación</h4>
-                    <p>Planificación de rutas y actividades</p>
+                    <p>Turnos, zonas, feriados, grupos de personal y programación</p>
                 </div>
                 <div class="icon">
                     <i class="fas fa-calendar-alt"></i>
@@ -81,7 +81,7 @@
             <div class="small-box bg-danger">
                 <div class="inner">
                     <h4>Cambios</h4>
-                    <p>Control y seguimiento operativo</p>
+                    <p>Control y seguimiento operativo, solicitudes</p>
                 </div>
                 <div class="icon">
                     <i class="fas fa-exchange-alt"></i>

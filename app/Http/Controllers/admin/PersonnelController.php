@@ -115,7 +115,6 @@ class PersonnelController extends Controller
                     'required',
                     'date',
                     'before_or_equal:' . Carbon::now()->subYears(18)->format('Y-m-d'),
-                    'after_or_equal:' . Carbon::now()->subYears(55)->format('Y-m-d'),
                 ],
                 'phone' => 'nullable',
                 'email' => 'required|email|unique:personnels,email',
@@ -123,12 +122,8 @@ class PersonnelController extends Controller
                 'password' => 'required|min:6',
                 'address' => 'required',
                 'photo_path' => 'nullable|image|mimes:jpg,jpeg,png|max:2048',
-                'license_path' => 'nullable|file|mimes:jpg,jpeg,png,pdf|max:2048',
+                'license_number' => 'nullable|regex:/^[A-Z][0-9]{8}$/',
             ];
-
-            if ($conductorType && $request->personnel_type_id == $conductorType->id) {
-                $rules['license_path'] = 'required|file|mimes:jpg,jpeg,png,pdf|max:2048';
-            }
 
             $request->validate($rules, [
                 'dni.required' => 'El DNI es obligatorio.',
@@ -144,7 +139,6 @@ class PersonnelController extends Controller
                 'birthdate.required' => 'La fecha de nacimiento es obligatoria.',
                 'birthdate.date' => 'Debe ingresar una fecha de nacimiento válida.',
                 'birthdate.before_or_equal' => 'El personal debe tener como mínimo 18 años.',
-                'birthdate.after_or_equal' => 'El personal no puede superar los 55 años.',
 
                 'email.required' => 'El email es obligatorio.',
                 'email.email' => 'Debe ingresar un email válido.',
@@ -161,9 +155,7 @@ class PersonnelController extends Controller
                 'photo_path.mimes' => 'La foto debe estar en formato JPG, JPEG o PNG.',
                 'photo_path.max' => 'La foto no debe superar los 2MB.',
 
-                'license_path.required' => 'Debe subir la licencia de conducir para el personal conductor.',
-                'license_path.mimes' => 'La licencia debe estar en formato JPG, JPEG, PNG o PDF.',
-                'license_path.max' => 'La licencia no debe superar los 2MB.',
+                'license_number.regex' => 'El número de licencia debe tener 1 letra seguida de 8 números. Ejemplo: M12345678.',
             ]);
 
             $photoPath = null;
@@ -171,13 +163,6 @@ class PersonnelController extends Controller
             if ($request->hasFile('photo_path')) {
                 $photoPath = $request->file('photo_path')
                     ->store('personnels/photos', 'public');
-            }
-
-            $licensePath = null;
-
-            if ($request->hasFile('license_path')) {
-                $licensePath = $request->file('license_path')
-                    ->store('personnels/licenses', 'public');
             }
 
             Personnel::create([
@@ -192,7 +177,7 @@ class PersonnelController extends Controller
                 'password' => Hash::make($request->password),
                 'address' => $request->address,
                 'photo_path' => $photoPath,
-                'license_path' => $licensePath,
+                'license_number' => $request->license_number,
             ]);
 
             return response()->json([
@@ -238,7 +223,6 @@ class PersonnelController extends Controller
                     'required',
                     'date',
                     'before_or_equal:' . Carbon::now()->subYears(18)->format('Y-m-d'),
-                    'after_or_equal:' . Carbon::now()->subYears(55)->format('Y-m-d'),
                 ],
                 'phone' => 'nullable',
                 'email' => 'required|email|unique:personnels,email,' . $id,
@@ -246,12 +230,8 @@ class PersonnelController extends Controller
                 'password' => 'nullable|min:6',
                 'address' => 'required',
                 'photo_path' => 'nullable|image|mimes:jpg,jpeg,png|max:2048',
-                'license_path' => 'nullable|file|mimes:jpg,jpeg,png,pdf|max:2048',
+                'license_number' => 'nullable|regex:/^[A-Z][0-9]{8}$/',
             ];
-
-            if ($conductorType && $request->personnel_type_id == $conductorType->id && !$personnel->license_path) {
-                $rules['license_path'] = 'required|file|mimes:jpg,jpeg,png,pdf|max:2048';
-            }
 
             $request->validate($rules, [
                 'dni.required' => 'El DNI es obligatorio.',
@@ -267,7 +247,6 @@ class PersonnelController extends Controller
                 'birthdate.required' => 'La fecha de nacimiento es obligatoria.',
                 'birthdate.date' => 'Debe ingresar una fecha de nacimiento válida.',
                 'birthdate.before_or_equal' => 'El personal debe tener como mínimo 18 años.',
-                'birthdate.after_or_equal' => 'El personal no puede superar los 55 años.',
 
                 'email.required' => 'El email es obligatorio.',
                 'email.email' => 'Debe ingresar un email válido.',
@@ -283,9 +262,7 @@ class PersonnelController extends Controller
                 'photo_path.mimes' => 'La foto debe estar en formato JPG, JPEG o PNG.',
                 'photo_path.max' => 'La foto no debe superar los 2MB.',
 
-                'license_path.required' => 'Debe subir la licencia de conducir para el personal conductor.',
-                'license_path.mimes' => 'La licencia debe estar en formato JPG, JPEG, PNG o PDF.',
-                'license_path.max' => 'La licencia no debe superar los 2MB.',
+                'license_number.regex' => 'El número de licencia debe tener 1 letra seguida de 8 números. Ejemplo: M12345678.',
             ]);
 
             $data = [
@@ -298,6 +275,7 @@ class PersonnelController extends Controller
                 'email' => $request->email,
                 'status' => $request->status,
                 'address' => $request->address,
+                'license_number' => $request->license_number,
             ];
 
             if ($request->filled('password')) {
@@ -312,16 +290,6 @@ class PersonnelController extends Controller
 
                 $data['photo_path'] = $request->file('photo_path')
                     ->store('personnels/photos', 'public');
-            }
-
-            if ($request->hasFile('license_path')) {
-
-                if ($personnel->license_path && Storage::disk('public')->exists($personnel->license_path)) {
-                    Storage::disk('public')->delete($personnel->license_path);
-                }
-
-                $data['license_path'] = $request->file('license_path')
-                    ->store('personnels/licenses', 'public');
             }
 
             $personnel->update($data);
@@ -352,10 +320,6 @@ class PersonnelController extends Controller
 
             if ($personnel->photo_path && Storage::disk('public')->exists($personnel->photo_path)) {
                 Storage::disk('public')->delete($personnel->photo_path);
-            }
-
-            if ($personnel->license_path && Storage::disk('public')->exists($personnel->license_path)) {
-                Storage::disk('public')->delete($personnel->license_path);
             }
 
             $personnel->delete();

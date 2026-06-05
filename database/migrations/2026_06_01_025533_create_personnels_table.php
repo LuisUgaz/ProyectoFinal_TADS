@@ -28,7 +28,7 @@ return new class extends Migration
             $table->string('password');
             $table->string('address');
             $table->string('photo_path')->nullable();
-            $table->string('license_path')->nullable();
+            $table->string('license_number', 9)->nullable();
             $table->timestamps();
         });
     }

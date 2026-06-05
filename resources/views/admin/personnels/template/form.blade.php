@@ -21,6 +21,9 @@
             <label>DNI *</label>
             <input type="text" name="dni" maxlength="8" class="form-control" value="{{ $personnel->dni ?? '' }}"
                 placeholder="Ingrese DNI" required>
+            <small class="text-muted">
+                8 dígitos únicos
+            </small>
         </div>
     </div>
 
@@ -62,10 +65,9 @@
         <div class="form-group">
             <label>Fecha de Nacimiento *</label>
             <input type="date" name="birthdate" class="form-control" value="{{ $personnel->birthdate ?? '' }}"
-                min="{{ now()->subYears(55)->format('Y-m-d') }}" max="{{ now()->subYears(18)->format('Y-m-d') }}"
-                required>
+                max="{{ now()->subYears(18)->format('Y-m-d') }}" required>
             <small class="text-muted">
-                Edad permitida: 18 a 55 años.
+                Mayor de 18 años
             </small>
         </div>
     </div>
@@ -91,16 +93,19 @@
     <label>Dirección *</label>
     <input type="text" name="address" class="form-control" value="{{ $personnel->address ?? '' }}"
         placeholder="Ingrese dirección" required>
+    <small class="text-muted">
+        Dirección completa (mínimo 10 caracteres)
+    </small>
 </div>
 
 <div class="form-group">
     <label>Contraseña *</label>
     <input type="password" name="password" class="form-control"
-        placeholder="{{ isset($personnel) ? 'Dejar vacío para mantener contraseña actual' : 'Ingrese contraseña' }}"
+        placeholder="{{ isset($personnel) ? 'Dejar vacío para mantener contraseña actual' : 'Ingrese contraseña (mínimo 6 caracteres)' }}"
         {{ isset($personnel) ? '' : 'required' }}>
     @isset($personnel)
         <small class="text-muted">
-            Si deja este campo vacío, se conservará la contraseña actual.
+            Si deja este campo vacío, se conservará la contraseña actual
         </small>
     @endisset
 </div>
@@ -129,10 +134,11 @@
 
     <div class="col-md-6" id="license_container" style="display:none;">
         <div class="form-group">
-            <label>Licencia de Conducir *</label>
-            <input type="file" name="license_path" class="form-control-file" accept=".pdf,.jpg,.jpeg,.png">
+            <label>N° de Licencia de Conducir</label>
+            <input type="text" name="license_number" class="form-control" maxlength="9"
+                value="{{ $personnel->license_number ?? '' }}" placeholder="Ej: C12345678">
             <small class="text-muted">
-                Obligatorio para conductores.
+                1 letra seguida de 8 números
             </small>
         </div>
     </div>
@@ -140,7 +146,6 @@
 
 <script>
     function toggleLicenseField() {
-
         let selectedText = $('#personnel_type_id option:selected')
             .text()
             .trim()
@@ -148,14 +153,9 @@
 
         if (selectedText === 'conductor') {
             $('#license_container').show();
-
-            @if (!isset($personnel) || (isset($personnel) && !$personnel->license_path))
-                $('input[name="license_path"]').attr('required', true);
-            @endif
-
         } else {
             $('#license_container').hide();
-            $('input[name="license_path"]').removeAttr('required');
+            $('input[name="license_number"]').val('');
         }
     }
 
