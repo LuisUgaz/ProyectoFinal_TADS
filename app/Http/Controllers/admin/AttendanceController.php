@@ -17,6 +17,24 @@ class AttendanceController extends Controller
             $attendances = Attendance::with('personnel')
                 ->select('attendances.*');
 
+            if ($request->filled('start_date')) {
+                $attendances->whereDate('date', '>=', $request->start_date);
+            }
+
+            if ($request->filled('end_date')) {
+                $attendances->whereDate('date', '<=', $request->end_date);
+            }
+
+            if ($request->filled('personnel_search')) {
+                $search = $request->personnel_search;
+
+                $attendances->whereHas('personnel', function ($query) use ($search) {
+                    $query->where('dni', 'like', "%{$search}%")
+                        ->orWhere('names', 'like', "%{$search}%")
+                        ->orWhere('lastnames', 'like', "%{$search}%");
+                });
+            }
+
             return DataTables::of($attendances)
 
                 ->addColumn('personnel_dni', function ($attendance) {

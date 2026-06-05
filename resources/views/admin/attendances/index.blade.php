@@ -21,7 +21,49 @@
                 Lista de Asistencias
             </h4>
         </div>
+    </div>
 
+    <div class="card">
+        <div class="card-body border-bottom">
+            <div class="row">
+                <div class="col-md-3">
+                    <div class="form-group mb-0">
+                        <label>Fecha de inicio</label>
+                        <input type="date" id="start_date" class="form-control">
+                    </div>
+                </div>
+
+                <div class="col-md-3">
+                    <div class="form-group mb-0">
+                        <label>Fecha de fin</label>
+                        <input type="date" id="end_date" class="form-control">
+                    </div>
+                </div>
+
+                <div class="col-md-4">
+                    <div class="form-group mb-0">
+                        <label>Buscar personal</label>
+                        <input type="text" id="personnel_search" class="form-control"
+                            placeholder="Ingrese DNI, nombre o apellido">
+                    </div>
+                </div>
+
+                <div class="col-md-2 d-flex align-items-end">
+                    <div class="form-group mb-0">
+                        <button type="button" id="btn-filtrar" class="btn btn-primary btn-sm">
+                            <i class="fas fa-filter"></i> Filtrar
+                        </button>
+
+                        <button type="button" id="btn-limpiar" class="btn btn-secondary btn-sm">
+                            <i class="fas fa-eraser"></i> Limpiar
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="card">
         <div class="card-body">
             <table class="table table-striped table-hover" id="datatable">
                 <thead>
@@ -66,7 +108,14 @@
             $('#datatable').DataTable({
                 processing: true,
                 serverSide: true,
-                ajax: "{{ route('admin.attendances.index') }}",
+                ajax: {
+                    url: "{{ route('admin.attendances.index') }}",
+                    data: function(d) {
+                        d.start_date = $('#start_date').val();
+                        d.end_date = $('#end_date').val();
+                        d.personnel_search = $('#personnel_search').val();
+                    }
+                },
                 columns: [{
                         data: "personnel_dni"
                     },
@@ -106,6 +155,18 @@
                 language: {
                     url: 'https://cdn.datatables.net/plug-ins/1.10.16/i18n/Spanish.json'
                 }
+            });
+
+            $('#btn-filtrar').click(function() {
+                $('#datatable').DataTable().ajax.reload();
+            });
+
+            $('#btn-limpiar').click(function() {
+                $('#start_date').val('');
+                $('#end_date').val('');
+                $('#personnel_search').val('');
+
+                $('#datatable').DataTable().ajax.reload();
             });
         });
 
