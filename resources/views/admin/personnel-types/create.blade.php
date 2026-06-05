@@ -1,5 +1,4 @@
 <form action="{{ route('admin.personnel-types.store') }}" method="POST">
-
     @csrf
 
     @include('admin.personnel-types.template.form')
@@ -11,5 +10,4 @@
     <button type="button" class="btn btn-danger btn-sm" data-dismiss="modal">
         <i class="fas fa-times"></i> Cancelar
     </button>
-
 </form>

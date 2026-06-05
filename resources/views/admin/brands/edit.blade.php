@@ -1,5 +1,4 @@
 <form action="{{ route('admin.brands.update', $brand->id) }}" method="POST" enctype="multipart/form-data">
-
     @csrf
     @method('PUT')
 
@@ -12,5 +11,4 @@
     <button type="button" class="btn btn-danger btn-sm" data-dismiss="modal">
         <i class="fas fa-times"></i> Cancelar
     </button>
-
 </form>

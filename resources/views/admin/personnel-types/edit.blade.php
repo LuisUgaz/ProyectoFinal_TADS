@@ -1,5 +1,4 @@
 <form action="{{ route('admin.personnel-types.update', $type->id) }}" method="POST">
-
     @csrf
     @method('PUT')
 
@@ -12,5 +11,4 @@
     <button type="button" class="btn btn-danger btn-sm" data-dismiss="modal">
         <i class="fas fa-times"></i> Cancelar
     </button>
-
 </form>
