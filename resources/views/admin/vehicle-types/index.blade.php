@@ -13,7 +13,7 @@
             <button type="button" class="btn btn-primary btn-sm float-right" id="btn-nuevo">
                 <i class="fas fa-plus"></i> Nuevo Tipo
             </button>
-            <h4><i class="fas fa-car-side"></i> Lista de Tipos de Vehículos</h4>
+            <h4><i class="fas fa-car"></i> Lista de Tipos de Vehículos</h4>
         </div>
 
         <div class="card-body">
@@ -89,7 +89,7 @@
                 type: "GET",
                 success: function(response) {
                     $('#FormModal .modal-title').html(
-                        '<i class="fas fa-car-side"></i> Nuevo Tipo de Vehículo');
+                        '<i class="fas fa-car"></i> Nuevo Tipo de Vehículo');
                     $('#FormModal .modal-body').html(response);
                     $('#FormModal').modal("show");
 

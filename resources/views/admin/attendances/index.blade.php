@@ -1,33 +1,38 @@
 @extends('adminlte::page')
 
-@section('title', 'Vehículos')
+@section('title', 'Asistencias')
 
 @section('plugins.Datatables', true)
 @section('plugins.Sweetalert2', true)
+@section('plugins.Select2', true)
 
 @section('content')
+
     <div class="pt-3"></div>
 
     <div class="card">
         <div class="card-header">
             <button type="button" class="btn btn-primary btn-sm float-right" id="btn-nuevo">
-                <i class="fas fa-plus"></i> Nuevo Vehículo
+                <i class="fas fa-plus"></i> Nueva Asistencia
             </button>
-            <h4><i class="fas fa-car-side"></i> Lista de Vehículos</h4>
+
+            <h4>
+                <i class="fas fa-clipboard-check"></i>
+                Lista de Asistencias
+            </h4>
         </div>
 
         <div class="card-body">
             <table class="table table-striped table-hover" id="datatable">
                 <thead>
                     <tr>
-                        <th>Imagen</th>
-                        <th>Código</th>
-                        <th>Placa</th>
-                        <th>Marca y Modelo</th>
+                        <th>DNI</th>
+                        <th>Personal</th>
+                        <th>Fecha</th>
+                        <th>Hora</th>
                         <th>Tipo</th>
-                        <th>Color</th>
-                        <th>Año</th>
                         <th>Estado</th>
+                        <th>Notas</th>
                         <th width="20">Editar</th>
                         <th width="20">Eliminar</th>
                     </tr>
@@ -40,50 +45,52 @@
         <div class="modal-dialog modal-lg modal-dialog-centered" role="document">
             <div class="modal-content">
                 <div class="modal-header bg-primary text-white">
-                    <h5 class="modal-title">Formulario de Vehículo</h5>
+                    <h5 class="modal-title">Formulario de Asistencia</h5>
+
                     <button type="button" class="close text-white" data-dismiss="modal">
                         <span>&times;</span>
                     </button>
                 </div>
+
                 <div class="modal-body"></div>
             </div>
         </div>
     </div>
+
 @stop
 
 @section('js')
+
     <script>
         $(document).ready(function() {
             $('#datatable').DataTable({
                 processing: true,
                 serverSide: true,
-                ajax: "{{ route('admin.vehicles.index') }}",
+                ajax: "{{ route('admin.attendances.index') }}",
                 columns: [{
-                        data: "image",
+                        data: "personnel_dni"
+                    },
+                    {
+                        data: "personnel_name"
+                    },
+                    {
+                        data: "date"
+                    },
+                    {
+                        data: "time"
+                    },
+                    {
+                        data: "type_badge",
                         orderable: false,
                         searchable: false
                     },
                     {
-                        data: "code",
-                        defaultContent: "N/A"
+                        data: "status_badge",
+                        orderable: false,
+                        searchable: false
                     },
                     {
-                        data: "plate"
-                    },
-                    {
-                        data: "full_model"
-                    },
-                    {
-                        data: "type_name"
-                    },
-                    {
-                        data: "color_info"
-                    },
-                    {
-                        data: "year"
-                    },
-                    {
-                        data: "status_badge"
+                        data: "notes"
                     },
                     {
                         data: "edit",
@@ -94,25 +101,39 @@
                         data: "delete",
                         orderable: false,
                         searchable: false
-                    },
+                    }
                 ],
                 language: {
-                    url: 'https://cdn.datatables.net/plug-ins/1.10.16/i18n/Spanish.json',
-                },
+                    url: 'https://cdn.datatables.net/plug-ins/1.10.16/i18n/Spanish.json'
+                }
             });
         });
 
         $('#btn-nuevo').click(function() {
             $.ajax({
-                url: "{{ route('admin.vehicles.create') }}",
+                url: "{{ route('admin.attendances.create') }}",
                 type: "GET",
                 success: function(response) {
-                    $('#FormModal .modal-title').html('<i class="fas fa-car-side"></i> Nuevo Vehículo');
+                    $('#FormModal .modal-title')
+                        .html('<i class="fas fa-clipboard-check"></i> Nueva Asistencia');
+
                     $('#FormModal .modal-body').html(response);
                     $('#FormModal').modal("show");
 
+                    $('.select2').select2({
+                        theme: 'bootstrap4',
+                        width: '100%',
+                        dropdownParent: $('#FormModal')
+                    });
+
                     $('#FormModal form').on("submit", function(e) {
                         e.preventDefault();
+
+                        if (!this.checkValidity()) {
+                            this.reportValidity();
+                            return;
+                        }
+
                         enviarFormulario(this);
                     });
                 }
@@ -123,15 +144,29 @@
             let id = $(this).attr("id");
 
             $.ajax({
-                url: "{{ route('admin.vehicles.edit', 'id') }}".replace('id', id),
+                url: "{{ route('admin.attendances.edit', 'id') }}".replace('id', id),
                 type: "GET",
                 success: function(response) {
-                    $('#FormModal .modal-title').html('<i class="fas fa-pen"></i> Modificar Vehículo');
+                    $('#FormModal .modal-title')
+                        .html('<i class="fas fa-pen"></i> Modificar Asistencia');
+
                     $('#FormModal .modal-body').html(response);
                     $('#FormModal').modal("show");
 
+                    $('.select2').select2({
+                        theme: 'bootstrap4',
+                        width: '100%',
+                        dropdownParent: $('#FormModal')
+                    });
+
                     $('#FormModal form').on("submit", function(e) {
                         e.preventDefault();
+
+                        if (!this.checkValidity()) {
+                            this.reportValidity();
+                            return;
+                        }
+
                         enviarFormulario(this);
                     });
                 }
@@ -148,20 +183,33 @@
                 data: formData,
                 processData: false,
                 contentType: false,
+
                 success: function(response) {
                     $('#FormModal').modal("hide");
                     refreshTable();
-                    Swal.fire('Proceso exitoso', response.message, 'success');
+
+                    Swal.fire(
+                        'Proceso exitoso',
+                        response.message,
+                        'success'
+                    );
                 },
+
                 error: function(xhr) {
                     let response = xhr.responseJSON;
-                    Swal.fire('Ocurrió un error', response.message, 'error');
+
+                    Swal.fire(
+                        'Ocurrió un error',
+                        response ? response.message : 'No se pudo completar la operación',
+                        'error'
+                    );
                 }
             });
         }
 
         $(document).on('click', '.btn-delete', function(e) {
             e.preventDefault();
+
             let url = $(this).data('url');
 
             Swal.fire({
@@ -179,14 +227,25 @@
                         data: {
                             _token: "{{ csrf_token() }}"
                         },
+
                         success: function(response) {
                             refreshTable();
-                            Swal.fire('Proceso exitoso', response.message, 'success');
+
+                            Swal.fire(
+                                'Proceso exitoso',
+                                response.message,
+                                'success'
+                            );
                         },
+
                         error: function(xhr) {
                             let response = xhr.responseJSON;
-                            Swal.fire('Ocurrió un error', response ? response.message :
-                                'No se pudo eliminar', 'error');
+
+                            Swal.fire(
+                                'Ocurrió un error',
+                                response ? response.message : 'No se pudo eliminar',
+                                'error'
+                            );
                         }
                     });
                 }
@@ -197,4 +256,5 @@
             $('#datatable').DataTable().ajax.reload(null, false);
         }
     </script>
+
 @stop

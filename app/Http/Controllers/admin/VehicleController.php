@@ -53,6 +53,20 @@ class VehicleController extends Controller
                                 . $vehicle->color->name . 
                            '</div>';
                 })
+                ->addColumn('status_badge', function ($vehicle) {
+                    switch ($vehicle->status) {
+                        case 'Activo':
+                            return '<span class="badge badge-success badge-custom">Activo</span>';
+                        case 'Inactivo':
+                            return '<span class="badge badge-danger badge-custom">Inactivo</span>';
+                        case 'Mantenimiento':
+                            return '<span class="badge badge-warning badge-custom">Mantenimiento</span>';
+                        default:
+                            return '<span class="badge badge-secondary badge-custom">'
+                                . $vehicle->status .
+                                '</span>';
+                    }
+                })
                 ->addColumn('edit', function ($vehicle) {
                     return '<button class="btn btn-sm btn-warning btn-editar" id="' . $vehicle->id . '">
                                 <i class="fas fa-pen"></i>
@@ -65,7 +79,7 @@ class VehicleController extends Controller
                                 <i class="fas fa-trash-alt"></i>
                             </button>';
                 })
-                ->rawColumns(['image', 'color_info', 'edit', 'delete'])
+                ->rawColumns(['image', 'color_info', 'status_badge', 'edit', 'delete'])
                 ->make(true);
         }
 

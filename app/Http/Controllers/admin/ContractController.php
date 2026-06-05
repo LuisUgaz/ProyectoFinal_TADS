@@ -35,9 +35,11 @@ class ContractController extends Controller
                     return $contract->end_date ? $contract->end_date->format('d/m/Y') : 'N/A';
                 })
                 ->addColumn('status', function ($contract) {
-                    $badgeClass = $contract->is_active ? 'badge-success' : 'badge-danger';
-                    $badgeText = $contract->is_active ? 'Activo' : 'Inactivo';
-                    return '<span class="badge ' . $badgeClass . '">' . $badgeText . '</span>';
+                    if ($contract->is_active) {
+                        return '<span class="badge badge-success badge-custom">Activo</span>';
+                    }
+
+                    return '<span class="badge badge-danger badge-custom">Inactivo</span>';
                 })
                 ->addColumn('edit', function ($contract) {
                     return '<button class="btn btn-sm btn-warning btn-editar" id="' . $contract->id . '">

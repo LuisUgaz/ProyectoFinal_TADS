@@ -352,7 +352,7 @@ return [
                 [
                     'text' => 'Personal',
                     'url'  => 'admin/personnels',
-                    'icon' => 'fas fa-user-tie',
+                    'icon' => 'fas fa-user',
                 ],
                 [
                     'text' => 'Contratos',
@@ -361,7 +361,7 @@ return [
                 ],
                 [
                     'text' => 'Asistencias',
-                    'url'  => '#',
+                    'url'  => 'admin/attendances',
                     'icon' => 'fas fa-clipboard-check',
                 ],
                 [

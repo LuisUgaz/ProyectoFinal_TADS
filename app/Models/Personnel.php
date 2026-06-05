@@ -39,4 +39,9 @@ class Personnel extends Model
     {
         return $this->hasOne(Contract::class)->where('is_active', true)->latest();
     }
+
+    public function attendances(): HasMany
+    {
+        return $this->hasMany(Attendance::class);
+    }
 }

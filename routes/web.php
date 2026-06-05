@@ -9,6 +9,7 @@ use App\Http\Controllers\admin\VehicleTypeController;
 use App\Http\Controllers\admin\PersonnelTypeController;
 use App\Http\Controllers\admin\PersonnelController;
 use App\Http\Controllers\admin\ContractController;
+use App\Http\Controllers\admin\AttendanceController;
 
 
 use Illuminate\Support\Facades\Route;
@@ -54,5 +55,11 @@ Route::middleware([
         
     Route::resource('admin/contracts', ContractController::class)
         ->names('admin.contracts');
+
+    Route::get('admin/attendances/personnel-day-info', [AttendanceController::class, 'personnelDayInfo'])
+        ->name('admin.attendances.personnel-day-info');
+
+    Route::resource('admin/attendances', AttendanceController::class)
+        ->names('admin.attendances');
 
 });

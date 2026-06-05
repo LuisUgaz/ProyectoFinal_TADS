@@ -119,3 +119,48 @@
 .content-wrapper {
     min-height: calc(100vh - 72px) !important;
 }
+
+/* Select2 como input normal */
+.select2-container--bootstrap4 .select2-selection--single {
+    height: 48px !important;
+    border: 1px solid #ced4da !important;
+    border-radius: 6px !important;
+    background-color: #ffffff !important;
+    display: flex !important;
+    align-items: center !important;
+}
+
+.select2-container--bootstrap4
+    .select2-selection--single
+    .select2-selection__rendered {
+    color: #495057 !important;
+    line-height: normal !important;
+    padding-left: 12px !important;
+}
+
+.select2-container--bootstrap4
+    .select2-selection--single
+    .select2-selection__arrow {
+    height: 46px !important;
+    right: 10px !important;
+}
+
+.select2-container--bootstrap4 .select2-selection__placeholder {
+    color: #6c757d !important;
+}
+
+.attendance-record-item {
+    border: 1px solid #dee2e6;
+    border-left: 4px solid #0088ce;
+    border-radius: 6px;
+    padding: 10px 12px;
+    margin-bottom: 8px;
+    background-color: #ffffff;
+}
+
+.badge-custom {
+    font-size: 0.85rem;
+    padding: 0.25rem 0.5rem;
+    font-weight: 600;
+    border-radius: 0.25rem;
+}

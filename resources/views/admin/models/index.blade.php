@@ -13,7 +13,7 @@
             <button type="button" class="btn btn-primary btn-sm float-right" id="btn-nuevo">
                 <i class="fas fa-plus"></i> Nuevo Modelo
             </button>
-            <h4><i class="fas fa-car"></i> Lista de Modelos de Vehículos</h4>
+            <h4><i class="fas fa-wrench"></i> Lista de Modelos de Vehículos</h4>
         </div>
 
         <div class="card-body">
@@ -96,7 +96,7 @@
                 url: "{{ route('admin.models.create') }}",
                 type: "GET",
                 success: function(response) {
-                    $('#FormModal .modal-title').html('<i class="fas fa-car"></i> Nuevo Modelo');
+                    $('#FormModal .modal-title').html('<i class="fas fa-wrench"></i> Nuevo Modelo');
                     $('#FormModal .modal-body').html(response);
                     $('#FormModal').modal("show");
 
