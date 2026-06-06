@@ -7,6 +7,7 @@ use App\Models\Attendance;
 use App\Models\Personnel;
 use Illuminate\Http\Request;
 use Yajra\DataTables\Facades\DataTables;
+use App\Models\Shift;
 
 class AttendanceController extends Controller
 {
@@ -14,7 +15,7 @@ class AttendanceController extends Controller
     {
         if ($request->ajax()) {
 
-            $attendances = Attendance::with('personnel')
+            $attendances = Attendance::with(['personnel', 'shift'])
                 ->select('attendances.*');
 
             if ($request->filled('start_date')) {
@@ -53,6 +54,10 @@ class AttendanceController extends Controller
 
                 ->addColumn('time', function ($attendance) {
                     return \Carbon\Carbon::parse($attendance->time)->format('H:i');
+                })
+
+                ->addColumn('shift_name', function ($attendance) {
+                    return $attendance->shift ? $attendance->shift->name : 'Sin turno';
                 })
 
                 ->addColumn('type_badge', function ($attendance) {
@@ -109,7 +114,9 @@ class AttendanceController extends Controller
             ->orderBy('names')
             ->get();
 
-        return view('admin.attendances.create', compact('personnels'));
+        $shifts = Shift::all();
+
+        return view('admin.attendances.create', compact('personnels', 'shifts'));
     }
 
     public function store(Request $request)
@@ -140,10 +147,13 @@ class AttendanceController extends Controller
 
             $type = $attendanceStatus['next_type'];
 
+            $shift = $this->determineShiftByTime($request->time);
+
             Attendance::create([
                 'personnel_id' => $request->personnel_id,
                 'date' => $request->date,
                 'time' => $request->time,
+                'shift_id' => $shift ? $shift->id : null,
                 'type' => $type,
                 'status' => $request->status,
                 'notes' => $request->notes,
@@ -170,8 +180,12 @@ class AttendanceController extends Controller
             ->orderBy('names')
             ->get();
 
-        return view('admin.attendances.edit', compact('attendance', 'personnels'));
+        $shifts = Shift::all();
+
+        return view('admin.attendances.edit', compact('attendance', 'personnels', 'shifts'));
     }
+
+    
 
     public function update(Request $request, string $id)
     {
@@ -187,10 +201,13 @@ class AttendanceController extends Controller
                 'notes' => 'nullable',
             ]);
 
+            $shift = $this->determineShiftByTime($request->time);
+
             $attendance->update([
                 'personnel_id' => $request->personnel_id,
                 'date' => $request->date,
                 'time' => $request->time,
+                'shift_id' => $shift ? $shift->id : null,
                 'status' => $request->status,
                 'notes' => $request->notes,
             ]);
@@ -300,5 +317,29 @@ class AttendanceController extends Controller
             'can_register' => $canRegister,
             'message' => $message,
         ]);
+    }
+
+    private function determineShiftByTime($time)
+    {
+        $time = \Carbon\Carbon::parse($time)->format('H:i:s');
+
+        $shifts = Shift::all();
+
+        foreach ($shifts as $shift) {
+            $start = \Carbon\Carbon::parse($shift->start_time)->format('H:i:s');
+            $end = \Carbon\Carbon::parse($shift->end_time)->format('H:i:s');
+
+            if ($start <= $end) {
+                if ($time >= $start && $time < $end) {
+                    return $shift;
+                }
+            } else {
+                if ($time >= $start || $time < $end) {
+                    return $shift;
+                }
+            }
+        }
+
+        return null;
     }
 }

@@ -20,8 +20,8 @@
             </h4>
         </div>
 
-        <div class="card-body">
-            <table class="table table-striped table-hover" id="datatable">
+        <div class="card-body table-responsive">
+            <table class="table table-striped table-hover table-sm text-nowrap" id="datatable">
                 <thead>
                     <tr>
                         <th>Foto</th>
@@ -65,6 +65,8 @@
             $('#datatable').DataTable({
                 processing: true,
                 serverSide: true,
+                scrollX: true,
+                autoWidth: false,
                 ajax: "{{ route('admin.personnels.index') }}",
                 columns: [{
                         data: "photo",

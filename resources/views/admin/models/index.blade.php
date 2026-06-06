@@ -16,8 +16,8 @@
             <h4><i class="fas fa-wrench"></i> Lista de Modelos de Vehículos</h4>
         </div>
 
-        <div class="card-body">
-            <table class="table table-striped table-hover" id="datatable">
+        <div class="card-body table-responsive">
+            <table class="table table-striped table-hover table-sm text-nowrap" id="datatable">
                 <thead>
                     <tr>
                         <th>Nombre</th>
@@ -55,6 +55,8 @@
             $('#datatable').DataTable({
                 processing: true,
                 serverSide: true,
+                scrollX: true,
+                autoWidth: false,
                 ajax: "{{ route('admin.models.index') }}",
                 columns: [{
                         data: "name"

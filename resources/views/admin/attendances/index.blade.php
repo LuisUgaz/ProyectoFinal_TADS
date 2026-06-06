@@ -64,14 +64,15 @@
     </div>
 
     <div class="card">
-        <div class="card-body">
-            <table class="table table-striped table-hover" id="datatable">
+        <div class="card-body table-responsive">
+            <table class="table table-striped table-hover table-sm text-nowrap" id="datatable">
                 <thead>
                     <tr>
                         <th>DNI</th>
                         <th>Personal</th>
                         <th>Fecha</th>
                         <th>Hora</th>
+                        <th>Turno</th>
                         <th>Tipo</th>
                         <th>Estado</th>
                         <th>Notas</th>
@@ -108,6 +109,8 @@
             $('#datatable').DataTable({
                 processing: true,
                 serverSide: true,
+                scrollX: true,
+                autoWidth: false,
                 ajax: {
                     url: "{{ route('admin.attendances.index') }}",
                     data: function(d) {
@@ -127,6 +130,9 @@
                     },
                     {
                         data: "time"
+                    },
+                    {
+                        data: "shift_name"
                     },
                     {
                         data: "type_badge",

@@ -11,6 +11,7 @@ use App\Models\Vehicle;
 use App\Models\PersonnelType;
 use App\Models\Personnel;
 use App\Models\Shift;
+use App\Models\Attendance;
 use Illuminate\Database\Seeder;
 use Illuminate\Support\Facades\Hash;
 
@@ -82,7 +83,7 @@ class DatabaseSeeder extends Seeder
                 ]
             ],
         ];
-        // 4. Marcas y Modelos
+
         foreach ($brands as $bData) {
             $brand = Brand::updateOrCreate(
                 ['name' => $bData['name']],
@@ -209,14 +210,13 @@ class DatabaseSeeder extends Seeder
                     'phone' => $p['phone'],
                     'email' => $p['email'],
                     'status' => 'Activo',
-                    'password' => Hash::make($p['dni']), // DNI como password por defecto
+                    'password' => Hash::make($p['dni']),
                     'address' => $p['address'],
                     'photo_path' => null,
                     'license_number' => $p['type_id'] == $conductorType->id ? 'C' . $p['dni'] : null,
                 ]
             );
 
-            // Crear Contrato para el personal
             $personnel->contracts()->updateOrCreate(
                 ['personnel_id' => $personnel->id, 'is_active' => true],
                 [
@@ -228,45 +228,94 @@ class DatabaseSeeder extends Seeder
                     'is_active' => true
                 ]
             );
-            // 8. Turnos
-            $shifts = [
-                [
-                    'name' => 'Madrugada',
-                    'description' => 'Turno madrugada',
-                    'start_time' => '22:00:00',
-                    'end_time' => '06:00:00',
-                ],
-                [
-                    'name' => 'Mañana',
-                    'description' => 'Turno matutino',
-                    'start_time' => '06:00:00',
-                    'end_time' => '14:00:00',
-                ],
-                [
-                    'name' => 'Tarde',
-                    'description' => 'Turno vespertino',
-                    'start_time' => '14:00:00',
-                    'end_time' => '18:00:00',
-                ],
-                [
-                    'name' => 'Noche',
-                    'description' => 'Turno nocturno',
-                    'start_time' => '18:00:00',
-                    'end_time' => '22:00:00',
-                ],
-            ];
-
-            foreach ($shifts as $shift) {
-
-                Shift::updateOrCreate(
-                    ['name' => $shift['name']],
-                    [
-                        'description' => $shift['description'],
-                        'start_time' => $shift['start_time'],
-                        'end_time' => $shift['end_time'],
-                    ]
-                );
-            }
         }
+
+        // 8. Turnos
+        $shifts = [
+            [
+                'name' => 'Madrugada',
+                'description' => 'Turno madrugada',
+                'start_time' => '22:00:00',
+                'end_time' => '06:00:00',
+            ],
+            [
+                'name' => 'Mañana',
+                'description' => 'Turno matutino',
+                'start_time' => '06:00:00',
+                'end_time' => '14:00:00',
+            ],
+            [
+                'name' => 'Tarde',
+                'description' => 'Turno vespertino',
+                'start_time' => '14:00:00',
+                'end_time' => '18:00:00',
+            ],
+            [
+                'name' => 'Noche',
+                'description' => 'Turno nocturno',
+                'start_time' => '18:00:00',
+                'end_time' => '22:00:00',
+            ],
+        ];
+
+        foreach ($shifts as $shift) {
+            Shift::updateOrCreate(
+                ['name' => $shift['name']],
+                [
+                    'description' => $shift['description'],
+                    'start_time' => $shift['start_time'],
+                    'end_time' => $shift['end_time'],
+                ]
+            );
+        }
+
+        // 9. Asistencias de prueba
+        $pedro = Personnel::where('dni', '87654321')->first();
+        $juan = Personnel::where('dni', '12345678')->first();
+
+        $shiftManana = Shift::where('name', 'Mañana')->first();
+
+        Attendance::updateOrCreate(
+            [
+                'personnel_id' => $pedro->id,
+                'date' => '2026-06-06',
+                'time' => '06:00:00',
+                'type' => 'Ingreso',
+            ],
+            [
+                'shift_id' => $shiftManana->id,
+                'status' => 'Presente',
+                'notes' => 'Ingreso registrado.',
+            ]
+        );
+
+        Attendance::updateOrCreate(
+            [
+                'personnel_id' => $pedro->id,
+                'date' => '2026-06-06',
+                'time' => '14:00:00',
+                'type' => 'Salida',
+            ],
+            [
+                'shift_id' => $shiftManana->id,
+                'status' => 'Presente',
+                'notes' => 'Salida registrada.',
+            ]
+        );
+
+        Attendance::updateOrCreate(
+            [
+                'personnel_id' => $juan->id,
+                'date' => '2026-06-06',
+                'time' => '06:15:00',
+                'type' => 'Ingreso',
+            ],
+            [
+                'shift_id' => $shiftManana->id,
+                'status' => 'Presente',
+                'notes' => 'Ingreso registrado.',
+            ]
+        );
+      
     }
 }

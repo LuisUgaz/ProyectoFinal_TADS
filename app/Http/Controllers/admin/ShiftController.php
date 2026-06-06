@@ -18,13 +18,13 @@ class ShiftController extends Controller
             return DataTables::of($shifts)
 
                 ->addColumn('start_time', function ($shift) {
-                    return '<span class="badge badge-success">'
+                    return '<span class="badge badge-success badge-custom">'
                         . date('H:i', strtotime($shift->start_time))
                         . '</span>';
                 })
 
                 ->addColumn('end_time', function ($shift) {
-                    return '<span class="badge badge-danger">'
+                    return '<span class="badge badge-danger badge-custom">'
                         . date('H:i', strtotime($shift->end_time))
                         . '</span>';
                 })

@@ -21,14 +21,14 @@ return new class extends Migration
             $table->date('date');
             $table->time('time');
 
+            $table->foreignId('shift_id')
+                ->nullable()
+                ->constrained('shifts')
+                ->nullOnDelete();
+
             $table->enum('type', ['Ingreso', 'Salida']);
             $table->enum('status', ['Presente', 'Ausente']);
-
-            // Por ahora no usamos turn_id porque aún no existe Turnos
-            // $table->foreignId('turn_id')->nullable()->constrained('turns')->nullOnDelete();
-
             $table->text('notes')->nullable();
-
             $table->timestamps();
         });
     }

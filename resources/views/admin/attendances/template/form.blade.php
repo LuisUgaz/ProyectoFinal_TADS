@@ -46,7 +46,7 @@
 
 <div class="row">
 
-    <div class="col-md-6">
+    <div class="col-md-4">
         <div class="form-group">
             <label>Fecha *</label>
             <input type="date" name="date" class="form-control"
@@ -57,7 +57,7 @@
         </div>
     </div>
 
-    <div class="col-md-6">
+    <div class="col-md-4">
         <div class="form-group">
             <label>Hora *</label>
             <input type="time" name="time" class="form-control"
@@ -65,6 +65,16 @@
                 required>
             <small class="text-muted">
                 Seleccione la hora de registro
+            </small>
+        </div>
+    </div>
+
+    <div class="col-md-4">
+        <div class="form-group">
+            <label>Turno *</label>
+            <input type="text" id="shift_preview" class="form-control" value="Se asignará automáticamente" disabled>
+            <small class="text-muted">
+                El sistema asigna el turno según la hora
             </small>
         </div>
     </div>
@@ -113,12 +123,45 @@
         placeholder="Ingrese notas adicionales sobre la asistencia">{{ $attendance->notes ?? '' }}</textarea>
 </div>
 
-<div class="alert alert-info py-2">
-    <i class="fas fa-info-circle"></i>
-    El turno se asignará automáticamente según la hora cuando el módulo de Turnos esté implementado.
-</div>
-
 <script>
+    window.attendanceShifts = @json($shifts);
+
+    function updateShiftPreview() {
+        let time = $('input[name="time"]').val();
+
+        if (!time) {
+            $('#shift_preview').val('Se asignará automáticamente');
+            return;
+        }
+
+        let selectedShift = null;
+
+        window.attendanceShifts.forEach(function(shift) {
+            let start = shift.start_time.substring(0, 5);
+            let end = shift.end_time.substring(0, 5);
+
+            if (start <= end) {
+                if (time >= start && time < end) {
+                    selectedShift = shift;
+                }
+            } else {
+                if (time >= start || time < end) {
+                    selectedShift = shift;
+                }
+            }
+        });
+
+        if (selectedShift) {
+            $('#shift_preview').val(
+                selectedShift.name + ' (' +
+                selectedShift.start_time.substring(0, 5) + ' - ' +
+                selectedShift.end_time.substring(0, 5) + ')'
+            );
+        } else {
+            $('#shift_preview').val('Sin turno asignado');
+        }
+    }
+
     function loadPersonnelDayInfo() {
         let personnelId = $('#personnel_id').val();
         let date = $('input[name="date"]').val();
@@ -194,8 +237,13 @@
         });
     }
 
-    $('#personnel_id').on('change', loadPersonnelDayInfo);
-    $('input[name="date"]').on('change', loadPersonnelDayInfo);
+    $('#personnel_id').off('change').on('change', loadPersonnelDayInfo);
+    $('input[name="date"]').off('change').on('change', loadPersonnelDayInfo);
+
+    $('input[name="time"]').off('change').on('change', function() {
+        updateShiftPreview();
+    });
 
     loadPersonnelDayInfo();
+    updateShiftPreview();
 </script>

@@ -164,3 +164,45 @@
     font-weight: 600;
     border-radius: 0.25rem;
 }
+
+/* Centrar contenido de tablas */
+table.dataTable th,
+table.dataTable td {
+    text-align: center !important;
+    vertical-align: middle !important;
+}
+
+/* Centrar imágenes reales */
+table.dataTable td img {
+    display: block !important;
+    margin: 0 auto !important;
+}
+
+/* Centrar placeholders de imagen */
+table.dataTable td .bg-light.d-flex {
+    margin: 0 auto !important;
+}
+
+/* Centrar círculos/cuadros de color */
+table.dataTable td span[style*="background"],
+table.dataTable td div[style*="background"] {
+    display: inline-block !important;
+    vertical-align: middle !important;
+}
+
+/* Centrar grupo color + texto */
+table.dataTable td {
+    white-space: nowrap;
+}
+
+.card-body.table-responsive {
+    overflow-x: auto;
+}
+
+table.dataTable {
+    width: 100% !important;
+}
+
+.dataTables_wrapper {
+    width: 100%;
+}
