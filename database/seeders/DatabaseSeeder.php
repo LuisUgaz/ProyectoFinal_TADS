@@ -316,6 +316,35 @@ class DatabaseSeeder extends Seeder
                 'notes' => 'Ingreso registrado.',
             ]
         );
+
+        // 10. Vacaciones de prueba
+        \App\Models\Vacation::create([
+            'personnel_id' => $juan->id,
+            'start_date' => '2026-07-01',
+            'end_date' => '2026-07-15',
+            'requested_days' => 15,
+            'status' => 'Aprobada',
+            'notes' => 'Vacaciones de mitad de año aprobadas.',
+        ]);
+
+        \App\Models\Vacation::create([
+            'personnel_id' => $pedro->id,
+            'start_date' => '2026-08-01',
+            'end_date' => '2026-08-10',
+            'requested_days' => 10,
+            'status' => 'Pendiente',
+            'notes' => 'Solicitud pendiente.',
+        ]);
+
+        // Personal que ya gastó sus 30 días (Juan ya gastó 15, gastaremos otros 15)
+        \App\Models\Vacation::create([
+            'personnel_id' => $juan->id,
+            'start_date' => '2026-12-01',
+            'end_date' => '2026-12-15',
+            'requested_days' => 15,
+            'status' => 'Aprobada',
+            'notes' => 'Segunda quincena de vacaciones.',
+        ]);
       
     }
 }

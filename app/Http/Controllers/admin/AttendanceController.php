@@ -141,6 +141,17 @@ class AttendanceController extends Controller
                 'status.required' => 'Debe seleccionar el estado de asistencia.',
             ]);
 
+            // Validar que el personal tenga un contrato activo
+            $hasActiveContract = \App\Models\Contract::where('personnel_id', $request->personnel_id)
+                ->where('is_active', true)
+                ->exists();
+
+            if (!$hasActiveContract) {
+                return response()->json([
+                    'message' => 'No se puede registrar asistencia. El personal seleccionado no tiene un contrato activo.'
+                ], 422);
+            }
+
             $attendanceStatus = $this->getAttendanceStatus($request->personnel_id, $request->date);
 
             $type = $attendanceStatus['next_type'];

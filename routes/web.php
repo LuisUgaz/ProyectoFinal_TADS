@@ -11,6 +11,7 @@ use App\Http\Controllers\admin\PersonnelController;
 use App\Http\Controllers\admin\ContractController;
 use App\Http\Controllers\admin\AttendanceController;
 use App\Http\Controllers\admin\ShiftController;
+use App\Http\Controllers\admin\VacationController;
 use Illuminate\Support\Facades\Route;
 
 Route::get('/', function () {
@@ -63,5 +64,14 @@ Route::middleware([
 
     Route::resource('admin/shifts', ShiftController::class)
         ->names('admin.shifts');
+
+    Route::get('admin/vacations/personnel-info', [VacationController::class, 'getPersonnelVacationInfo'])
+        ->name('admin.vacations.personnel-info');
+    Route::post('admin/vacations/{id}/approve', [VacationController::class, 'approve'])
+        ->name('admin.vacations.approve');
+    Route::post('admin/vacations/{id}/reject', [VacationController::class, 'reject'])
+        ->name('admin.vacations.reject');
+    Route::resource('admin/vacations', VacationController::class)
+        ->names('admin.vacations');
 
 });

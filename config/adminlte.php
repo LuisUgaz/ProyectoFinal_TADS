@@ -366,7 +366,7 @@ return [
                 ],
                 [
                     'text' => 'Vacaciones',
-                    'url'  => '#',
+                    'route'  => 'admin.vacations.index',
                     'icon' => 'fas fa-plane-departure',
                 ],
             ],
