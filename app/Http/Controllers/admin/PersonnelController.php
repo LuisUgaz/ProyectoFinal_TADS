@@ -57,34 +57,28 @@ class PersonnelController extends Controller
                     return $personnel->updated_at->format('d/m/Y H:i');
                 })
 
-                ->addColumn('show', function ($personnel) {
-                    return '<button class="btn btn-sm btn-info btn-ver"
-                                id="' . $personnel->id . '">
-                                <i class="fas fa-eye"></i>
-                            </button>';
-                })
+                ->addColumn('actions', function ($personnel) {
+                    return '
+                        <button class="btn btn-sm btn-warning btn-editar" id="' . $personnel->id . '">
+                            <i class="fas fa-pen"></i>
+                        </button>
 
-                ->addColumn('edit', function ($personnel) {
-                    return '<button class="btn btn-sm btn-warning btn-editar"
-                                id="' . $personnel->id . '">
-                                <i class="fas fa-pen"></i>
-                            </button>';
-                })
+                        <button class="btn btn-sm btn-info btn-ver" id="' . $personnel->id . '">
+                            <i class="fas fa-eye"></i>
+                        </button>
 
-                ->addColumn('delete', function ($personnel) {
-                    return '<button type="button"
-                                class="btn btn-sm btn-danger btn-delete"
-                                data-url="' . route('admin.personnels.destroy', $personnel->id) . '">
-                                <i class="fas fa-trash-alt"></i>
-                            </button>';
+                        <button type="button"
+                            class="btn btn-sm btn-danger btn-delete"
+                            data-url="' . route('admin.personnels.destroy', $personnel->id) . '">
+                            <i class="fas fa-trash-alt"></i>
+                        </button>
+                    ';
                 })
 
                 ->rawColumns([
                     'photo',
                     'status_badge',
-                    'show',
-                    'edit',
-                    'delete'
+                    'actions'
                 ])
 
                 ->make(true);

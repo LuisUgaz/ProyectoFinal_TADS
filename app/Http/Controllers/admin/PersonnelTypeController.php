@@ -26,25 +26,21 @@ class PersonnelTypeController extends Controller
                     return $type->updated_at->format('d/m/Y H:i');
                 })
 
-                ->addColumn('edit', function ($type) {
-                    return '<button class="btn btn-sm btn-warning btn-editar"
-                                id="' . $type->id . '">
-                                <i class="fas fa-pen"></i>
-                            </button>';
+                ->addColumn('actions', function ($type) {
+                    return '
+                        <button class="btn btn-sm btn-warning btn-editar" id="' . $type->id . '">
+                            <i class="fas fa-pen"></i>
+                        </button>
+
+                        <button type="button"
+                            class="btn btn-sm btn-danger btn-delete"
+                            data-url="' . route('admin.personnel-types.destroy', $type->id) . '">
+                            <i class="fas fa-trash-alt"></i>
+                        </button>
+                    ';
                 })
 
-                ->addColumn('delete', function ($type) {
-                    return '<button type="button"
-                                class="btn btn-sm btn-danger btn-delete"
-                                data-url="' . route('admin.personnel-types.destroy', $type->id) . '">
-                                <i class="fas fa-trash-alt"></i>
-                            </button>';
-                })
-
-                ->rawColumns([
-                    'edit',
-                    'delete'
-                ])
+                ->rawColumns(['actions'])
 
                 ->make(true);
         }

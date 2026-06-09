@@ -42,25 +42,24 @@ class BrandController extends Controller
                     return $brand->updated_at->format('d/m/Y H:i');
                 })
 
-                ->addColumn('edit', function ($brand) {
-                    return '<button class="btn btn-sm btn-warning btn-editar"
-                                id="' . $brand->id . '">
-                                <i class="fas fa-pen"></i>
-                            </button>';
-                })
+                ->addColumn('actions', function ($brand) {
+                    return '
+                        <button class="btn btn-sm btn-warning btn-editar"
+                            id="' . $brand->id . '">
+                            <i class="fas fa-pen"></i>
+                        </button>
 
-                ->addColumn('delete', function ($brand) {
-                    return '<button type="button"
-                                class="btn btn-sm btn-danger btn-delete"
-                                data-url="' . route('admin.brands.destroy', $brand->id) . '">
-                                <i class="fas fa-trash-alt"></i>
-                            </button>';
+                        <button type="button"
+                            class="btn btn-sm btn-danger btn-delete"
+                            data-url="' . route('admin.brands.destroy', $brand->id) . '">
+                            <i class="fas fa-trash-alt"></i>
+                        </button>
+                    ';
                 })
 
                 ->rawColumns([
                     'logo',
-                    'edit',
-                    'delete'
+                    'actions'
                 ])
 
                 ->make(true);

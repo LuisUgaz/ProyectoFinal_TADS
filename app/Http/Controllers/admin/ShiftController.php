@@ -41,26 +41,24 @@ class ShiftController extends Controller
                         : '';
                 })
 
-                ->addColumn('edit', function ($shift) {
-                    return '<button class="btn btn-sm btn-warning btn-editar"
-                                id="'.$shift->id.'">
-                                <i class="fas fa-pen"></i>
-                            </button>';
-                })
+                ->addColumn('actions', function ($shift) {
+                    return '
+                        <button class="btn btn-sm btn-warning btn-editar" id="' . $shift->id . '">
+                            <i class="fas fa-pen"></i>
+                        </button>
 
-                ->addColumn('delete', function ($shift) {
-                    return '<button type="button"
-                                class="btn btn-sm btn-danger btn-delete"
-                                data-url="'.route('admin.shifts.destroy', $shift->id).'">
-                                <i class="fas fa-trash-alt"></i>
-                            </button>';
+                        <button type="button"
+                            class="btn btn-sm btn-danger btn-delete"
+                            data-url="' . route('admin.shifts.destroy', $shift->id) . '">
+                            <i class="fas fa-trash-alt"></i>
+                        </button>
+                    ';
                 })
 
                 ->rawColumns([
                     'start_time',
                     'end_time',
-                    'edit',
-                    'delete'
+                    'actions'
                 ])
 
                 ->make(true);

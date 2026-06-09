@@ -1,7 +1,7 @@
 <div class="row">
     <div class="col-md-4">
         <div class="form-group">
-            <label>Tipo de Personal *</label>
+            <label>Tipo de Personal <span class="text-danger">*</span></label>
             <select name="personnel_type_id" id="personnel_type_id" class="form-control" required>
                 <option value="">
                     Seleccione
@@ -18,7 +18,7 @@
 
     <div class="col-md-4">
         <div class="form-group">
-            <label>DNI *</label>
+            <label>DNI <span class="text-danger">*</span></label>
             <input type="text" name="dni" maxlength="8" class="form-control" value="{{ $personnel->dni ?? '' }}"
                 placeholder="Ingrese DNI" required>
             <small class="text-muted">
@@ -29,7 +29,7 @@
 
     <div class="col-md-4">
         <div class="form-group">
-            <label>Estado *</label>
+            <label>Estado <span class="text-danger">*</span></label>
             <select name="status" class="form-control" required>
                 <option value="Activo" {{ isset($personnel) && $personnel->status == 'Activo' ? 'selected' : '' }}>
                     Activo
@@ -45,7 +45,7 @@
 <div class="row">
     <div class="col-md-6">
         <div class="form-group">
-            <label>Nombres *</label>
+            <label>Nombres <span class="text-danger">*</span></label>
             <input type="text" name="names" class="form-control" value="{{ $personnel->names ?? '' }}"
                 placeholder="Ingrese nombres" required>
         </div>
@@ -53,7 +53,7 @@
 
     <div class="col-md-6">
         <div class="form-group">
-            <label>Apellidos *</label>
+            <label>Apellidos <span class="text-danger">*</span></label>
             <input type="text" name="lastnames" class="form-control" value="{{ $personnel->lastnames ?? '' }}"
                 placeholder="Ingrese apellidos" required>
         </div>
@@ -63,7 +63,7 @@
 <div class="row">
     <div class="col-md-4">
         <div class="form-group">
-            <label>Fecha de Nacimiento *</label>
+            <label>Fecha de Nacimiento <span class="text-danger">*</span></label>
             <input type="date" name="birthdate" class="form-control" value="{{ $personnel->birthdate ?? '' }}"
                 max="{{ now()->subYears(18)->format('Y-m-d') }}" required>
             <small class="text-muted">
@@ -82,7 +82,7 @@
 
     <div class="col-md-4">
         <div class="form-group">
-            <label>Email *</label>
+            <label>Email <span class="text-danger">*</span></label>
             <input type="email" name="email" class="form-control" value="{{ $personnel->email ?? '' }}"
                 placeholder="Ingrese email" required>
         </div>
@@ -90,7 +90,7 @@
 </div>
 
 <div class="form-group">
-    <label>Dirección *</label>
+    <label>Dirección <span class="text-danger">*</span></label>
     <input type="text" name="address" class="form-control" value="{{ $personnel->address ?? '' }}"
         placeholder="Ingrese dirección" required>
     <small class="text-muted">
@@ -99,7 +99,7 @@
 </div>
 
 <div class="form-group">
-    <label>Contraseña *</label>
+    <label>Contraseña <span class="text-danger">*</span></label>
     <input type="password" name="password" class="form-control"
         placeholder="{{ isset($personnel) ? 'Dejar vacío para mantener contraseña actual' : 'Ingrese contraseña (mínimo 6 caracteres)' }}"
         {{ isset($personnel) ? '' : 'required' }}>

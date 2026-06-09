@@ -76,8 +76,7 @@
                         <th>Tipo</th>
                         <th>Estado</th>
                         <th>Notas</th>
-                        <th width="20">Editar</th>
-                        <th width="20">Eliminar</th>
+                        <th width="120">Acciones</th>
                     </tr>
                 </thead>
             </table>
@@ -158,12 +157,7 @@
                         name: "attendances.notes"
                     },
                     {
-                        data: "edit",
-                        orderable: false,
-                        searchable: false
-                    },
-                    {
-                        data: "delete",
+                        data: "actions",
                         orderable: false,
                         searchable: false
                     }

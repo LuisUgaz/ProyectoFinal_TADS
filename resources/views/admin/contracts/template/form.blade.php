@@ -1,7 +1,7 @@
 <div class="row">
     <div class="col-md-12 form-group position-relative">
 
-        <label>Personal *</label>
+        <label>Personal <span class="text-danger">*</span></label>
 
         @php
             $selectedPersonnelText = '';
@@ -54,7 +54,7 @@
     </div>
 
     <div class="col-md-6 form-group">
-        <label for="type">Tipo de Contrato *</label>
+        <label for="type">Tipo de Contrato <span class="text-danger">*</span></label>
         <select name="type" id="type" class="form-control" required>
             <option value="Permanente" {{ isset($contract) && $contract->type == 'Permanente' ? 'selected' : '' }}>
                 Permanente
@@ -69,7 +69,7 @@
     </div>
 
     <div class="col-md-6 form-group">
-        <label for="salary">Salario *</label>
+        <label for="salary">Salario <span class="text-danger">*</span></label>
         <div class="input-group">
             <div class="input-group-prepend">
                 <span class="input-group-text">S/</span>
@@ -80,7 +80,7 @@
     </div>
 
     <div class="col-md-6 form-group">
-        <label for="start_date">Fecha de Inicio *</label>
+        <label for="start_date">Fecha de Inicio <span class="text-danger">*</span></label>
         <input type="date" name="start_date" id="start_date" class="form-control"
             value="{{ isset($contract) ? $contract->start_date->format('Y-m-d') : '' }}" required>
     </div>

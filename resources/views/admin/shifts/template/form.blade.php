@@ -1,5 +1,5 @@
 <div class="form-group">
-    <label for="name">Nombre del Turno *</label>
+    <label for="name">Nombre del Turno <span class="text-danger">*</span></label>
     <input type="text" id="name" name="name" class="form-control" placeholder="Ingrese nombre del turno"
         value="{{ $shift->name ?? '' }}" required>
 </div>
@@ -7,9 +7,7 @@
 <div class="row">
     <div class="col-md-6">
         <div class="form-group">
-            <label for="start_time">
-                Hora de Inicio *
-            </label>
+            <label for="start_time"> Hora de Inicio <span class="text-danger">*</span> </label>
             <input type="time" id="start_time" name="start_time" class="form-control"
                 value="{{ $shift->start_time ?? '' }}" required>
             <small class="text-muted">
@@ -20,9 +18,7 @@
 
     <div class="col-md-6">
         <div class="form-group">
-            <label for="end_time">
-                Hora de Término *
-            </label>
+            <label for="end_time"> Hora de Término <span class="text-danger">*</span> </label>
             <input type="time" id="end_time" name="end_time" class="form-control"
                 value="{{ $shift->end_time ?? '' }}" required>
             <small class="text-muted">

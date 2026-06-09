@@ -24,19 +24,20 @@ class VehicleColorController extends Controller
                 ->addColumn('updated_at', function ($color) {
                     return $color->updated_at->format('d/m/Y H:i');
                 })
-                ->addColumn('edit', function ($color) {
-                    return '<button class="btn btn-sm btn-warning btn-editar" id="' . $color->id . '">
-                                <i class="fas fa-pen"></i>
-                            </button>';
+                ->addColumn('actions', function ($color) {
+                    return '
+                        <button class="btn btn-sm btn-warning btn-editar" id="' . $color->id . '">
+                            <i class="fas fa-pen"></i>
+                        </button>
+
+                        <button type="button"
+                            class="btn btn-sm btn-danger btn-delete"
+                            data-url="' . route('admin.colors.destroy', $color->id) . '">
+                            <i class="fas fa-trash-alt"></i>
+                        </button>
+                    ';
                 })
-                ->addColumn('delete', function ($color) {
-                    return '<button type="button" 
-                                class="btn btn-sm btn-danger btn-delete"
-                                data-url="' . route('admin.colors.destroy', $color->id) . '">
-                                <i class="fas fa-trash-alt"></i>
-                            </button>';
-                })
-                ->rawColumns(['color_preview', 'edit', 'delete'])
+                ->rawColumns(['color_preview', 'actions'])
                 ->make(true);
         }
 

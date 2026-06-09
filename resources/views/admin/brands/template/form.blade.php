@@ -1,5 +1,5 @@
 <div class="form-group">
-    <label>Nombre de la Marca *</label>
+    <label>Nombre de la Marca <span class="text-danger">*</span></label>
     <input type="text" name="name" class="form-control" placeholder="Ingrese nombre de la marca"
         value="{{ $brand->name ?? '' }}" required>
 </div>

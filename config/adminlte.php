@@ -30,7 +30,7 @@ return [
     |
     */
 
-    'use_ico_only' => false,
+    'use_ico_only' => true,
     'use_full_favicon' => false,
 
     /*
@@ -113,11 +113,11 @@ return [
         'enabled' => true,
         'mode' => 'fullscreen',
         'img' => [
-            'path' => 'vendor/adminlte/dist/img/AdminLTELogo.png',
-            'alt' => 'AdminLTE Preloader Image',
+            'path' => 'img/logo-jlo-icono.png',
+            'alt' => 'Municipalidad José Leonardo Ortiz',
             'effect' => 'animation__shake',
-            'width' => 60,
-            'height' => 60,
+            'width' => 80,
+            'height' => 80,
         ],
     ],
 
@@ -383,7 +383,7 @@ return [
                 ],
                 [
                     'text' => 'Zonas',
-                    'url'  => '#',
+                    'url'  => 'admin/zones',
                     'icon' => 'fas fa-map-marker-alt',
                 ],
                 [

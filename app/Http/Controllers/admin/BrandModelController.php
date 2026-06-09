@@ -26,19 +26,21 @@ class BrandModelController extends Controller
                 ->addColumn('updated_at', function ($model) {
                     return $model->updated_at->format('d/m/Y H:i');
                 })
-                ->addColumn('edit', function ($model) {
-                    return '<button class="btn btn-sm btn-warning btn-editar" id="' . $model->id . '">
-                                <i class="fas fa-pen"></i>
-                            </button>';
+                ->addColumn('actions', function ($model) {
+                    return '
+                        <button class="btn btn-sm btn-warning btn-editar" id="' . $model->id . '">
+                            <i class="fas fa-pen"></i>
+                        </button>
+
+                        <button type="button"
+                            class="btn btn-sm btn-danger btn-delete"
+                            data-url="' . route('admin.models.destroy', $model->id) . '">
+                            <i class="fas fa-trash-alt"></i>
+                        </button>
+                    ';
                 })
-                ->addColumn('delete', function ($model) {
-                    return '<button type="button" 
-                                class="btn btn-sm btn-danger btn-delete"
-                                data-url="' . route('admin.models.destroy', $model->id) . '">
-                                <i class="fas fa-trash-alt"></i>
-                            </button>';
-                })
-                ->rawColumns(['edit', 'delete'])
+
+                ->rawColumns(['actions'])
                 ->make(true);
         }
 

@@ -82,25 +82,24 @@ class AttendanceController extends Controller
                     return $attendance->notes ?: '—';
                 })
 
-                ->addColumn('edit', function ($attendance) {
-                    return '<button class="btn btn-sm btn-warning btn-editar" id="' . $attendance->id . '">
-                                <i class="fas fa-pen"></i>
-                            </button>';
-                })
+                ->addColumn('actions', function ($attendance) {
+                    return '
+                        <button class="btn btn-sm btn-warning btn-editar" id="' . $attendance->id . '">
+                            <i class="fas fa-pen"></i>
+                        </button>
 
-                ->addColumn('delete', function ($attendance) {
-                    return '<button type="button"
-                                class="btn btn-sm btn-danger btn-delete"
-                                data-url="' . route('admin.attendances.destroy', $attendance->id) . '">
-                                <i class="fas fa-trash-alt"></i>
-                            </button>';
+                        <button type="button"
+                            class="btn btn-sm btn-danger btn-delete"
+                            data-url="' . route('admin.attendances.destroy', $attendance->id) . '">
+                            <i class="fas fa-trash-alt"></i>
+                        </button>
+                    ';
                 })
 
                 ->rawColumns([
                     'type_badge',
                     'status_badge',
-                    'edit',
-                    'delete'
+                    'actions'
                 ])
 
                 ->make(true);

@@ -1,5 +1,5 @@
 <div class="form-group position-relative">
-    <label>Personal *</label>
+    <label>Personal <span class="text-danger">*</span></label>
 
     @php
         $selectedPersonnelText = '';
@@ -74,7 +74,7 @@
 
     <div class="col-md-4">
         <div class="form-group">
-            <label>Fecha *</label>
+            <label>Fecha <span class="text-danger">*</span></label>
             <input type="date" name="date" class="form-control"
                 value="{{ isset($attendance) ? $attendance->date->format('Y-m-d') : now()->format('Y-m-d') }}" required>
             <small class="text-muted">
@@ -85,7 +85,7 @@
 
     <div class="col-md-4">
         <div class="form-group">
-            <label>Hora *</label>
+            <label>Hora <span class="text-danger">*</span></label>
             <input type="time" name="time" class="form-control"
                 value="{{ isset($attendance) ? \Carbon\Carbon::parse($attendance->time)->format('H:i') : now()->format('H:i') }}"
                 required>
@@ -97,7 +97,7 @@
 
     <div class="col-md-4">
         <div class="form-group">
-            <label>Turno *</label>
+            <label>Turno <span class="text-danger">*</span></label>
             <input type="text" id="shift_preview" class="form-control" value="Se asignará automáticamente" disabled>
             <small class="text-muted">
                 El sistema asigna el turno según la hora
@@ -111,7 +111,7 @@
 
     <div class="col-md-6">
         <div class="form-group">
-            <label>Tipo de Marcación *</label>
+            <label>Tipo de Marcación <span class="text-danger">*</span></label>
 
             <input type="text" id="type_preview" class="form-control"
                 value="{{ isset($attendance) ? $attendance->type : 'Ingreso' }}" disabled>
@@ -124,7 +124,7 @@
 
     <div class="col-md-6">
         <div class="form-group">
-            <label>Estado *</label>
+            <label>Estado <span class="text-danger">*</span></label>
             <select name="status" class="form-control" required>
                 <option value="Presente"
                     {{ isset($attendance) && $attendance->status == 'Presente' ? 'selected' : '' }}>

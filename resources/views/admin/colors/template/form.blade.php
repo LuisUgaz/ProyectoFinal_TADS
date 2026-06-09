@@ -1,11 +1,11 @@
 <div class="form-group">
-    <label for="name">Nombre del Color *</label>
+    <label for="name">Nombre del Color <span class="text-danger">*</span></label>
     <input type="text" name="name" id="name" class="form-control" placeholder="Ingrese nombre del color"
         value="{{ isset($color) ? $color->name : '' }}" required>
 </div>
 
 <div class="form-group">
-    <label for="code">Código del Color *</label>
+    <label for="code">Código del Color <span class="text-danger">*</span></label>
 
     <div class="input-group">
         <input type="text" name="code" id="code" class="form-control" placeholder="#0088CE"

@@ -32,9 +32,7 @@
                         <th>Estado</th>
                         <th>Creación</th>
                         <th>Actualización</th>
-                        <th width="20">Ver</th>
-                        <th width="20">Editar</th>
-                        <th width="20">Eliminar</th>
+                        <th width="140">Acciones</th>
                     </tr>
                 </thead>
             </table>
@@ -98,17 +96,7 @@
                         data: "updated_at"
                     },
                     {
-                        data: "show",
-                        orderable: false,
-                        searchable: false
-                    },
-                    {
-                        data: "edit",
-                        orderable: false,
-                        searchable: false
-                    },
-                    {
-                        data: "delete",
+                        data: "actions",
                         orderable: false,
                         searchable: false
                     }

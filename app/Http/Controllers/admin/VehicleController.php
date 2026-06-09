@@ -67,19 +67,20 @@ class VehicleController extends Controller
                                 '</span>';
                     }
                 })
-                ->addColumn('edit', function ($vehicle) {
-                    return '<button class="btn btn-sm btn-warning btn-editar" id="' . $vehicle->id . '">
-                                <i class="fas fa-pen"></i>
-                            </button>';
+                ->addColumn('actions', function ($vehicle) {
+                    return '
+                        <button class="btn btn-sm btn-warning btn-editar" id="' . $vehicle->id . '">
+                            <i class="fas fa-pen"></i>
+                        </button>
+
+                        <button type="button"
+                            class="btn btn-sm btn-danger btn-delete"
+                            data-url="' . route('admin.vehicles.destroy', $vehicle->id) . '">
+                            <i class="fas fa-trash-alt"></i>
+                        </button>
+                    ';
                 })
-                ->addColumn('delete', function ($vehicle) {
-                    return '<button type="button" 
-                                class="btn btn-sm btn-danger btn-delete"
-                                data-url="' . route('admin.vehicles.destroy', $vehicle->id) . '">
-                                <i class="fas fa-trash-alt"></i>
-                            </button>';
-                })
-                ->rawColumns(['image', 'color_info', 'status_badge', 'edit', 'delete'])
+                ->rawColumns(['image', 'color_info', 'status_badge', 'actions'])
                 ->make(true);
         }
 

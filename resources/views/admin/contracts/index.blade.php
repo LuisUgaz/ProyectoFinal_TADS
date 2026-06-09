@@ -40,8 +40,7 @@
                         <th>F. Fin</th>
                         <th>Salario</th>
                         <th>Estado</th>
-                        <th width="20">Editar</th>
-                        <th width="20">Eliminar</th>
+                        <th width="120">Acciones</th>
                     </tr>
                 </thead>
 
@@ -117,12 +116,7 @@
                         searchable: false
                     },
                     {
-                        data: "edit",
-                        orderable: false,
-                        searchable: false
-                    },
-                    {
-                        data: "delete",
+                        data: "actions",
                         orderable: false,
                         searchable: false
                     }

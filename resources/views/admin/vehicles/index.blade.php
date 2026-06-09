@@ -28,8 +28,7 @@
                         <th>Color</th>
                         <th>Año</th>
                         <th>Estado</th>
-                        <th width="20">Editar</th>
-                        <th width="20">Eliminar</th>
+                        <th width="120">Acciones</th>
                     </tr>
                 </thead>
             </table>
@@ -91,12 +90,7 @@
                         data: "status_badge"
                     },
                     {
-                        data: "edit",
-                        orderable: false,
-                        searchable: false
-                    },
-                    {
-                        data: "delete",
+                        data: "actions",
                         orderable: false,
                         searchable: false
                     },

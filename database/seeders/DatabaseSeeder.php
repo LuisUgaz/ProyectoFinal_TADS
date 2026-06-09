@@ -12,6 +12,9 @@ use App\Models\PersonnelType;
 use App\Models\Personnel;
 use App\Models\Shift;
 use App\Models\Attendance;
+use App\Models\Department;
+use App\Models\Province;
+use App\Models\District;
 use Illuminate\Database\Seeder;
 use Illuminate\Support\Facades\Hash;
 
@@ -345,6 +348,34 @@ class DatabaseSeeder extends Seeder
             'status' => 'Aprobada',
             'notes' => 'Segunda quincena de vacaciones.',
         ]);
+
+        // 11. Ubicación inicial para zonas
+        $department = Department::updateOrCreate(
+            ['name' => 'Lambayeque'],
+            ['name' => 'Lambayeque']
+        );
+
+        $province = Province::updateOrCreate(
+            [
+                'name' => 'Chiclayo',
+                'department_id' => $department->id,
+            ],
+            [
+                'name' => 'Chiclayo',
+                'department_id' => $department->id,
+            ]
+        );
+
+        District::updateOrCreate(
+            [
+                'name' => 'José Leonardo Ortiz',
+                'province_id' => $province->id,
+            ],
+            [
+                'name' => 'José Leonardo Ortiz',
+                'province_id' => $province->id,
+            ]
+        );
       
     }
 }

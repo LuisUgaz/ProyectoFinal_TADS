@@ -1,21 +1,21 @@
 <div class="row">
     <div class="col-md-3">
         <div class="form-group">
-            <label for="code">Código*</label>
+            <label for="code">Código <span class="text-danger">*</span></label>
             <input type="text" name="code" id="code" class="form-control" placeholder="VEH-001"
                 value="{{ isset($vehicle) ? $vehicle->code : '' }}" required>
         </div>
     </div>
     <div class="col-md-5">
         <div class="form-group">
-            <label for="name">Nombre del Vehículo*</label>
+            <label for="name">Nombre del Vehículo <span class="text-danger">*</span></label>
             <input type="text" name="name" id="name" class="form-control" placeholder="Camión Recolector #1"
                 value="{{ isset($vehicle) ? $vehicle->name : '' }}" required>
         </div>
     </div>
     <div class="col-md-4">
         <div class="form-group">
-            <label for="plate">Placa *</label>
+            <label for="plate">Placa <span class="text-danger">*</span></label>
             <input type="text" name="plate" id="plate" class="form-control" placeholder="ABC-123"
                 value="{{ isset($vehicle) ? $vehicle->plate : '' }}" required>
         </div>
@@ -25,7 +25,7 @@
 <div class="row">
     <div class="col-md-4">
         <div class="form-group">
-            <label for="brand_model_id">Marca y Modelo *</label>
+            <label for="brand_model_id">Marca y Modelo <span class="text-danger">*</span></label>
             <select name="brand_model_id" id="brand_model_id" class="form-control" required>
                 <option value="">Seleccione...</option>
                 @foreach ($models as $model)
@@ -39,7 +39,7 @@
     </div>
     <div class="col-md-4">
         <div class="form-group">
-            <label for="vehicle_type_id">Tipo de Vehículo *</label>
+            <label for="vehicle_type_id">Tipo de Vehículo <span class="text-danger">*</span></label>
             <select name="vehicle_type_id" id="vehicle_type_id" class="form-control" required>
                 <option value="">Seleccione...</option>
                 @foreach ($types as $type)
@@ -53,7 +53,7 @@
     </div>
     <div class="col-md-4">
         <div class="form-group">
-            <label for="vehicle_color_id">Color *</label>
+            <label for="vehicle_color_id">Color <span class="text-danger">*</span></label>
             <select name="vehicle_color_id" id="vehicle_color_id" class="form-control" required>
                 <option value="">Seleccione...</option>
                 @foreach ($colors as $color)
@@ -70,30 +70,30 @@
 <div class="row">
     <div class="col-md-3">
         <div class="form-group">
-            <label for="year">Año *</label>
+            <label for="year">Año <span class="text-danger">*</span></label>
             <input type="number" name="year" id="year" class="form-control" placeholder="2024"
                 value="{{ isset($vehicle) ? $vehicle->year : date('Y') }}" required>
         </div>
     </div>
     <div class="col-md-3">
         <div class="form-group">
-            <label for="load_capacity">Cap. Carga (Tn) *</label>
+            <label for="load_capacity">Cap. Carga (Tn) <span class="text-danger">*</span></label>
             <input type="number" step="0.01" name="load_capacity" id="load_capacity" class="form-control"
                 placeholder="0.00" value="{{ isset($vehicle) ? $vehicle->load_capacity : '' }}" required>
         </div>
     </div>
     <div class="col-md-3">
         <div class="form-group">
-            <label for="fuel_capacity">Cap. Combustible (L) *</label>
+            <label for="fuel_capacity">Cap. Combustible (L) <span class="text-danger">*</span></label>
             <input type="number" step="0.01" name="fuel_capacity" id="fuel_capacity" class="form-control"
                 placeholder="0.00" value="{{ isset($vehicle) ? $vehicle->fuel_capacity : '' }}" required>
         </div>
     </div>
     <div class="col-md-3">
         <div class="form-group">
-            <label for="passenger_capacity">Cap. Pasajeros *</label>
-            <input type="number" name="passenger_capacity" id="passenger_capacity" class="form-control" placeholder="0"
-                value="{{ isset($vehicle) ? $vehicle->passenger_capacity : '' }}" required>
+            <label for="passenger_capacity">Cap. Pasajeros <span class="text-danger">*</span></label>
+            <input type="number" name="passenger_capacity" id="passenger_capacity" class="form-control"
+                placeholder="0" value="{{ isset($vehicle) ? $vehicle->passenger_capacity : '' }}" required>
         </div>
     </div>
 </div>
@@ -101,7 +101,7 @@
 <div class="row">
     <div class="col-md-3">
         <div class="form-group">
-            <label for="compaction_capacity">Cap. Compactación (Tn) *</label>
+            <label for="compaction_capacity">Cap. Compactación (Tn) <span class="text-danger">*</span></label>
             <input type="number" step="0.01" name="compaction_capacity" id="compaction_capacity"
                 class="form-control" placeholder="0.00"
                 value="{{ isset($vehicle) ? $vehicle->compaction_capacity : '' }}" required>
@@ -109,14 +109,14 @@
     </div>
     <div class="col-md-3">
         <div class="form-group">
-            <label for="mileage">Kilometraje (Km) *</label>
+            <label for="mileage">Kilometraje (Km) <span class="text-danger">*</span></label>
             <input type="number" name="mileage" id="mileage" class="form-control" placeholder="0"
                 value="{{ isset($vehicle) ? $vehicle->mileage : '0' }}" required>
         </div>
     </div>
     <div class="col-md-6">
         <div class="form-group">
-            <label for="status">Estado *</label>
+            <label for="status">Estado <span class="text-danger">*</span></label>
             <select name="status" id="status" class="form-control" required>
                 <option value="Activo" {{ isset($vehicle) && $vehicle->status == 'Activo' ? 'selected' : '' }}>
                     Activo</option>

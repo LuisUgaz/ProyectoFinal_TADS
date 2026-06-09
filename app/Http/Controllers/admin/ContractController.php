@@ -43,17 +43,20 @@ class ContractController extends Controller
 
                     return '<span class="badge badge-danger badge-custom">Inactivo</span>';
                 })
-                ->addColumn('edit', function ($contract) {
-                    return '<button class="btn btn-sm btn-warning btn-editar" id="' . $contract->id . '">
-                                <i class="fas fa-pen"></i>
-                            </button>';
+                ->addColumn('actions', function ($contract) {
+                    return '
+                        <button class="btn btn-sm btn-warning btn-editar" id="' . $contract->id . '">
+                            <i class="fas fa-pen"></i>
+                        </button>
+
+                        <button type="button"
+                            class="btn btn-sm btn-danger btn-delete"
+                            data-url="' . route('admin.contracts.destroy', $contract->id) . '">
+                            <i class="fas fa-trash-alt"></i>
+                        </button>
+                    ';
                 })
-                ->addColumn('delete', function ($contract) {
-                    return '<button type="button" class="btn btn-sm btn-danger btn-delete" data-url="' . route('admin.contracts.destroy', $contract->id) . '">
-                                <i class="fas fa-trash-alt"></i>
-                            </button>';
-                })
-                ->rawColumns(['status', 'edit', 'delete'])
+                ->rawColumns(['status', 'actions'])
                 ->make(true);
         }
 
