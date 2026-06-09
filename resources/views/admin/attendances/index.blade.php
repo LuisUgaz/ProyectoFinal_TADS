@@ -111,6 +111,10 @@
                 serverSide: true,
                 scrollX: true,
                 autoWidth: false,
+                order: [
+                    [2, 'desc'],
+                    [3, 'desc']
+                ],
                 ajax: {
                     url: "{{ route('admin.attendances.index') }}",
                     data: function(d) {
@@ -120,19 +124,24 @@
                     }
                 },
                 columns: [{
-                        data: "personnel_dni"
+                        data: "personnel_dni",
+                        name: "personnels.dni"
                     },
                     {
-                        data: "personnel_name"
+                        data: "personnel_name",
+                        name: "personnels.names"
                     },
                     {
-                        data: "date"
+                        data: "date",
+                        name: "attendances.date"
                     },
                     {
-                        data: "time"
+                        data: "time",
+                        name: "attendances.time"
                     },
                     {
-                        data: "shift_name"
+                        data: "shift_name",
+                        name: "shifts.name"
                     },
                     {
                         data: "type_badge",
@@ -145,7 +154,8 @@
                         searchable: false
                     },
                     {
-                        data: "notes"
+                        data: "notes",
+                        name: "attendances.notes"
                     },
                     {
                         data: "edit",

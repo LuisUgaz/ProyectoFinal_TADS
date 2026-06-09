@@ -1,16 +1,42 @@
-<div class="form-group">
+<div class="form-group position-relative">
     <label>Personal *</label>
 
-    <select name="personnel_id" id="personnel_id" class="form-control select2" required>
-        <option value="">Busque por DNI, nombres o apellidos del personal</option>
+    @php
+        $selectedPersonnelText = '';
 
+        if (isset($attendance) && $attendance->personnel) {
+            $selectedPersonnelText =
+                $attendance->personnel->dni .
+                ' - ' .
+                $attendance->personnel->names .
+                ' ' .
+                $attendance->personnel->lastnames;
+        }
+    @endphp
+
+    <input type="hidden" name="personnel_id" id="personnel_id" value="{{ $attendance->personnel_id ?? '' }}">
+
+    <div class="position-relative">
+        <input type="text" id="personnel_search_input" class="form-control pr-5"
+            placeholder="Busque por DNI, nombres o apellidos del personal" value="{{ $selectedPersonnelText }}"
+            autocomplete="off" required>
+
+        <button type="button" id="clear_personnel_search" class="btn btn-sm text-muted"
+            style="position:absolute; right:8px; top:50%; transform:translateY(-50%); display:none;">
+            <i class="fas fa-times"></i>
+        </button>
+    </div>
+
+    <div id="personnel_results" class="list-group shadow-sm d-none"
+        style="position:absolute; z-index:9999; left:0; right:0; max-height:180px; overflow-y:auto;">
         @foreach ($personnels as $person)
-            <option value="{{ $person->id }}"
-                {{ isset($attendance) && $attendance->personnel_id == $person->id ? 'selected' : '' }}>
-                {{ $person->dni }} - {{ $person->names }} {{ $person->lastnames }}
-            </option>
+            <button type="button" class="list-group-item list-group-item-action personnel-option"
+                data-id="{{ $person->id }}"
+                data-text="{{ $person->dni }} - {{ $person->names }} {{ $person->lastnames }}">
+                <strong>{{ $person->dni }}</strong> - {{ $person->names }} {{ $person->lastnames }}
+            </button>
         @endforeach
-    </select>
+    </div>
 
     <small class="text-muted">
         Seleccione al personal para consultar sus registros del día
@@ -162,6 +188,46 @@
         }
     }
 
+    $('#personnel_search_input').off('keyup focus').on('keyup focus', function() {
+        let value = $(this).val().toLowerCase();
+        let hasResults = false;
+
+        $('.personnel-option').each(function() {
+            let text = $(this).data('text').toLowerCase();
+
+            if (text.includes(value)) {
+                $(this).removeClass('d-none');
+                hasResults = true;
+            } else {
+                $(this).addClass('d-none');
+            }
+        });
+
+        if (hasResults) {
+            $('#personnel_results').removeClass('d-none');
+        } else {
+            $('#personnel_results').addClass('d-none');
+        }
+    });
+
+    $(document).off('click', '.personnel-option').on('click', '.personnel-option', function() {
+        let id = $(this).data('id');
+        let text = $(this).data('text');
+
+        $('#personnel_id').val(id);
+        $('#personnel_search_input').val(text);
+        $('#personnel_results').addClass('d-none');
+        $('#clear_personnel_search').show();
+
+        loadPersonnelDayInfo();
+    });
+
+    $(document).off('click.personnelResults').on('click.personnelResults', function(e) {
+        if (!$(e.target).closest('#personnel_search_input, #personnel_results').length) {
+            $('#personnel_results').addClass('d-none');
+        }
+    });
+
     function loadPersonnelDayInfo() {
         let personnelId = $('#personnel_id').val();
         let date = $('input[name="date"]').val();
@@ -223,21 +289,11 @@
                     }
 
                     $('#FormModal button[type="submit"]').prop('disabled', false);
-                } else {
-                    $('#type_preview').val('Registro completo');
-
-                    $('#attendance-message')
-                        .removeClass('alert-success alert-info alert-warning')
-                        .addClass('alert-danger')
-                        .html('<i class="fas fa-lock"></i> ' + response.message);
-
-                    $('#FormModal button[type="submit"]').prop('disabled', true);
                 }
             }
         });
     }
 
-    $('#personnel_id').off('change').on('change', loadPersonnelDayInfo);
     $('input[name="date"]').off('change').on('change', loadPersonnelDayInfo);
 
     $('input[name="time"]').off('change').on('change', function() {
@@ -246,4 +302,38 @@
 
     loadPersonnelDayInfo();
     updateShiftPreview();
+
+    function resetPersonnelSearch() {
+        $('#personnel_id').val('');
+        $('#personnel_search_input').val('');
+        $('#personnel_results').addClass('d-none');
+        $('#clear_personnel_search').hide();
+
+        $('#personnel-empty-state').removeClass('d-none');
+        $('#personnel-loaded-state').addClass('d-none');
+
+        $('#records-list').html('No hay registros para esta fecha.');
+        $('#attendance-message').removeClass('alert-info alert-warning alert-danger').html('');
+
+        $('#type_preview').val('Ingreso');
+        $('#FormModal button[type="submit"]').prop('disabled', false);
+    }
+
+    $('#clear_personnel_search').off('click').on('click', function() {
+        resetPersonnelSearch();
+    });
+
+    $('#personnel_search_input').off('input.clearButton').on('input.clearButton', function() {
+        $('#personnel_id').val('');
+
+        if ($(this).val().trim() !== '') {
+            $('#clear_personnel_search').show();
+        } else {
+            resetPersonnelSearch();
+        }
+    });
+
+    if ($('#personnel_search_input').val().trim() !== '') {
+        $('#clear_personnel_search').show();
+    }
 </script>

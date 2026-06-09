@@ -57,6 +57,9 @@
                 serverSide: true,
                 scrollX: true,
                 autoWidth: false,
+                order: [
+                    [0, 'asc']
+                ],
                 ajax: "{{ route('admin.models.index') }}",
                 columns: [{
                         data: "name"

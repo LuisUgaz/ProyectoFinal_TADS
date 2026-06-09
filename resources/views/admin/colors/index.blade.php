@@ -57,6 +57,9 @@
                 serverSide: true,
                 scrollX: true,
                 autoWidth: false,
+                order: [
+                    [1, 'asc']
+                ],
                 ajax: "{{ route('admin.colors.index') }}",
                 columns: [{
                         data: "color_preview",

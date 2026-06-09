@@ -64,6 +64,9 @@
                 serverSide: true,
                 scrollX: true,
                 autoWidth: false,
+                order: [
+                    [2, 'asc']
+                ],
                 ajax: "{{ route('admin.shifts.index') }}",
                 columns: [{
                         data: "name"

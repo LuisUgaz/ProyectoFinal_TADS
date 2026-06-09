@@ -67,6 +67,9 @@
                 serverSide: true,
                 scrollX: true,
                 autoWidth: false,
+                order: [
+                    [2, 'asc']
+                ],
                 ajax: "{{ route('admin.personnels.index') }}",
                 columns: [{
                         data: "photo",

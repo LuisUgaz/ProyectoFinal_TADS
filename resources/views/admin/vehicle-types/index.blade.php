@@ -55,6 +55,9 @@
                 serverSide: true,
                 scrollX: true,
                 autoWidth: false,
+                order: [
+                    [0, 'asc']
+                ],
                 ajax: "{{ route('admin.vehicle-types.index') }}",
                 columns: [{
                         data: "name"

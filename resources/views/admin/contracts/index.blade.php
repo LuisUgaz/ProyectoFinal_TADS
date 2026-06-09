@@ -78,32 +78,38 @@
 @section('js')
     <script>
         $(document).ready(function() {
-
             $('#datatable').DataTable({
-
                 processing: true,
                 serverSide: true,
                 scrollX: true,
                 autoWidth: false,
+                order: [
+                    [3, 'desc']
+                ],
                 ajax: "{{ route('admin.contracts.index') }}",
-
                 columns: [{
-                        data: "personnel_dni"
+                        data: "personnel_dni",
+                        name: "personnels.dni"
                     },
                     {
-                        data: "personnel_name"
+                        data: "personnel_name",
+                        name: "personnels.names"
                     },
                     {
-                        data: "type"
+                        data: "type",
+                        name: "contracts.type"
                     },
                     {
-                        data: "start_date"
+                        data: "start_date",
+                        name: "contracts.start_date"
                     },
                     {
-                        data: "end_date"
+                        data: "end_date",
+                        name: "contracts.end_date"
                     },
                     {
-                        data: "salary"
+                        data: "salary",
+                        name: "contracts.salary"
                     },
                     {
                         data: "status",

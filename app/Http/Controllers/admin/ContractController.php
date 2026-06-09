@@ -19,7 +19,9 @@ class ContractController extends Controller
             ->update(['is_active' => false]);
 
         if ($request->ajax()) {
-            $contracts = Contract::with('personnel')->select('contracts.*');
+            $contracts = Contract::with('personnel')
+                ->leftJoin('personnels', 'contracts.personnel_id', '=', 'personnels.id')
+                ->select('contracts.*');
 
             return DataTables::of($contracts)
                 ->addColumn('personnel_name', function ($contract) {
@@ -28,10 +30,10 @@ class ContractController extends Controller
                 ->addColumn('personnel_dni', function ($contract) {
                     return $contract->personnel->dni;
                 })
-                ->addColumn('start_date', function ($contract) {
+                ->editColumn('start_date', function ($contract) {
                     return $contract->start_date->format('d/m/Y');
                 })
-                ->addColumn('end_date', function ($contract) {
+                ->editColumn('end_date', function ($contract) {
                     return $contract->end_date ? $contract->end_date->format('d/m/Y') : 'N/A';
                 })
                 ->addColumn('status', function ($contract) {

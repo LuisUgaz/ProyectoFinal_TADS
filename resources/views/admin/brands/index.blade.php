@@ -56,6 +56,9 @@
                 serverSide: true,
                 scrollX: true,
                 autoWidth: false,
+                order: [
+                    [1, 'asc']
+                ],
                 ajax: "{{ route('admin.brands.index') }}",
                 columns: [{
                         data: "logo",

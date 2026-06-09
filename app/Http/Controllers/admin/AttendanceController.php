@@ -16,6 +16,8 @@ class AttendanceController extends Controller
         if ($request->ajax()) {
 
             $attendances = Attendance::with(['personnel', 'shift'])
+                ->leftJoin('personnels', 'attendances.personnel_id', '=', 'personnels.id')
+                ->leftJoin('shifts', 'attendances.shift_id', '=', 'shifts.id')
                 ->select('attendances.*');
 
             if ($request->filled('start_date')) {
@@ -109,7 +111,9 @@ class AttendanceController extends Controller
 
     public function create()
     {
-        $personnels = Personnel::where('status', 'Activo')
+        $personnels = Personnel::whereHas('contracts', function ($query) {
+                $query->where('is_active', true);
+            })
             ->orderBy('lastnames')
             ->orderBy('names')
             ->get();
@@ -138,12 +142,6 @@ class AttendanceController extends Controller
             ]);
 
             $attendanceStatus = $this->getAttendanceStatus($request->personnel_id, $request->date);
-
-            if (!$attendanceStatus['can_register']) {
-                return response()->json([
-                    'message' => $attendanceStatus['message']
-                ], 422);
-            }
 
             $type = $attendanceStatus['next_type'];
 
@@ -175,7 +173,9 @@ class AttendanceController extends Controller
     {
         $attendance = Attendance::findOrFail($id);
 
-        $personnels = Personnel::where('status', 'Activo')
+        $personnels = Personnel::whereHas('contracts', function ($query) {
+                $query->where('is_active', true);
+            })
             ->orderBy('lastnames')
             ->orderBy('names')
             ->get();
@@ -250,10 +250,12 @@ class AttendanceController extends Controller
             ->orderBy('time')
             ->get();
 
-        $hasIngreso = $records->where('type', 'Ingreso')->count() > 0;
-        $hasSalida = $records->where('type', 'Salida')->count() > 0;
+        $lastAttendance = Attendance::where('personnel_id', $personnelId)
+            ->orderBy('date', 'desc')
+            ->orderBy('time', 'desc')
+            ->first();
 
-        if (!$hasIngreso) {
+        if (!$lastAttendance || $lastAttendance->type == 'Salida') {
             return [
                 'records' => $records,
                 'next_type' => 'Ingreso',
@@ -262,20 +264,11 @@ class AttendanceController extends Controller
             ];
         }
 
-        if (!$hasSalida) {
-            return [
-                'records' => $records,
-                'next_type' => 'Salida',
-                'can_register' => true,
-                'message' => 'La entrada ya fue registrada. Corresponde registrar la SALIDA del personal.'
-            ];
-        }
-
         return [
             'records' => $records,
-            'next_type' => null,
-            'can_register' => false,
-            'message' => 'La asistencia del personal ya se encuentra registrada para la fecha seleccionada.'
+            'next_type' => 'Salida',
+            'can_register' => true,
+            'message' => 'Existe una entrada pendiente. Corresponde registrar la SALIDA del personal.'
         ];
     }
 
