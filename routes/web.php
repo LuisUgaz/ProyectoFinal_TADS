@@ -65,6 +65,9 @@ Route::middleware([
 
     Route::resource('admin/shifts', ShiftController::class)
         ->names('admin.shifts');
+
+    Route::get('admin/zones-polygons/{id?}', [ZoneController::class, 'polygons'])
+        ->name('admin.zones.polygons');
     
     Route::resource('admin/zones', ZoneController::class)
         ->names('admin.zones');

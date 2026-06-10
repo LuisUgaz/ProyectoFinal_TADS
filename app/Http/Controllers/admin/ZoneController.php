@@ -185,4 +185,16 @@ class ZoneController extends Controller
             'message' => 'Zona eliminada correctamente.'
         ]);
     }
+
+    public function polygons($id = null)
+    {
+        $zones = Zone::select('id', 'name', 'coordinates')
+            ->whereNotNull('coordinates')
+            ->when($id, function ($query) use ($id) {
+                $query->where('id', '!=', $id);
+            })
+            ->get();
+
+        return response()->json($zones);
+    }
 }

@@ -130,7 +130,7 @@
 
         $('#btnNuevo').on('click', function() {
             $.get("{{ route('admin.zones.create') }}", function(response) {
-                $('#modalTitle').html('Nueva Zona');
+                $('#modalTitle').html('<i class="fas fa-map-marker-alt"></i> Nueva Zona');
                 $('#formModal .modal-body').html(response);
                 $('#formModal').modal('show');
             });
@@ -140,10 +140,15 @@
             let id = $(this).attr('id');
 
             $.get("{{ route('admin.zones.edit', ':id') }}".replace(':id', id), function(response) {
-                $('#modalTitle').html('Editar Zona');
+                $('#modalTitle').html('<i class="fas fa-pen"></i> Editar Zona');
                 $('#formModal .modal-body').html(response);
                 $('#formModal').modal('show');
             });
+        });
+
+        $(document).on('submit', '#zoneForm', function(e) {
+            e.preventDefault();
+            window.saveZone();
         });
 
         $('#formModal').on('shown.bs.modal', function() {
@@ -162,12 +167,21 @@
             });
         });
 
+
         window.saveZone = function() {
             let form = $('#zoneForm');
             let coordinates = $('#coordinates').val();
 
-            if (!coordinates || coordinates === 'null' || coordinates === '[]') {
-                Swal.fire('Error', 'Debe dibujar y cerrar el perímetro antes de guardar.', 'error');
+            let parsedCoordinates = [];
+
+            try {
+                parsedCoordinates = JSON.parse(coordinates);
+            } catch (e) {
+                parsedCoordinates = [];
+            }
+
+            if (parsedCoordinates.length < 3) {
+                Swal.fire('Error', 'Debe registrar mínimo 3 coordenadas para definir el perímetro.', 'error');
                 return;
             }
 
@@ -248,22 +262,18 @@
                 window.zoneLeafletMap = null;
             }
 
+            let drawnItems = new L.FeatureGroup();
+            let currentPolygon = null;
+            let existingZonesLayer = new L.FeatureGroup();
+
             window.zoneLeafletMap = L.map('zoneMap').setView([-6.7630, -79.8366], 15);
+            window.zoneLeafletMap.addLayer(existingZonesLayer);
 
             L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
                 attribution: '© OpenStreetMap contributors'
             }).addTo(window.zoneLeafletMap);
 
-            let drawnItems = new L.FeatureGroup();
             window.zoneLeafletMap.addLayer(drawnItems);
-
-            let polygonDrawer = new L.Draw.Polygon(window.zoneLeafletMap, {
-                allowIntersection: false,
-                showArea: true,
-                shapeOptions: {
-                    color: 'red'
-                }
-            });
 
             let drawControl = new L.Control.Draw({
                 draw: {
@@ -271,7 +281,7 @@
                         allowIntersection: false,
                         showArea: true,
                         shapeOptions: {
-                            color: 'red'
+                            color: 'blue'
                         }
                     },
                     marker: false,
@@ -288,50 +298,84 @@
 
             window.zoneLeafletMap.addControl(drawControl);
 
-            let savedCoordinates = $('#coordinates').val();
+            function getCoordinates() {
+                let coordinates = [];
 
-            if (savedCoordinates && savedCoordinates !== 'null') {
-                try {
-                    let coords = JSON.parse(savedCoordinates);
+                $('.coordinate-row').each(function() {
+                    let lat = $(this).find('.coord-lat').val();
+                    let lng = $(this).find('.coord-lng').val();
 
-                    if (coords.length > 0) {
-                        let latlngs = coords.map(c => [c.lat, c.lng]);
-                        let polygon = L.polygon(latlngs, {
-                            color: 'red'
+                    if (lat !== '' && lng !== '') {
+                        coordinates.push({
+                            lat: parseFloat(lat),
+                            lng: parseFloat(lng)
                         });
-                        drawnItems.addLayer(polygon);
-                        window.zoneLeafletMap.fitBounds(polygon.getBounds());
                     }
-                } catch (e) {}
+                });
+
+                return coordinates;
             }
 
-            $('#btnDrawPolygon').off('click').on('click', function() {
-                polygonDrawer.enable();
-            });
+            function setHiddenCoordinates() {
+                let coordinates = getCoordinates();
+                $('#coordinates').val(JSON.stringify(coordinates));
+            }
 
-            $('#btnClearPolygon').off('click').on('click', function() {
-                drawnItems.clearLayers();
-                $('#coordinates').val('');
-            });
+            function renderCoordinateRows(coordinates) {
+                $('#coordinatesRows').html('');
 
-            window.zoneLeafletMap.on(L.Draw.Event.CREATED, function(event) {
-                drawnItems.clearLayers();
-                let layer = event.layer;
-                drawnItems.addLayer(layer);
-                saveCoordinates(layer);
-            });
-
-            window.zoneLeafletMap.on(L.Draw.Event.EDITED, function(event) {
-                event.layers.eachLayer(function(layer) {
-                    saveCoordinates(layer);
+                coordinates.forEach(function(coord) {
+                    addCoordinateRow(coord.lat, coord.lng);
                 });
-            });
 
-            window.zoneLeafletMap.on(L.Draw.Event.DELETED, function() {
-                $('#coordinates').val('');
-            });
+                setHiddenCoordinates();
+            }
 
-            function saveCoordinates(layer) {
+            function addCoordinateRow(lat = '', lng = '') {
+                let row = `
+            <div class="input-group mb-2 coordinate-row">
+                <input type="number" step="any" class="form-control coord-lat"
+                    placeholder="Latitud" value="${lat}">
+
+                <input type="number" step="any" class="form-control coord-lng"
+                    placeholder="Longitud" value="${lng}">
+
+                <div class="input-group-append">
+                    <button type="button" class="btn btn-danger btn-remove-coordinate">
+                        <i class="fas fa-trash"></i>
+                    </button>
+                </div>
+            </div>
+        `;
+
+                $('#coordinatesRows').append(row);
+                setHiddenCoordinates();
+            }
+
+            function drawPolygonFromRows() {
+                let coordinates = getCoordinates();
+
+                drawnItems.clearLayers();
+                currentPolygon = null;
+
+                if (coordinates.length >= 3) {
+                    let latlngs = coordinates.map(c => [c.lat, c.lng]);
+
+                    currentPolygon = L.polygon(latlngs, {
+                        color: 'blue',
+                        fillColor: 'blue',
+                        fillOpacity: 0.18
+                    });
+
+                    drawnItems.addLayer(currentPolygon);
+                    enableCurrentPolygonEditing(currentPolygon);
+                    window.zoneLeafletMap.fitBounds(currentPolygon.getBounds());
+                }
+
+                setHiddenCoordinates();
+            }
+
+            function updateRowsFromPolygon(layer) {
                 let latlngs = layer.getLatLngs()[0];
 
                 let coordinates = latlngs.map(function(point) {
@@ -341,12 +385,137 @@
                     };
                 });
 
-                $('#coordinates').val(JSON.stringify(coordinates));
+                renderCoordinateRows(coordinates);
             }
+
+            let savedCoordinates = $('#coordinates').val();
+
+            if (savedCoordinates && savedCoordinates !== 'null' && savedCoordinates !== '[]') {
+                try {
+                    let coords = JSON.parse(savedCoordinates);
+
+                    if (coords.length > 0) {
+                        renderCoordinateRows(coords);
+                        drawPolygonFromRows();
+                    }
+                } catch (e) {
+                    $('#coordinates').val('');
+                }
+            } else {
+                addCoordinateRow();
+            }
+
+            window.zoneLeafletMap.on(L.Draw.Event.CREATED, function(event) {
+                drawnItems.clearLayers();
+
+                let layer = event.layer;
+                drawnItems.addLayer(layer);
+                currentPolygon = layer;
+
+                updateRowsFromPolygon(layer);
+                enableCurrentPolygonEditing(layer);
+            });
+
+            window.zoneLeafletMap.on(L.Draw.Event.EDITED, function(event) {
+                event.layers.eachLayer(function(layer) {
+                    currentPolygon = layer;
+                    updateRowsFromPolygon(layer);
+                });
+            });
+
+            window.zoneLeafletMap.on(L.Draw.Event.DELETED, function() {
+                $('#coordinatesRows').html('');
+                addCoordinateRow();
+                $('#coordinates').val('');
+                currentPolygon = null;
+            });
+
+            $(document).off('click', '#btnAddCoordinate').on('click', '#btnAddCoordinate', function() {
+                addCoordinateRow();
+            });
+
+            $(document).off('click', '.btn-remove-coordinate').on('click', '.btn-remove-coordinate', function() {
+                $(this).closest('.coordinate-row').remove();
+
+                if ($('.coordinate-row').length === 0) {
+                    addCoordinateRow();
+                }
+
+                drawPolygonFromRows();
+            });
+
+            $(document).off('input', '.coord-lat, .coord-lng').on('input', '.coord-lat, .coord-lng', function() {
+                drawPolygonFromRows();
+            });
+
+            $(document).off('click', '#btnClearPolygon').on('click', '#btnClearPolygon', function() {
+                Swal.fire({
+                    title: '¿Limpiar todo?',
+                    text: 'Se eliminarán todas las coordenadas, el polígono y la búsqueda actual.',
+                    icon: 'warning',
+                    showCancelButton: true,
+                    confirmButtonText: 'Sí, limpiar',
+                    cancelButtonText: 'Cancelar'
+                }).then((result) => {
+                    if (result.isConfirmed || result.value) {
+                        drawnItems.clearLayers();
+                        $('#coordinatesRows').html('');
+                        addCoordinateRow();
+                        $('#coordinates').val('');
+                        $('#searchAddress').val('');
+                        currentPolygon = null;
+                    }
+                });
+            });
+
+            function loadExistingZones() {
+                let currentZoneId = $('#zoneForm').data('zone-id') || '';
+
+                $.get("{{ route('admin.zones.polygons', ':id') }}".replace(':id', currentZoneId), function(zones) {
+                    existingZonesLayer.clearLayers();
+
+                    zones.forEach(function(zone) {
+                        if (!zone.coordinates || zone.coordinates.length < 3) {
+                            return;
+                        }
+
+                        let latlngs = zone.coordinates.map(c => [c.lat, c.lng]);
+
+                        let polygon = L.polygon(latlngs, {
+                            color: 'red',
+                            fillColor: 'red',
+                            fillOpacity: 0.18,
+                            weight: 2,
+                            interactive: false
+                        });
+
+                        polygon.bindTooltip(zone.name, {
+                            permanent: false,
+                            direction: 'center'
+                        });
+
+                        existingZonesLayer.addLayer(polygon);
+                    });
+                });
+            }
+
+            function enableCurrentPolygonEditing(layer) {
+                if (layer && layer.editing) {
+                    layer.editing.enable();
+
+                    layer.on('edit', function() {
+                        updateRowsFromPolygon(layer);
+                    });
+                }
+            }
+
+            loadExistingZones();
 
             setTimeout(function() {
                 window.zoneLeafletMap.invalidateSize();
             }, 300);
+
+
         }
     </script>
 @endsection
