@@ -270,7 +270,7 @@ class AttendanceController extends Controller
                 'records' => $records,
                 'next_type' => 'Ingreso',
                 'can_register' => true,
-                'message' => 'Corresponde registrar la ENTRADA del personal.'
+                'message' => 'Corresponde registrar el INGRESO del personal.'
             ];
         }
 
@@ -278,7 +278,7 @@ class AttendanceController extends Controller
             'records' => $records,
             'next_type' => 'Salida',
             'can_register' => true,
-            'message' => 'Existe una entrada pendiente. Corresponde registrar la SALIDA del personal.'
+            'message' => 'Existe un ingreso pendiente. Corresponde registrar la SALIDA del personal.'
         ];
     }
 

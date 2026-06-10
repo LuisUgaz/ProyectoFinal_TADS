@@ -1,10 +1,9 @@
 @extends('adminlte::page')
 
-@section('title', 'Gestión de Vacaciones')
+@section('title', 'Vacaciones')
 
 @section('plugins.Datatables', true)
 @section('plugins.Sweetalert2', true)
-@section('plugins.Select2', true)
 
 @section('content')
 
@@ -21,9 +20,7 @@
                 Lista de Vacaciones
             </h4>
         </div>
-    </div>
 
-    <div class="card">
         <div class="card-body table-responsive">
             <table class="table table-striped table-hover table-sm text-nowrap" id="datatable">
                 <thead>
@@ -34,7 +31,7 @@
                         <th>Fin</th>
                         <th>Días</th>
                         <th>Estado</th>
-                        <th>Acciones</th>
+                        <th width="180">Acciones</th>
                     </tr>
                 </thead>
             </table>
@@ -45,7 +42,9 @@
         <div class="modal-dialog modal-lg modal-dialog-centered" role="document">
             <div class="modal-content">
                 <div class="modal-header bg-primary text-white">
-                    <h5 class="modal-title">Formulario de Vacaciones</h5>
+                    <h5 class="modal-title">
+                        Formulario de Vacaciones
+                    </h5>
 
                     <button type="button" class="close text-white" data-dismiss="modal">
                         <span>&times;</span>
@@ -68,6 +67,9 @@
                 serverSide: true,
                 scrollX: true,
                 autoWidth: false,
+                order: [
+                    [2, 'desc']
+                ],
                 ajax: "{{ route('admin.vacations.index') }}",
                 columns: [{
                         data: "personnel_dni"
@@ -108,50 +110,100 @@
                 success: function(response) {
                     $('#FormModal .modal-title')
                         .html('<i class="fas fa-plane-departure"></i> Nueva Solicitud de Vacaciones');
-                    $('#FormModal .modal-body').html(response);
+
+                    $('#FormModal .modal-body')
+                        .html(response);
+
                     $('#FormModal').modal("show");
-                    initSelect2();
+
                     initFormSubmit();
                 }
             });
         });
+
+        $(document).off('click.vacationShow', '.btn-ver')
+            .on('click.vacationShow', '.btn-ver', function(e) {
+                e.preventDefault();
+                e.stopPropagation();
+
+                let id = $(this).data("id");
+
+                $.ajax({
+                    url: "{{ route('admin.vacations.show', 'id') }}".replace('id', id),
+                    type: "GET",
+                    beforeSend: function() {
+                        $('#FormModal .modal-title')
+                            .html('<i class="fas fa-spinner fa-spin"></i> Cargando información');
+
+                        $('#FormModal .modal-body')
+                            .html(`
+                        <div class="text-center text-muted py-4">
+                            <i class="fas fa-spinner fa-spin fa-2x mb-2"></i>
+                            <p class="mb-0">Cargando información de vacaciones...</p>
+                        </div>
+                    `);
+
+                        $('#FormModal').modal("show");
+                    },
+                    success: function(response) {
+                        $('#FormModal .modal-title')
+                            .html('<i class="fas fa-eye"></i> Información de Vacaciones');
+
+                        $('#FormModal .modal-body')
+                            .html(response);
+                    },
+                    error: function(xhr) {
+                        let response = xhr.responseJSON;
+
+                        $('#FormModal').modal("hide");
+
+                        Swal.fire(
+                            'Ocurrió un error',
+                            response ? response.message :
+                            'No se pudo cargar la información de vacaciones.',
+                            'error'
+                        );
+                    }
+                });
+            });
 
         $(document).on('click', '.btn-editar', function() {
             let id = $(this).data("id");
-            $.ajax({
-                url: "{{ route('admin.vacations.edit', 'id') }}".replace('id', id),
-                type: "GET",
-                success: function(response) {
-                    $('#FormModal .modal-title').html('<i class="fas fa-pen"></i> Editar Solicitud');
-                    $('#FormModal .modal-body').html(response);
-                    $('#FormModal').modal("show");
-                    initSelect2();
-                    initFormSubmit();
-                }
-            });
-        });
 
-        $(document).on('click', '.btn-ver', function() {
-            let id = $(this).data("id");
             $.ajax({
-                url: "{{ route('admin.vacations.show', 'id') }}".replace('id', id),
+                url: "{{ route('admin.vacations.edit', 'id') }}"
+                    .replace('id', id),
                 type: "GET",
                 success: function(response) {
-                    $('#FormModal .modal-title').html('<i class="fas fa-eye"></i> Detalle de Vacaciones');
-                    $('#FormModal .modal-body').html(response);
+                    $('#FormModal .modal-title')
+                        .html('<i class="fas fa-pen"></i> Modificar Solicitud de Vacaciones');
+
+                    $('#FormModal .modal-body')
+                        .html(response);
+
                     $('#FormModal').modal("show");
+
+                    initFormSubmit();
                 }
             });
         });
 
         $(document).on('click', '.btn-approve', function() {
             let id = $(this).data("id");
-            confirmAction("{{ route('admin.vacations.approve', 'id') }}".replace('id', id), "aprobar");
+
+            confirmAction(
+                "{{ route('admin.vacations.approve', 'id') }}".replace('id', id),
+                "aprobar"
+            );
         });
 
         $(document).on('click', '.btn-reject', function() {
             let id = $(this).data("id");
-            confirmAction("{{ route('admin.vacations.reject', 'id') }}".replace('id', id), "rechazar");
+
+            confirmAction(
+                "{{ route('admin.vacations.reject', 'id') }}".replace('id', id),
+                "rechazar"
+            );
         });
 
         function confirmAction(url, action) {
@@ -163,22 +215,83 @@
                 cancelButtonText: "Cancelar"
             }).then((result) => {
                 if (result.isConfirmed || result.value) {
-                    $.post(url, { _token: "{{ csrf_token() }}" }, function(response) {
-                        Swal.fire('Exitoso', response.message, 'success');
-                        $('#datatable').DataTable().ajax.reload(null, false);
+                    $.post(url, {
+                        _token: "{{ csrf_token() }}"
+                    }, function(response) {
+                        refreshTable();
+
+                        Swal.fire(
+                            'Proceso exitoso',
+                            response.message,
+                            'success'
+                        );
                     }).fail(function(xhr) {
-                        let msg = xhr.responseJSON ? xhr.responseJSON.message : 'Error desconocido';
-                        Swal.fire('Error', msg, 'error');
+                        let response = xhr.responseJSON;
+
+                        Swal.fire(
+                            'Ocurrió un error',
+                            response ? response.message : 'Error desconocido',
+                            'error'
+                        );
                     });
                 }
             });
         }
 
-        $(document).on('click', '.btn-delete', function() {
+        function initFormSubmit() {
+            $('#FormModal form').off("submit").on("submit", function(e) {
+                e.preventDefault();
+
+                if (!this.checkValidity()) {
+                    this.reportValidity();
+                    return;
+                }
+
+                enviarFormulario(this);
+            });
+        }
+
+        function enviarFormulario(formulario) {
+            let form = $(formulario);
+            let formData = new FormData(formulario);
+
+            $.ajax({
+                url: form.attr('action'),
+                type: form.attr('method'),
+                data: formData,
+                processData: false,
+                contentType: false,
+                success: function(response) {
+                    $('#FormModal').modal("hide");
+
+                    refreshTable();
+
+                    Swal.fire(
+                        'Proceso exitoso',
+                        response.message,
+                        'success'
+                    );
+                },
+                error: function(xhr) {
+                    let response = xhr.responseJSON;
+
+                    Swal.fire(
+                        'Ocurrió un error',
+                        response ? response.message : 'No se pudo procesar la solicitud',
+                        'error'
+                    );
+                }
+            });
+        }
+
+        $(document).on('click', '.btn-delete', function(e) {
+            e.preventDefault();
+
             let url = $(this).data('url');
+
             Swal.fire({
-                title: "¿Eliminar solicitud?",
-                text: "Esta acción no se puede deshacer",
+                title: "¿Está seguro de eliminar?",
+                text: "Esta acción es irreversible",
                 icon: "warning",
                 showCancelButton: true,
                 confirmButtonText: "Sí, eliminar",
@@ -188,49 +301,41 @@
                     $.ajax({
                         url: url,
                         type: 'DELETE',
-                        data: { _token: "{{ csrf_token() }}" },
+                        data: {
+                            _token: "{{ csrf_token() }}"
+                        },
                         success: function(response) {
-                            Swal.fire('Exitoso', response.message, 'success');
-                            $('#datatable').DataTable().ajax.reload(null, false);
+                            refreshTable();
+
+                            Swal.fire(
+                                'Proceso exitoso',
+                                response.message,
+                                'success'
+                            );
                         },
                         error: function(xhr) {
-                            let msg = xhr.responseJSON ? xhr.responseJSON.message : 'No se pudo eliminar';
-                            Swal.fire('Error', msg, 'error');
+                            let response = xhr.responseJSON;
+
+                            Swal.fire(
+                                'Ocurrió un error',
+                                response ? response.message : 'No se pudo eliminar',
+                                'error'
+                            );
                         }
                     });
                 }
             });
         });
 
-        function initSelect2() {
-            $('.select2').select2({
-                theme: 'bootstrap4',
-                width: '100%',
-                dropdownParent: $('#FormModal')
-            });
+        function refreshTable() {
+            $('#datatable')
+                .DataTable()
+                .ajax.reload(null, false);
         }
 
-        function initFormSubmit() {
-            $('#FormModal form').on("submit", function(e) {
-                e.preventDefault();
-                let form = $(this);
-                $.ajax({
-                    url: form.attr('action'),
-                    type: form.attr('method'),
-                    data: new FormData(this),
-                    processData: false,
-                    contentType: false,
-                    success: function(response) {
-                        $('#FormModal').modal("hide");
-                        $('#datatable').DataTable().ajax.reload(null, false);
-                        Swal.fire('Exitoso', response.message, 'success');
-                    },
-                    error: function(xhr) {
-                        Swal.fire('Error', xhr.responseJSON.message, 'error');
-                    }
-                });
-            });
-        }
+        $('#FormModal').on('hidden.bs.modal', function() {
+            $('#FormModal .modal-body').html('');
+        });
     </script>
 
 @stop

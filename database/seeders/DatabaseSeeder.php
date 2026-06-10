@@ -393,7 +393,7 @@ class DatabaseSeeder extends Seeder
         $zones = [
             [
                 'name' => 'Centro',
-                'description' => 'Sector centro de José Leonardo Ortiz',
+                'description' => 'Sector centro de JLO',
                 'coordinates' => [
                     ['lat' => -6.756392, 'lng' => -79.833667],
                     ['lat' => -6.756401, 'lng' => -79.838865],
@@ -403,7 +403,7 @@ class DatabaseSeeder extends Seeder
             ],
             [
                 'name' => 'Norte',
-                'description' => 'Sector norte de José Leonardo Ortiz',
+                'description' => 'Sector norte de JLO',
                 'coordinates' => [
                     ['lat' => -6.750900, 'lng' => -79.835900],
                     ['lat' => -6.750900, 'lng' => -79.829900],
