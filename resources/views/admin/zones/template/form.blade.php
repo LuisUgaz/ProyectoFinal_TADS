@@ -1,7 +1,7 @@
 <div class="form-group">
     <label>Nombre de la Zona <span class="text-danger">*</span></label>
     <input type="text" name="name" class="form-control" value="{{ old('name', $zone->name ?? '') }}"
-        placeholder="Nombre de la zona" required>
+        placeholder="Ingrese nombre de la zona" required>
 </div>
 
 <div class="form-row">
@@ -44,7 +44,7 @@
 
 <div class="form-group">
     <label>Descripción</label>
-    <textarea name="description" class="form-control" rows="3" placeholder="Agregue una descripción de la zona">{{ old('description', $zone->description ?? '') }}</textarea>
+    <textarea name="description" class="form-control" rows="3" placeholder="Ingrese una descripción de la zona">{{ old('description', $zone->description ?? '') }}</textarea>
 </div>
 
 <div class="form-row">
