@@ -11,23 +11,39 @@
             <div class="card-body">
 
                 <div class="row text-center mb-3">
-                    <div class="col-6">
-                        <div class="border rounded p-2 bg-light">
+                    <div class="col-4">
+                        <div class="border rounded p-2 bg-light h-100 d-flex flex-column justify-content-center">
                             <i class="fas fa-map-pin text-primary"></i>
-                            <h5 class="mb-0 mt-1">
+                            <h5 class="mb-0 mt-1" style="font-size: 1rem; line-height: 1.2;">
                                 {{ is_array($zone->coordinates) ? count($zone->coordinates) : 0 }}
                             </h5>
                             <small class="text-muted">Puntos</small>
                         </div>
                     </div>
 
-                    <div class="col-6">
-                        <div class="border rounded p-2 bg-light">
+                    <div class="col-4">
+                        <div class="border rounded p-2 bg-light h-100 d-flex flex-column justify-content-center">
                             <i class="fas fa-trash-alt text-warning"></i>
-                            <h5 class="mb-0 mt-1">
-                                {{ $zone->average_waste ? $zone->average_waste . ' kg' : 'N/A' }}
+
+                            <h5 class="mb-0 mt-1" style="font-size: 1rem; line-height: 1.2;">
+                                {{ $zone->average_waste ? number_format($zone->average_waste, 2) : 'N/A' }}
                             </h5>
+
+                            @if ($zone->average_waste)
+                                <small class="text-muted">kg</small>
+                            @endif
+
                             <small class="text-muted">Residuos</small>
+                        </div>
+                    </div>
+
+                    <div class="col-4">
+                        <div class="border rounded p-2 bg-light h-100 d-flex flex-column justify-content-center">
+                            <i class="fas fa-ruler-combined text-info"></i>
+                            <h5 class="mb-0 mt-1" id="zoneAreaBox" style="font-size: 1rem; line-height: 1.2;">
+                                -
+                            </h5>
+                            <small class="text-muted">Área</small>
                         </div>
                     </div>
                 </div>
@@ -136,6 +152,8 @@
     </div>
 </div>
 
+<script src="https://cdn.jsdelivr.net/npm/@turf/turf@6/turf.min.js"></script>
+
 <script>
     setTimeout(function() {
         let coordinates = @json($zone->coordinates ?? []);
@@ -160,10 +178,46 @@
                 weight: 3
             }).addTo(map);
 
+            let turfPoints = coordinates.map(function(point) {
+                return [point.lng, point.lat];
+            });
+
+            turfPoints.push(turfPoints[0]);
+
+            let turfPolygon = turf.polygon([turfPoints]);
+            let areaM2 = turf.area(turfPolygon);
+            let areaKm2 = areaM2 / 1000000;
+
+            let areaText = areaKm2 >= 0.01 ?
+                areaKm2.toFixed(2) + ' km²' :
+                areaM2.toFixed(2) + ' m²';
+
+            $('#zoneAreaBox').html(areaText);
+
             polygon.bindPopup(`
-                <strong>{{ $zone->name }}</strong><br>
-                <i class="fas fa-map-marker-alt"></i> {{ $zone->district->name ?? '-' }}<br>
-                <i class="fas fa-map-pin"></i> ${coordinates.length} puntos
+                <div style="text-align:center; min-width:160px;">
+                    <div style="font-size:22px; color:#007bff; margin-bottom:5px;">
+                        <i class="fas fa-map-marked-alt"></i>
+                    </div>
+
+                    <h6 style="font-weight:bold; margin-bottom:8px;">
+                        {{ $zone->name }}
+                    </h6>
+
+                    <div style="text-align:center; font-size:13px;">
+
+                        <div style="margin-bottom:4px;">
+                            <i class="fas fa-map-marker-alt text-muted"></i>
+                            {{ $zone->district->name ?? '-' }}
+                        </div>
+
+                        <div>
+                            <i class="fas fa-trash-alt text-muted"></i>
+                            Residuos: {{ $zone->average_waste ? $zone->average_waste . ' kg' : 'N/A' }}
+                        </div>
+
+                    </div>
+                </div>
             `).openPopup();
 
             map.fitBounds(polygon.getBounds(), {
