@@ -15,6 +15,10 @@
                 <i class="fas fa-plus"></i> Nueva Zona
             </button>
 
+            <button type="button" class="btn btn-success btn-sm float-right mr-2" id="btnMapaGeneral">
+                <i class="fas fa-map-marked-alt"></i> Ver Mapa de Zonas
+            </button>
+
             <h4>
                 <i class="fas fa-map-marker-alt"></i>
                 Lista de Zonas
@@ -132,6 +136,14 @@
         $('#btnNuevo').on('click', function() {
             $.get("{{ route('admin.zones.create') }}", function(response) {
                 $('#modalTitle').html('<i class="fas fa-map-marker-alt"></i> Nueva Zona');
+                $('#formModal .modal-body').html(response);
+                $('#formModal').modal('show');
+            });
+        });
+
+        $('#btnMapaGeneral').on('click', function() {
+            $.get("{{ route('admin.zones.general-map') }}", function(response) {
+                $('#modalTitle').html('<i class="fas fa-map"></i> Mapa General de Zonas');
                 $('#formModal .modal-body').html(response);
                 $('#formModal').modal('show');
             });
@@ -614,5 +626,14 @@
 
 
         }
+
+        $('#formModal').on('hidden.bs.modal', function() {
+            if (window.generalZonesMapInstance) {
+                window.generalZonesMapInstance.remove();
+                window.generalZonesMapInstance = null;
+            }
+
+            $('#formModal .modal-body').html('');
+        });
     </script>
 @endsection

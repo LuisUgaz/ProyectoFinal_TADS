@@ -74,13 +74,14 @@ class ZoneController extends Controller
 
     public function create()
     {
-        $departments = Department::pluck('name', 'id');
-        $provinces = Province::pluck('name', 'id');
-        $districts = District::pluck('name', 'id');
+        $departments = Department::orderBy('name', 'asc')->pluck('name', 'id');
 
-        $defaultDepartment = Department::where('name', 'Lambayeque')->first();
-        $defaultProvince = Province::where('name', 'Chiclayo')->first();
-        $defaultDistrict = District::where('name', 'José Leonardo Ortiz')->first();
+        $provinces = collect();
+        $districts = collect();
+
+        $defaultDepartment = null;
+        $defaultProvince = null;
+        $defaultDistrict = null;
 
         return view('admin.zones.create', compact(
             'departments',
@@ -134,9 +135,15 @@ class ZoneController extends Controller
     {
         $zone = Zone::findOrFail($id);
 
-        $departments = Department::pluck('name', 'id');
-        $provinces = Province::pluck('name', 'id');
-        $districts = District::pluck('name', 'id');
+        $departments = Department::orderBy('name', 'asc')->pluck('name', 'id');
+
+        $provinces = Province::where('department_id', $zone->department_id)
+            ->orderBy('name', 'asc')
+            ->pluck('name', 'id');
+
+        $districts = District::where('province_id', $zone->province_id)
+            ->orderBy('name', 'asc')
+            ->pluck('name', 'id');
 
         return view('admin.zones.edit', compact(
             'zone',
@@ -196,5 +203,55 @@ class ZoneController extends Controller
             ->get();
 
         return response()->json($zones);
+    }
+
+    public function generalMap()
+    {
+        $departments = Department::orderBy('name')->get(['id', 'name']);
+
+        return view('admin.zones.general-map', compact('departments'));
+    }
+
+    public function allPolygons()
+    {
+        $zones = Zone::with(['department', 'province', 'district'])
+            ->whereNotNull('coordinates')
+            ->get()
+            ->map(function ($zone) {
+                return [
+                    'id' => $zone->id,
+                    'name' => $zone->name,
+                    'department_id' => $zone->department_id,
+                    'province_id' => $zone->province_id,
+                    'district_id' => $zone->district_id,
+                    'department' => $zone->department->name ?? '-',
+                    'province' => $zone->province->name ?? '-',
+                    'district' => $zone->district->name ?? '-',
+                    'description' => $zone->description ?: 'Sin descripción',
+                    'average_waste' => $zone->average_waste,
+                    'status' => $zone->status,
+                    'coordinates' => $zone->coordinates,
+                ];
+            });
+
+        return response()->json($zones);
+    }
+
+    public function getProvinces($departmentId)
+    {
+        $provinces = Province::where('department_id', $departmentId)
+            ->orderBy('name', 'asc')
+            ->get(['id', 'name']);
+
+        return response()->json($provinces);
+    }
+
+    public function getDistricts($provinceId)
+    {
+        $districts = District::where('province_id', $provinceId)
+            ->orderBy('name', 'asc')
+            ->get(['id', 'name']);
+
+        return response()->json($districts);
     }
 }

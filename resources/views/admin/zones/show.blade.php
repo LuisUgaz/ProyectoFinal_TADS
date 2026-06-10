@@ -3,9 +3,9 @@
 
         <div class="card shadow-sm">
             <div class="card-header bg-secondary text-white">
-                <h5 class="mb-0">
+                <strong class="mb-0">
                     <i class="fas fa-map-marker-alt"></i> {{ $zone->name }}
-                </h5>
+                </strong>
             </div>
 
             <div class="card-body">
@@ -76,7 +76,7 @@
                 <hr>
 
                 <h6>
-                    Descripción
+                    <b>Descripción</b>
                 </h6>
 
                 <p class="text-muted mb-0">

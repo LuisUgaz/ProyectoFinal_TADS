@@ -68,7 +68,19 @@ Route::middleware([
 
     Route::get('admin/zones-polygons/{id?}', [ZoneController::class, 'polygons'])
         ->name('admin.zones.polygons');
-    
+
+    Route::get('admin/zones-general-map', [ZoneController::class, 'generalMap'])
+        ->name('admin.zones.general-map');
+
+    Route::get('admin/zones-all-polygons', [ZoneController::class, 'allPolygons'])
+        ->name('admin.zones.all-polygons');
+
+    Route::get('admin/zones/provinces/{department}', [ZoneController::class, 'getProvinces'])
+        ->name('admin.zones.provinces');
+
+    Route::get('admin/zones/districts/{province}', [ZoneController::class, 'getDistricts'])
+        ->name('admin.zones.districts');
+
     Route::resource('admin/zones', ZoneController::class)
         ->names('admin.zones');
 
