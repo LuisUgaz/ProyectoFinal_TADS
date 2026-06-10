@@ -15,6 +15,7 @@ use App\Models\Attendance;
 use App\Models\Department;
 use App\Models\Province;
 use App\Models\District;
+use App\Models\Zone;
 use Illuminate\Database\Seeder;
 use Illuminate\Support\Facades\Hash;
 
@@ -376,6 +377,55 @@ class DatabaseSeeder extends Seeder
                 'province_id' => $province->id,
             ]
         );
-      
+
+        // 12. Creación de zonas
+        $district = District::updateOrCreate(
+            [
+                'name' => 'José Leonardo Ortiz',
+                'province_id' => $province->id,
+            ],
+            [
+                'name' => 'José Leonardo Ortiz',
+                'province_id' => $province->id,
+            ]
+        );
+
+        $zones = [
+            [
+                'name' => 'Centro',
+                'description' => 'Sector centro de José Leonardo Ortiz',
+                'coordinates' => [
+                    ['lat' => -6.756392, 'lng' => -79.833667],
+                    ['lat' => -6.756401, 'lng' => -79.838865],
+                    ['lat' => -6.762681, 'lng' => -79.841187],
+                    ['lat' => -6.763225, 'lng' => -79.834664],
+                ],
+            ],
+            [
+                'name' => 'Norte',
+                'description' => 'Sector norte de José Leonardo Ortiz',
+                'coordinates' => [
+                    ['lat' => -6.750900, 'lng' => -79.835900],
+                    ['lat' => -6.750900, 'lng' => -79.829900],
+                    ['lat' => -6.755500, 'lng' => -79.829900],
+                    ['lat' => -6.755500, 'lng' => -79.835900],
+                ],
+            ],
+        ];
+
+        foreach ($zones as $zone) {
+            Zone::updateOrCreate(
+                ['name' => $zone['name']],
+                [
+                    'department_id' => $department->id,
+                    'province_id' => $province->id,
+                    'district_id' => $district->id,
+                    'description' => $zone['description'],
+                    'average_waste' => null,
+                    'status' => true,
+                    'coordinates' => $zone['coordinates'],
+                ]
+            );
+        }
     }
 }

@@ -65,6 +65,7 @@
 @section('js')
     <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/leaflet.draw/1.0.4/leaflet.draw.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/@turf/turf@6/turf.min.js"></script>
 
     <script>
         let table;
@@ -161,7 +162,7 @@
             let id = $(this).attr('id');
 
             $.get("{{ route('admin.zones.show', ':id') }}".replace(':id', id), function(response) {
-                $('#modalTitle').html('Mapa de la Zona');
+                $('#modalTitle').html('<i class="fas fa-map"></i> Mapa de la Zona');
                 $('#formModal .modal-body').html(response);
                 $('#formModal').modal('show');
             });
@@ -182,6 +183,15 @@
 
             if (parsedCoordinates.length < 3) {
                 Swal.fire('Error', 'Debe registrar mínimo 3 coordenadas para definir el perímetro.', 'error');
+                return;
+            }
+
+            if (window.hasOverlapWithExistingZones && window.hasOverlapWithExistingZones(parsedCoordinates)) {
+                Swal.fire(
+                    'Zona no permitida',
+                    'No puede guardar una zona que se superpone con una zona ya registrada.',
+                    'warning'
+                );
                 return;
             }
 
@@ -265,6 +275,8 @@
             let drawnItems = new L.FeatureGroup();
             let currentPolygon = null;
             let existingZonesLayer = new L.FeatureGroup();
+
+            let existingZonesData = [];
 
             window.zoneLeafletMap = L.map('zoneMap').setView([-6.7630, -79.8366], 15);
             window.zoneLeafletMap.addLayer(existingZonesLayer);
@@ -352,6 +364,38 @@
                 setHiddenCoordinates();
             }
 
+            function leafletCoordsToTurfPolygon(coords) {
+                let points = coords.map(c => [c.lng, c.lat]);
+
+                if (points.length > 0) {
+                    points.push(points[0]);
+                }
+
+                return turf.polygon([points]);
+            }
+
+            function hasOverlapWithExistingZones(coordinates) {
+                if (coordinates.length < 3) {
+                    return false;
+                }
+
+                let currentPolygonTurf = leafletCoordsToTurfPolygon(coordinates);
+
+                for (let zone of existingZonesData) {
+                    if (!zone.coordinates || zone.coordinates.length < 3) {
+                        continue;
+                    }
+
+                    let existingPolygonTurf = leafletCoordsToTurfPolygon(zone.coordinates);
+
+                    if (turf.booleanIntersects(currentPolygonTurf, existingPolygonTurf)) {
+                        return true;
+                    }
+                }
+
+                return false;
+            }
+
             function drawPolygonFromRows() {
                 let coordinates = getCoordinates();
 
@@ -359,6 +403,18 @@
                 currentPolygon = null;
 
                 if (coordinates.length >= 3) {
+
+                    if (hasOverlapWithExistingZones(coordinates)) {
+                        Swal.fire(
+                            'Zona no permitida',
+                            'El perímetro seleccionado se superpone con una zona ya registrada.',
+                            'warning'
+                        );
+
+                        setHiddenCoordinates();
+                        return;
+                    }
+
                     let latlngs = coordinates.map(c => [c.lat, c.lng]);
 
                     currentPolygon = L.polygon(latlngs, {
@@ -409,6 +465,24 @@
                 drawnItems.clearLayers();
 
                 let layer = event.layer;
+                let latlngs = layer.getLatLngs()[0];
+
+                let coordinates = latlngs.map(function(point) {
+                    return {
+                        lat: point.lat,
+                        lng: point.lng
+                    };
+                });
+
+                if (hasOverlapWithExistingZones(coordinates)) {
+                    Swal.fire(
+                        'Zona no permitida',
+                        'El perímetro seleccionado se superpone con una zona ya registrada.',
+                        'warning'
+                    );
+                    return;
+                }
+
                 drawnItems.addLayer(layer);
                 currentPolygon = layer;
 
@@ -418,6 +492,26 @@
 
             window.zoneLeafletMap.on(L.Draw.Event.EDITED, function(event) {
                 event.layers.eachLayer(function(layer) {
+                    let latlngs = layer.getLatLngs()[0];
+
+                    let coordinates = latlngs.map(function(point) {
+                        return {
+                            lat: point.lat,
+                            lng: point.lng
+                        };
+                    });
+
+                    if (hasOverlapWithExistingZones(coordinates)) {
+                        Swal.fire(
+                            'Zona no permitida',
+                            'El perímetro editado se superpone con una zona ya registrada.',
+                            'warning'
+                        );
+
+                        drawPolygonFromRows();
+                        return;
+                    }
+
                     currentPolygon = layer;
                     updateRowsFromPolygon(layer);
                 });
@@ -472,6 +566,7 @@
                 let currentZoneId = $('#zoneForm').data('zone-id') || '';
 
                 $.get("{{ route('admin.zones.polygons', ':id') }}".replace(':id', currentZoneId), function(zones) {
+                    existingZonesData = zones;
                     existingZonesLayer.clearLayers();
 
                     zones.forEach(function(zone) {
@@ -508,6 +603,8 @@
                     });
                 }
             }
+
+            window.hasOverlapWithExistingZones = hasOverlapWithExistingZones;
 
             loadExistingZones();
 
