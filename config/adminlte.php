@@ -388,7 +388,7 @@ return [
                 ],
                 [
                     'text' => 'Feriados',
-                    'url'  => '#',
+                    'url'  => 'admin/holidays',
                     'icon' => 'fas fa-flag',
                 ],
                 [

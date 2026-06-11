@@ -13,6 +13,7 @@ use App\Http\Controllers\admin\AttendanceController;
 use App\Http\Controllers\admin\ShiftController;
 use App\Http\Controllers\admin\VacationController;
 use App\Http\Controllers\admin\ZoneController;
+use App\Http\Controllers\admin\HolidayController;
 use Illuminate\Support\Facades\Route;
 
 Route::get('/', function () {
@@ -95,5 +96,11 @@ Route::middleware([
         
     Route::resource('admin/vacations', VacationController::class)
         ->names('admin.vacations');
+
+    Route::get('admin/holidays-stats', [HolidayController::class, 'stats'])
+        ->name('admin.holidays.stats');
+
+    Route::resource('admin/holidays', HolidayController::class)
+        ->names('admin.holidays');
 
 });

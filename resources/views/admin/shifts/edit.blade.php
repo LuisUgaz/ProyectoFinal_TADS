@@ -6,7 +6,7 @@
     @include('admin.shifts.template.form')
 
     <button type="submit" class="btn btn-success btn-sm">
-        <i class="fas fa-save"></i> Actualizar
+        <i class="fas fa-pen"></i> Actualizar
     </button>
 
     <button type="button" class="btn btn-danger btn-sm" data-dismiss="modal">

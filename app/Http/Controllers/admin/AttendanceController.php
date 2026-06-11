@@ -20,12 +20,22 @@ class AttendanceController extends Controller
                 ->leftJoin('shifts', 'attendances.shift_id', '=', 'shifts.id')
                 ->select('attendances.*');
 
-            if ($request->filled('start_date')) {
-                $attendances->whereDate('date', '>=', $request->start_date);
-            }
+            $hasDateFilter = $request->filled('start_date') || $request->filled('end_date');
+            $hasPersonnelSearch = $request->filled('personnel_search');
 
-            if ($request->filled('end_date')) {
-                $attendances->whereDate('date', '<=', $request->end_date);
+            if ($hasDateFilter) {
+
+                if ($request->filled('start_date')) {
+                    $attendances->whereDate('date', '>=', $request->start_date);
+                }
+
+                if ($request->filled('end_date')) {
+                    $attendances->whereDate('date', '<=', $request->end_date);
+                }
+
+            } elseif (!$hasPersonnelSearch) {
+
+                $attendances->whereDate('date', now()->format('Y-m-d'));
             }
 
             if ($request->filled('personnel_search')) {

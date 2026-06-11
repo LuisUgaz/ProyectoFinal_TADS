@@ -36,6 +36,7 @@ class DatabaseSeeder extends Seeder
         );
 
         $this->call(UbigeoSeeder::class);
+        $this->call(HolidaySeeder::class);
 
         // 2. Colores de Vehículos
         $colors = [

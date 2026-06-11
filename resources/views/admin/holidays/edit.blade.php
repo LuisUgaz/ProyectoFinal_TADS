@@ -1,9 +1,9 @@
-<form action="{{ route('admin.zones.update', $zone->id) }}" method="POST" id="zoneForm"
-    data-zone-id="{{ $zone->id }}">
+<form action="{{ route('admin.holidays.update', $holiday->id) }}" method="POST">
+
     @csrf
     @method('PUT')
 
-    @include('admin.zones.template.form')
+    @include('admin.holidays.template.form')
 
     <button type="submit" class="btn btn-success btn-sm">
         <i class="fas fa-pen"></i> Actualizar
@@ -12,4 +12,5 @@
     <button type="button" class="btn btn-danger btn-sm" data-dismiss="modal">
         <i class="fas fa-times"></i> Cancelar
     </button>
+
 </form>

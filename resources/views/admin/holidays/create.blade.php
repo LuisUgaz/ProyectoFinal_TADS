@@ -1,15 +1,15 @@
-<form action="{{ route('admin.zones.update', $zone->id) }}" method="POST" id="zoneForm"
-    data-zone-id="{{ $zone->id }}">
-    @csrf
-    @method('PUT')
+<form action="{{ route('admin.holidays.store') }}" method="POST">
 
-    @include('admin.zones.template.form')
+    @csrf
+
+    @include('admin.holidays.template.form')
 
     <button type="submit" class="btn btn-success btn-sm">
-        <i class="fas fa-pen"></i> Actualizar
+        <i class="fas fa-save"></i> Guardar
     </button>
 
     <button type="button" class="btn btn-danger btn-sm" data-dismiss="modal">
         <i class="fas fa-times"></i> Cancelar
     </button>
+
 </form>

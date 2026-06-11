@@ -1,10 +1,9 @@
 @extends('adminlte::page')
 
-@section('title', 'Asistencias')
+@section('title', 'Feriados')
 
 @section('plugins.Datatables', true)
 @section('plugins.Sweetalert2', true)
-@section('plugins.Select2', true)
 
 @section('content')
 
@@ -13,19 +12,62 @@
     <div class="card">
         <div class="card-header">
             <button type="button" class="btn btn-primary btn-sm float-right" id="btn-nuevo">
-                <i class="fas fa-plus"></i> Nueva Asistencia
+                <i class="fas fa-plus"></i> Nuevo Feriado
             </button>
 
             <h4>
-                <i class="fas fa-clipboard-check"></i>
-                Lista de Asistencias
+                <i class="fas fa-flag"></i>
+                Lista de Feriados
             </h4>
+        </div>
+    </div>
+
+    <div class="row mb-3">
+        <div class="col-md-3">
+            <div class="card shadow-sm mb-0">
+                <div class="card-body text-center">
+                    <i class="fas fa-calendar-alt text-primary"></i>
+                    <h5 class="mb-0 mt-1" id="totalHolidays">0</h5>
+                    <small class="text-muted">Total Feriados</small>
+                </div>
+            </div>
+        </div>
+
+        <div class="col-md-3">
+            <div class="card shadow-sm mb-0">
+                <div class="card-body text-center">
+                    <i class="fas fa-check-circle text-success"></i>
+                    <h5 class="mb-0 mt-1" id="activeHolidays">0</h5>
+                    <small class="text-muted">Feriados Activos</small>
+                </div>
+            </div>
+        </div>
+
+        <div class="col-md-3">
+            <div class="card shadow-sm mb-0">
+                <div class="card-body text-center">
+                    <i class="fas fa-hourglass-half text-warning"></i>
+                    <h5 class="mb-0 mt-1" id="upcomingHolidays">0</h5>
+                    <small class="text-muted">Próximos Feriados</small>
+                </div>
+            </div>
+        </div>
+
+        <div class="col-md-3">
+            <div class="card shadow-sm mb-0">
+                <div class="card-body text-center">
+                    <i class="fas fa-calendar text-info"></i>
+                    <h5 class="mb-0 mt-1">{{ date('Y') }}</h5>
+                    <small class="text-muted">Año Actual</small>
+                </div>
+            </div>
         </div>
     </div>
 
     <div class="card">
         <div class="card-body border-bottom">
             <div class="row align-items-end">
+
                 <div class="col-md-3">
                     <div class="form-group mb-0">
                         <label>Fecha de inicio</label>
@@ -40,15 +82,18 @@
                     </div>
                 </div>
 
-                <div class="col-md-4">
+                <div class="col-md-3">
                     <div class="form-group mb-0">
-                        <label>Buscar personal</label>
-                        <input type="text" id="personnel_search" class="form-control"
-                            placeholder="Ingrese DNI, nombre o apellido">
+                        <label>Estado</label>
+                        <select id="status" class="form-control">
+                            <option value="">Todos</option>
+                            <option value="1">Activo</option>
+                            <option value="0">Inactivo</option>
+                        </select>
                     </div>
                 </div>
 
-                <div class="col-md-2">
+                <div class="col-md-3">
                     <div class="form-group mb-0">
                         <label class="d-none d-md-block">&nbsp;</label>
 
@@ -63,6 +108,7 @@
                         </div>
                     </div>
                 </div>
+
             </div>
         </div>
     </div>
@@ -72,14 +118,11 @@
             <table class="table table-striped table-hover table-sm text-nowrap" id="datatable">
                 <thead>
                     <tr>
-                        <th>DNI</th>
-                        <th>Personal</th>
                         <th>Fecha</th>
-                        <th>Hora</th>
-                        <th>Turno</th>
-                        <th>Tipo</th>
+                        <th>Descripción</th>
+                        <th>Día</th>
                         <th>Estado</th>
-                        <th>Notas</th>
+                        <th>Creación</th>
                         <th width="120">Acciones</th>
                     </tr>
                 </thead>
@@ -91,7 +134,9 @@
         <div class="modal-dialog modal-lg modal-dialog-centered" role="document">
             <div class="modal-content">
                 <div class="modal-header bg-primary text-white">
-                    <h5 class="modal-title">Formulario de Asistencia</h5>
+                    <h5 class="modal-title">
+                        Formulario de Feriado
+                    </h5>
 
                     <button type="button" class="close text-white" data-dismiss="modal">
                         <span>&times;</span>
@@ -108,46 +153,35 @@
 @section('js')
 
     <script>
+        let table;
+
         $(document).ready(function() {
-            $('#datatable').DataTable({
+            table = $('#datatable').DataTable({
                 processing: true,
                 serverSide: true,
                 scrollX: true,
                 autoWidth: false,
                 order: [
-                    [2, 'desc'],
-                    [3, 'desc']
+                    [0, 'asc']
                 ],
                 ajax: {
-                    url: "{{ route('admin.attendances.index') }}",
+                    url: "{{ route('admin.holidays.index') }}",
                     data: function(d) {
                         d.start_date = $('#start_date').val();
                         d.end_date = $('#end_date').val();
-                        d.personnel_search = $('#personnel_search').val();
+                        d.status = $('#status').val();
                     }
                 },
                 columns: [{
-                        data: "personnel_dni",
-                        name: "personnels.dni"
-                    },
-                    {
-                        data: "personnel_name",
-                        name: "personnels.names"
-                    },
-                    {
                         data: "date",
-                        name: "attendances.date"
+                        name: "holidays.date"
                     },
                     {
-                        data: "time",
-                        name: "attendances.time"
+                        data: "description",
+                        name: "holidays.description"
                     },
                     {
-                        data: "shift_name",
-                        name: "shifts.name"
-                    },
-                    {
-                        data: "type_badge",
+                        data: "day",
                         orderable: false,
                         searchable: false
                     },
@@ -157,8 +191,8 @@
                         searchable: false
                     },
                     {
-                        data: "notes",
-                        name: "attendances.notes"
+                        data: "created_at",
+                        name: "holidays.created_at"
                     },
                     {
                         data: "actions",
@@ -168,38 +202,53 @@
                 ],
                 language: {
                     url: 'https://cdn.datatables.net/plug-ins/1.10.16/i18n/Spanish.json'
+                },
+                drawCallback: function() {
+                    updateHolidayStats();
                 }
             });
 
+            updateHolidayStats();
+
             $('#btn-filtrar').click(function() {
-                $('#datatable').DataTable().ajax.reload();
+                table.ajax.reload(null, false);
+                updateHolidayStats();
             });
 
             $('#btn-limpiar').click(function() {
                 $('#start_date').val('');
                 $('#end_date').val('');
-                $('#personnel_search').val('');
+                $('#status').val('');
 
-                $('#datatable').DataTable().ajax.reload();
+                table.ajax.reload(null, false);
+                updateHolidayStats();
             });
         });
 
+        function updateHolidayStats() {
+            $.get("{{ route('admin.holidays.stats') }}", {
+                start_date: $('#start_date').val(),
+                end_date: $('#end_date').val(),
+                status: $('#status').val()
+            }, function(response) {
+                $('#totalHolidays').text(response.total);
+                $('#activeHolidays').text(response.active);
+                $('#upcomingHolidays').text(response.upcoming);
+            });
+        }
+
         $('#btn-nuevo').click(function() {
             $.ajax({
-                url: "{{ route('admin.attendances.create') }}",
+                url: "{{ route('admin.holidays.create') }}",
                 type: "GET",
                 success: function(response) {
                     $('#FormModal .modal-title')
-                        .html('<i class="fas fa-clipboard-check"></i> Nueva Asistencia');
+                        .html('<i class="fas fa-flag"></i> Nuevo Feriado');
 
-                    $('#FormModal .modal-body').html(response);
+                    $('#FormModal .modal-body')
+                        .html(response);
+
                     $('#FormModal').modal("show");
-
-                    $('.select2').select2({
-                        theme: 'bootstrap4',
-                        width: '100%',
-                        dropdownParent: $('#FormModal')
-                    });
 
                     $('#FormModal form').on("submit", function(e) {
                         e.preventDefault();
@@ -219,20 +268,16 @@
             let id = $(this).attr("id");
 
             $.ajax({
-                url: "{{ route('admin.attendances.edit', 'id') }}".replace('id', id),
+                url: "{{ route('admin.holidays.edit', ':id') }}".replace(':id', id),
                 type: "GET",
                 success: function(response) {
                     $('#FormModal .modal-title')
-                        .html('<i class="fas fa-pen"></i> Modificar Asistencia');
+                        .html('<i class="fas fa-pen"></i> Modificar Feriado');
 
-                    $('#FormModal .modal-body').html(response);
+                    $('#FormModal .modal-body')
+                        .html(response);
+
                     $('#FormModal').modal("show");
-
-                    $('.select2').select2({
-                        theme: 'bootstrap4',
-                        width: '100%',
-                        dropdownParent: $('#FormModal')
-                    });
 
                     $('#FormModal form').on("submit", function(e) {
                         e.preventDefault();
@@ -329,7 +374,12 @@
 
         function refreshTable() {
             $('#datatable').DataTable().ajax.reload(null, false);
+            updateHolidayStats();
         }
+
+        $('#FormModal').on('hidden.bs.modal', function() {
+            $('#FormModal .modal-body').html('');
+        });
     </script>
 
 @stop
