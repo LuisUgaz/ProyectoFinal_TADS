@@ -22,21 +22,23 @@
         <h4><i class="fas fa-calendar-check"></i> Lista de Programaciones</h4>
     </div>
     <div class="card-body">
-        <table id="schedules-table" class="table table-bordered table-striped">
-            <thead>
-                <tr>
-                    <th>Grupo</th>
-                    <th>Zona</th>
-                    <th>Turno</th>
-                    <th>Vehículo</th>
-                    <th>Conductor</th>
-                    <th>Ayudantes</th>
-                    <th>Periodo</th>
-                    <th>Estado</th>
-                    <th>Acciones</th>
-                </tr>
-            </thead>
-        </table>
+        <div class="table-responsive">
+            <table id="schedules-table" class="table table-bordered table-striped w-100">
+                <thead>
+                    <tr>
+                        <th>Grupo</th>
+                        <th>Zona</th>
+                        <th>Turno</th>
+                        <th>Vehículo</th>
+                        <th>Conductor</th>
+                        <th>Ayudantes</th>
+                        <th>Periodo</th>
+                        <th>Estado</th>
+                        <th>Acciones</th>
+                    </tr>
+                </thead>
+            </table>
+        </div>
     </div>
 </div>
 
@@ -177,6 +179,7 @@ $(function() {
     let table = $('#schedules-table').DataTable({
         processing: true,
         serverSide: true,
+        responsive: true,
         ajax: '{{ route("admin.schedules.index") }}',
         columns: [
             { data: 'group_name', name: 'group_name' },
@@ -304,18 +307,47 @@ $(function() {
             data: formData,
             success: function(response) {
                 Swal.close();
-                if (response.valid) {
-                    Swal.fire('¡Éxito!', 'No se encontraron inconsistencias. Ya puede guardar.', 'success');
+                
+                let hasErrors = response.errors && response.errors.length > 0;
+                let hasWarnings = response.warnings && response.warnings.length > 0;
+
+                if (!hasErrors) {
+                    let message = 'No se encontraron conflictos bloqueantes. Ya puede guardar.';
+                    let icon = 'success';
+                    let html = '';
+
+                    if (hasWarnings) {
+                        icon = 'info';
+                        message = 'La programación es válida, pero tenga en cuenta lo siguiente:';
+                        html = '<ul class="text-left">';
+                        response.warnings.forEach(item => {
+                            html += `<li>${item}</li>`;
+                        });
+                        html += '</ul>';
+                    }
+
+                    Swal.fire({
+                        title: hasWarnings ? 'Aviso' : '¡Éxito!',
+                        text: hasWarnings ? undefined : message,
+                        html: html || undefined,
+                        icon: icon
+                    });
+                    
                     $('#btn-save').prop('disabled', false);
                 } else {
                     let list = '<ul class="text-left">';
-                    response.inconsistencies.forEach(item => {
-                        list += `<li>${item}</li>`;
+                    response.errors.forEach(item => {
+                        list += `<li class="text-danger"><strong>ERROR:</strong> ${item}</li>`;
                     });
+                    if (hasWarnings) {
+                        response.warnings.forEach(item => {
+                            list += `<li class="text-muted"><strong>AVISO:</strong> ${item}</li>`;
+                        });
+                    }
                     list += '</ul>';
                     
                     Swal.fire({
-                        title: 'Inconsistencias Detectadas',
+                        title: 'Conflictos Detectados',
                         html: list,
                         icon: 'warning'
                     });

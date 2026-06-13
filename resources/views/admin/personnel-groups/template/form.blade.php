@@ -201,6 +201,10 @@
 
         @foreach($drivers as $driver)
 
+            @php
+                $contractType = $driver->activeContract ? $driver->activeContract->type : 'Sin contrato';
+            @endphp
+
             <option value="{{ $driver->id }}"
                 @isset($group)
                     {{ $group->driver_id == $driver->id ? 'selected' : '' }}
@@ -208,6 +212,7 @@
 
                 {{ $driver->names }}
                 {{ $driver->lastnames }}
+                ({{ $contractType }})
 
             </option>
 
@@ -218,10 +223,6 @@
 </div>
 
 <hr>
-
-<h5>
-    Ayudantes del Grupo
-</h5>
 
 <div id="helpers-container"></div>
 
@@ -265,9 +266,11 @@
 
 $helpersJson = $helpers->map(function ($helper) {
 
+    $contractType = $helper->activeContract ? $helper->activeContract->type : 'Sin contrato';
+
     return [
         'id' => $helper->id,
-        'name' => $helper->names . ' ' . $helper->lastnames,
+        'name' => $helper->names . ' ' . $helper->lastnames . ' (' . $contractType . ')',
     ];
 
 })->values()->toArray();
@@ -306,9 +309,14 @@ function generarCamposAyudantes()
 {
     let capacity = parseInt(
         $('#vehicle_id option:selected').data('capacity')
-    ) || 0;
+    ) || 3; // Valor por defecto de 3 (1 conductor + 2 ayudantes) si no hay selección
 
     let cantidadAyudantes = Math.max(capacity - 1, 0);
+
+    // Asegurar que siempre se muestren al menos 2 campos si no hay vehículo seleccionado
+    if (!$('#vehicle_id').val() && cantidadAyudantes < 2) {
+        cantidadAyudantes = 2;
+    }
 
     let html = '';
 

@@ -108,14 +108,14 @@ class DatabaseSeeder extends Seeder
             }
         }
 
-        // 5. Vehículos (Generación de 5 vehículos de prueba)
+        // 5. Vehículos
         $allModels = BrandModel::all();
         $allTypes = VehicleType::all();
         $allColors = VehicleColor::all();
 
-        $plates = ['V1C-789', 'A5T-456', 'M9B-123', 'X4D-001', 'P2R-555'];
+        $plates = ['V1C-789', 'A5T-456', 'M9B-123', 'X4D-001', 'P2R-555', 'B7Y-888', 'C9K-222', 'Z1X-999', 'F4G-333', 'H8J-111'];
 
-        for ($i = 0; $i < 5; $i++) {
+        for ($i = 0; $i < 10; $i++) {
             Vehicle::updateOrCreate(
                 ['plate' => $plates[$i]],
                 [
@@ -127,7 +127,8 @@ class DatabaseSeeder extends Seeder
                     'engine_number' => 'ENG-' . rand(100000, 999999),
                     'chassis_number' => 'CHS-' . rand(100000, 999999),
                     'mileage' => rand(1000, 50000),
-                    'status' => 'Activo'
+                    'status' => 'Activo',
+                    'passenger_capacity' => rand(2, 4), // Mínimo 2 para que haya al menos 1 ayudante
                 ]
             );
         }
@@ -151,7 +152,7 @@ class DatabaseSeeder extends Seeder
             );
         }
 
-        // 7. Personal y Contratos
+        // 7. Personal y Contratos Iniciales
         $conductorType = PersonnelType::where('name', 'Conductor')->first();
         $ayudanteType = PersonnelType::where('name', 'Ayudante')->first();
 
@@ -343,16 +344,6 @@ class DatabaseSeeder extends Seeder
             'notes' => 'Solicitud pendiente.',
         ]);
 
-        // Personal que ya gastó sus 30 días (Juan ya gastó 15, gastaremos otros 15)
-        \App\Models\Vacation::create([
-            'personnel_id' => $juan->id,
-            'start_date' => '2026-12-01',
-            'end_date' => '2026-12-15',
-            'requested_days' => 15,
-            'status' => 'Aprobada',
-            'notes' => 'Segunda quincena de vacaciones.',
-        ]);
-
         // 11. Creación de zonas de prueba
         $department = Department::where('name', 'Lambayeque')->first();
         $province = Province::where('name', 'Chiclayo')
@@ -364,26 +355,10 @@ class DatabaseSeeder extends Seeder
 
         if ($department && $province && $district) {
             $zones = [
-                [
-                    'name' => 'Centro',
-                    'description' => 'Sector centro de JLO',
-                    'coordinates' => [
-                        ['lat' => -6.756392, 'lng' => -79.833667],
-                        ['lat' => -6.756401, 'lng' => -79.838865],
-                        ['lat' => -6.762681, 'lng' => -79.841187],
-                        ['lat' => -6.763225, 'lng' => -79.834664],
-                    ],
-                ],
-                [
-                    'name' => 'Norte',
-                    'description' => 'Sector norte de JLO',
-                    'coordinates' => [
-                        ['lat' => -6.750900, 'lng' => -79.835900],
-                        ['lat' => -6.750900, 'lng' => -79.829900],
-                        ['lat' => -6.755500, 'lng' => -79.829900],
-                        ['lat' => -6.755500, 'lng' => -79.835900],
-                    ],
-                ],
+                ['name' => 'Centro', 'description' => 'Sector centro de JLO', 'coordinates' => [['lat' => -6.756392, 'lng' => -79.833667], ['lat' => -6.756401, 'lng' => -79.838865], ['lat' => -6.762681, 'lng' => -79.841187], ['lat' => -6.763225, 'lng' => -79.834664]]],
+                ['name' => 'Norte', 'description' => 'Sector norte de JLO', 'coordinates' => [['lat' => -6.750900, 'lng' => -79.835900], ['lat' => -6.750900, 'lng' => -79.829900], ['lat' => -6.755500, 'lng' => -79.829900], ['lat' => -6.755500, 'lng' => -79.835900]]],
+                ['name' => 'Sur', 'description' => 'Sector sur de JLO', 'coordinates' => [['lat' => -6.765000, 'lng' => -79.835900], ['lat' => -6.765000, 'lng' => -79.829900], ['lat' => -6.770000, 'lng' => -79.829900], ['lat' => -6.770000, 'lng' => -79.835900]]],
+                ['name' => 'Oeste', 'description' => 'Sector oeste de JLO', 'coordinates' => [['lat' => -6.756392, 'lng' => -79.842000], ['lat' => -6.756401, 'lng' => -79.847000], ['lat' => -6.762681, 'lng' => -79.847000], ['lat' => -6.763225, 'lng' => -79.842000]]],
             ];
 
             foreach ($zones as $zone) {
@@ -394,7 +369,6 @@ class DatabaseSeeder extends Seeder
                         'province_id' => $province->id,
                         'district_id' => $district->id,
                         'description' => $zone['description'],
-                        'average_waste' => null,
                         'status' => true,
                         'coordinates' => $zone['coordinates'],
                     ]
@@ -402,6 +376,9 @@ class DatabaseSeeder extends Seeder
             }
         }
 
+        // 12. Llamar a los nuevos seeders
+        $this->call(PersonnelSeeder::class);
+        $this->call(PersonnelGroupSeeder::class);
         $this->call(ScheduleSeeder::class);
     }
 }

@@ -72,9 +72,27 @@ class PersonnelGroupController extends Controller
 
                 ->addColumn('workdays', function ($group) {
 
-                    return $group->workdays
-                        ->pluck('day')
-                        ->implode(', ');
+                    $daysMap = [
+                        'Lunes' => 'Lun',
+                        'Martes' => 'Mar',
+                        'Miércoles' => 'Mie',
+                        'Jueves' => 'Jue',
+                        'Viernes' => 'Vie',
+                        'Sábado' => 'Sab',
+                        'Domingo' => 'Dom',
+                    ];
+
+                    $days = $group->workdays->pluck('day')->toArray();
+
+                    if (count($days) === 7) {
+                        return '<span class="badge badge-info">Diario (Lun-Dom)</span>';
+                    }
+
+                    $abbreviated = array_map(function ($day) use ($daysMap) {
+                        return $daysMap[$day] ?? $day;
+                    }, $days);
+
+                    return implode(', ', $abbreviated);
                 })
 
                 ->addColumn('status_badge', function ($group) {
@@ -122,6 +140,7 @@ class PersonnelGroupController extends Controller
 
                 ->rawColumns([
                     'helpers',
+                    'workdays',
                     'status_badge',
                     'edit',
                     'delete'
@@ -148,15 +167,15 @@ class PersonnelGroupController extends Controller
 
         $helperType = PersonnelType::where('name', 'Ayudante')->first();
 
-        $drivers = Personnel::where(
-            'personnel_type_id',
-            $driverType->id
-        )->get();
+        $drivers = Personnel::where('personnel_type_id', $driverType->id)
+            ->where('status', 'Activo')
+            ->with('activeContract')
+            ->get();
 
-        $helpers = Personnel::where(
-            'personnel_type_id',
-            $helperType->id
-        )->get();
+        $helpers = Personnel::where('personnel_type_id', $helperType->id)
+            ->where('status', 'Activo')
+            ->with('activeContract')
+            ->get();
 
         return view(
             'admin.personnel-groups.create',
@@ -237,42 +256,16 @@ class PersonnelGroupController extends Controller
 
                 foreach ($request->helpers as $helperId) {
 
-                    $groupsHelper = PersonnelGroupDetail::where(
-                        'personnel_id',
-                        $helperId
-                    )
-                        ->with([
-                            'group.workdays',
-                            'group.shift'
-                        ])
-                        ->get();
+                    $existsInAnotherGroup = PersonnelGroupDetail::where('personnel_id', $helperId)
+                        ->exists();
 
-                    foreach ($groupsHelper as $detail) {
+                    if ($existsInAnotherGroup) {
 
-                        if (
-                            $detail->group &&
-                            $detail->group->shift_id == $request->shift_id
-                        ) {
+                        $helper = Personnel::find($helperId);
 
-                            $groupDays = $detail->group
-                                ->workdays
-                                ->pluck('day')
-                                ->toArray();
-
-                            $repeatedDays = array_intersect(
-                                $request->workdays,
-                                $groupDays
-                            );
-
-                            if (!empty($repeatedDays)) {
-
-                                return response()->json([
-                                    'message' =>
-                                    'Uno de los ayudantes ya está asignado a otro grupo en el mismo turno para los días: '
-                                        . implode(', ', $repeatedDays)
-                                ], 422);
-                            }
-                        }
+                        return response()->json([
+                            'message' => "El ayudante {$helper->names} {$helper->lastnames} ya está registrado en otro grupo."
+                        ], 422);
                     }
                 }
             }
@@ -395,15 +388,15 @@ class PersonnelGroupController extends Controller
             'Ayudante'
         )->first();
 
-        $drivers = Personnel::where(
-            'personnel_type_id',
-            $driverType->id
-        )->get();
+        $drivers = Personnel::where('personnel_type_id', $driverType->id)
+            ->where('status', 'Activo')
+            ->with('activeContract')
+            ->get();
 
-        $helpers = Personnel::where(
-            'personnel_type_id',
-            $helperType->id
-        )->get();
+        $helpers = Personnel::where('personnel_type_id', $helperType->id)
+            ->where('status', 'Activo')
+            ->with('activeContract')
+            ->get();
 
         return view(
             'admin.personnel-groups.edit',
@@ -473,28 +466,17 @@ class PersonnelGroupController extends Controller
 
                 foreach ($request->helpers as $helperId) {
 
-                    $helperGroups = PersonnelGroupDetail::where('personnel_id', $helperId)
-                        ->whereHas('group', function ($q) use ($request, $group) {
-                            $q->where('shift_id', $request->shift_id)
-                                ->where('id', '!=', $group->id);
-                        })
-                        ->with('group.workdays')
-                        ->get();
+                    $existsInAnotherGroup = PersonnelGroupDetail::where('personnel_id', $helperId)
+                        ->where('personnel_group_id', '!=', $group->id)
+                        ->exists();
 
-                    foreach ($helperGroups as $detail) {
+                    if ($existsInAnotherGroup) {
 
-                        $groupDays = $detail->group->workdays->pluck('day')->toArray();
+                        $helper = Personnel::find($helperId);
 
-                        $repeatedDays = array_intersect($request->workdays, $groupDays);
-
-                        if (!empty($repeatedDays)) {
-
-                            return response()->json([
-                                'message' =>
-                                'Uno de los ayudantes ya está asignado a otro grupo en el mismo turno para los días: '
-                                    . implode(', ', $repeatedDays)
-                            ], 422);
-                        }
+                        return response()->json([
+                            'message' => "El ayudante {$helper->names} {$helper->lastnames} ya está registrado en otro grupo."
+                        ], 422);
                     }
                 }
             }

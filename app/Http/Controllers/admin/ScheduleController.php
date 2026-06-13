@@ -79,79 +79,10 @@ class ScheduleController extends Controller
      * Valida la disponibilidad de conductores, ayudantes y vehículos.
      * Invocado vía AJAX antes de guardar.
      */
-    public function validateAvailability(Request $request)
-    {
-        $startDate = Carbon::parse($request->start_date);
-        $endDate = Carbon::parse($request->end_date);
-        $driverId = $request->driver_id;
-        $helperIds = $request->helper_ids ?? [];
-        $vehicleId = $request->vehicle_id;
-        $workdays = $request->workdays ?? []; // Días de la semana seleccionados
-
-        $inconsistencies = [];
-
-        // 1. Validar Feriados (Si la programación cae en un feriado activo)
-        $holidays = Holiday::where('status', true)
-            ->whereBetween('date', [$startDate, $endDate])
-            ->get();
-        
-        foreach ($holidays as $holiday) {
-            // Podríamos ser más específicos según los días de la semana, pero por ahora notificamos
-            $inconsistencies[] = "El periodo incluye un feriado: " . $holiday->description . " (" . $holiday->date->format('d/m/Y') . ")";
-        }
-
-        // 2. Validar Vacaciones del Conductor y Ayudantes
-        $allPersonnelIds = array_merge([$driverId], $helperIds);
-        foreach ($allPersonnelIds as $pId) {
-            $personnel = Personnel::find($pId);
-            if (!$personnel) continue;
-
-            $vacations = Vacation::where('personnel_id', $pId)
-                ->where('status', 'Aprobada') // Coincide con el enum en español
-                ->where(function($q) use ($startDate, $endDate) {
-                    $q->whereBetween('start_date', [$startDate, $endDate])
-                      ->orWhereBetween('end_date', [$startDate, $endDate]);
-                })->first();
-
-            if ($vacations) {
-                $inconsistencies[] = "El personal {$personnel->names} {$personnel->lastnames} tiene vacaciones en este periodo.";
-            }
-        }
-
-        // 3. Validar otras programaciones activas (Cruces de horario/días)
-        // Por ahora una validación simple de fechas, se puede refinar con los 'workdays'
-        $existingSchedules = Schedule::whereIn('status', ['scheduled', 'in_progress'])
-            ->where(function($q) use ($startDate, $endDate) {
-                $q->whereBetween('start_date', [$startDate, $endDate])
-                  ->orWhereBetween('end_date', [$startDate, $endDate]);
-            })->get();
-
-        foreach ($existingSchedules as $es) {
-            if ($es->driver_id == $driverId) {
-                $inconsistencies[] = "El conductor ya está asignado a otra programación en este periodo.";
-            }
-            if ($es->vehicle_id == $vehicleId) {
-                $inconsistencies[] = "El vehículo ya está asignado a otra programación en este periodo.";
-            }
-            // Validar ayudantes
-            foreach ($helperIds as $hId) {
-                if ($es->helpers()->where('personnel_id', $hId)->exists()) {
-                    $h = Personnel::find($hId);
-                    $inconsistencies[] = "El ayudante {$h->names} ya está asignado a otra programación en este periodo.";
-                }
-            }
-        }
-
-        return response()->json([
-            'valid' => count($inconsistencies) === 0,
-            'inconsistencies' => $inconsistencies
-        ]);
-    }
-
     public function store(Request $request)
     {
         // Validación de datos básica
-        $validated = $request->validate([
+        $request->validate([
             'personnel_group_id' => 'required|exists:personnel_groups,id',
             'start_date' => 'required|date',
             'end_date' => 'required|date|after_or_equal:start_date',
@@ -160,6 +91,16 @@ class ScheduleController extends Controller
             'vehicle_id' => 'required',
             'driver_id' => 'required',
         ]);
+
+        // Validar disponibilidad antes de guardar
+        $availability = $this->checkAvailability($request);
+        if (!$availability['valid']) {
+            return response()->json([
+                'success' => false,
+                'message' => 'Existen conflictos bloqueantes en la programación:',
+                'errors' => $availability['errors']
+            ], 422);
+        }
 
         $schedule = Schedule::create($request->all());
 
@@ -190,7 +131,7 @@ class ScheduleController extends Controller
     {
         $schedule = Schedule::findOrFail($id);
         
-        $validated = $request->validate([
+        $request->validate([
             'personnel_group_id' => 'required|exists:personnel_groups,id',
             'start_date' => 'required|date',
             'end_date' => 'required|date|after_or_equal:start_date',
@@ -199,6 +140,16 @@ class ScheduleController extends Controller
             'vehicle_id' => 'required',
             'driver_id' => 'required',
         ]);
+
+        // Validar disponibilidad antes de actualizar (pasando el ID para excluirlo)
+        $availability = $this->checkAvailability($request, $id);
+        if (!$availability['valid']) {
+            return response()->json([
+                'success' => false,
+                'message' => 'Existen conflictos bloqueantes en la actualización:',
+                'errors' => $availability['errors']
+            ], 422);
+        }
 
         $schedule->update($request->all());
 
@@ -218,6 +169,94 @@ class ScheduleController extends Controller
         }
 
         return response()->json(['success' => true]);
+    }
+
+    private function checkAvailability(Request $request, $excludeId = null)
+    {
+        $startDate = Carbon::parse($request->start_date);
+        $endDate = Carbon::parse($request->end_date);
+        $groupId = $request->personnel_group_id;
+        $driverId = $request->driver_id;
+        $helperIds = $request->helper_ids ?? [];
+        $vehicleId = $request->vehicle_id;
+
+        $errors = [];
+        $warnings = [];
+
+        // 1. Validar Feriados (Advertencia)
+        $holidays = Holiday::where('status', true)
+            ->whereBetween('date', [$startDate, $endDate])
+            ->get();
+        
+        foreach ($holidays as $holiday) {
+            $warnings[] = "El periodo incluye un feriado: " . $holiday->description . " (" . $holiday->date->format('d/m/Y') . "). Este día no se tomará en cuenta para la jornada laboral.";
+        }
+
+        // 2. Validar Vacaciones (Error)
+        $allPersonnelIds = array_filter(array_unique(array_merge([$driverId], $helperIds)));
+        foreach ($allPersonnelIds as $pId) {
+            $personnel = Personnel::find($pId);
+            if (!$personnel) continue;
+
+            $vacations = Vacation::where('personnel_id', $pId)
+                ->where('status', 'Aprobada')
+                ->where(function($q) use ($startDate, $endDate) {
+                    $q->whereBetween('start_date', [$startDate, $endDate])
+                      ->orWhereBetween('end_date', [$startDate, $endDate])
+                      ->orWhere(function($sub) use ($startDate, $endDate) {
+                          $sub->where('start_date', '<=', $startDate)
+                              ->where('end_date', '>=', $endDate);
+                      });
+                })->first();
+
+            if ($vacations) {
+                $errors[] = "El personal {$personnel->names} {$personnel->lastnames} tiene vacaciones aprobadas en este periodo.";
+            }
+        }
+
+        // 3. Validar otras programaciones activas (Cruces - Error)
+        $existingSchedules = Schedule::whereIn('status', ['scheduled', 'in_progress'])
+            ->when($excludeId, function($q) use ($excludeId) {
+                $q->where('id', '!=', $excludeId);
+            })
+            ->where(function($q) use ($startDate, $endDate) {
+                $q->whereBetween('start_date', [$startDate, $endDate])
+                  ->orWhereBetween('end_date', [$startDate, $endDate])
+                  ->orWhere(function($sub) use ($startDate, $endDate) {
+                      $sub->where('start_date', '<=', $startDate)
+                          ->where('end_date', '>=', $endDate);
+                  });
+            })->get();
+
+        foreach ($existingSchedules as $es) {
+            if ($es->personnel_group_id == $groupId) {
+                $errors[] = "El grupo ya tiene una programación que se cruza con estas fechas.";
+            }
+            if ($es->driver_id == $driverId) {
+                $errors[] = "El conductor ya está asignado a otra programación en este periodo.";
+            }
+            if ($es->vehicle_id == $vehicleId) {
+                $errors[] = "El vehículo ya está asignado a otra programación en este periodo.";
+            }
+            foreach ($helperIds as $hId) {
+                if ($es->helpers()->where('personnel_id', $hId)->exists()) {
+                    $h = Personnel::find($hId);
+                    $errors[] = "El ayudante {$h->names} ya está asignado a otra programación en este periodo.";
+                }
+            }
+        }
+
+        return [
+            'valid' => count($errors) === 0,
+            'errors' => $errors,
+            'warnings' => $warnings
+        ];
+    }
+
+    public function validateAvailability(Request $request)
+    {
+        $result = $this->checkAvailability($request, $request->id);
+        return response()->json($result);
     }
 
     public function destroy($id)

@@ -33,30 +33,34 @@
 
     <div class="card-body">
 
-        <table class="table table-striped table-hover"
-            id="datatable">
+        <div class="table-responsive">
 
-            <thead>
+            <table class="table table-striped table-hover w-100"
+                id="datatable">
 
-                <tr>
+                <thead>
 
-                    <th>Nombre</th>
-                    <th>Zona</th>
-                    <th>Turno</th>
-                    <th>Vehículo</th>
-                    <th>Conductor</th>
-                    <th>Ayudantes</th>
-                    <th>Días de Trabajo</th>
-                    <th>Estado</th>
-                    <th>Creación</th>
-                    <th width="20">Editar</th>
-                    <th width="20">Eliminar</th>
+                    <tr>
 
-                </tr>
+                        <th>Nombre</th>
+                        <th>Zona</th>
+                        <th>Turno</th>
+                        <th>Vehículo</th>
+                        <th>Conductor</th>
+                        <th>Ayudantes</th>
+                        <th>Días de Trabajo</th>
+                        <th>Estado</th>
+                        <th>Creación</th>
+                        <th width="20">Editar</th>
+                        <th width="20">Eliminar</th>
 
-            </thead>
+                    </tr>
 
-        </table>
+                </thead>
+
+            </table>
+
+        </div>
 
     </div>
 
@@ -108,6 +112,8 @@
             processing: true,
 
             serverSide: true,
+
+            responsive: true,
 
             ajax: "{{ route('admin.personnel-groups.index') }}",
 
