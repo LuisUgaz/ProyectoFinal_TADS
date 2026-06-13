@@ -12,4 +12,9 @@ class Shift extends Model
         'end_time',
         'description'
     ];
+
+    public function personnelGroups()
+    {
+        return $this->hasMany(PersonnelGroup::class);
+    }
 }

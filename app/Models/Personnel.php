@@ -49,4 +49,14 @@ class Personnel extends Model
     {
         return $this->hasMany(Vacation::class);
     }
+
+    public function driverGroups()
+    {
+        return $this->hasMany(PersonnelGroup::class,'driver_id');
+    }
+
+    public function helperGroups()
+    {
+        return $this->hasMany(PersonnelGroupDetail::class);
+    }
 }

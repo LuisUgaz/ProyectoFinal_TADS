@@ -393,7 +393,7 @@ return [
                 ],
                 [
                     'text' => 'Grupos de personal',
-                    'url'  => '#',
+                    'url'  => 'admin/personnel-groups',
                     'icon' => 'fas fa-user-friends',
                 ],
                 [

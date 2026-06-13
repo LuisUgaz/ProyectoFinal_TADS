@@ -49,4 +49,9 @@ class Vehicle extends Model
     {
         return $this->hasMany(VehicleImage::class);
     }
+    
+    public function personnelGroups()
+    {
+        return $this->hasMany(PersonnelGroup::class);
+    }
 }

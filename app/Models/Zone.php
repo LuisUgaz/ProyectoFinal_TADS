@@ -36,4 +36,9 @@ class Zone extends Model
     {
         return $this->belongsTo(District::class);
     }
+
+    public function personnelGroups()
+    {
+        return $this->hasMany(PersonnelGroup::class);
+    }
 }
