@@ -355,9 +355,18 @@ class PersonnelGroupController extends Controller
     /**
      * Display the specified resource.
      */
-    public function show(PersonnelGroup $personnelGroup)
+    public function show($id)
     {
-        //
+        $group = PersonnelGroup::with([
+            'zone',
+            'shift',
+            'vehicle',
+            'driver',
+            'helpers.personnel',
+            'workdays'
+        ])->findOrFail($id);
+
+        return response()->json($group);
     }
 
     /**

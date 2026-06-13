@@ -71,8 +71,8 @@
                 <div class="icon">
                     <i class="fas fa-calendar-alt"></i>
                 </div>
-                <a href="#" class="small-box-footer">
-                    Próximamente <i class="fas fa-clock"></i>
+                <a href="{{ route('admin.schedules.index') }}" class="small-box-footer">
+                    Acceder <i class="fas fa-arrow-circle-right"></i>
                 </a>
             </div>
         </div>

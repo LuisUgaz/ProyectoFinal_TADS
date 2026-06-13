@@ -107,4 +107,10 @@ Route::middleware([
     Route::resource('admin/personnel-groups', PersonnelGroupController::class)
         ->names('admin.personnel-groups');
 
+    Route::post('admin/schedules/validate-availability', [\App\Http\Controllers\admin\ScheduleController::class, 'validateAvailability'])
+        ->name('admin.schedules.validate-availability');
+
+    Route::resource('admin/schedules', \App\Http\Controllers\admin\ScheduleController::class)
+        ->names('admin.schedules');
+
 });

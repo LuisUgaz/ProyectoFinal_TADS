@@ -398,9 +398,10 @@ return [
                 ],
                 [
                     'text' => 'Programación',
-                    'url'  => '#',
+                    'url'  => 'admin/schedules',
                     'icon' => 'fas fa-calendar-check',
                 ],
+
             ],
         ],
 
