@@ -230,8 +230,20 @@ class ScheduleController extends Controller
 
         foreach ($existingSchedules as $es) {
             if ($es->personnel_group_id == $groupId) {
-                $errors[] = "El grupo ya tiene una programación que se cruza con estas fechas.";
+                $errors[] = "El Grupo de Personal ya tiene una programación activa (ID: {$es->id}) que se solapa con este periodo ({$es->start_date->format('d/m/Y')} - {$es->end_date->format('d/m/Y')}).";
             }
+            
+            // Nueva validación por Zona y Turno
+            if ($es->zone_id == $request->zone_id) {
+                if ($es->shift_id == $request->shift_id) {
+                    $errors[] = "La Zona y el Turno ya están ocupados por otra programación activa (ID: {$es->id}) en este periodo.";
+                } else {
+                    // Si es la misma zona pero diferente turno, ¿debería ser error o aviso? 
+                    // El usuario indica que no debería permitirlo para "el mismo mes", así que lo pondremos como error.
+                    $errors[] = "La Zona ya tiene una programación asignada (ID: {$es->id}) en un turno diferente durante este periodo.";
+                }
+            }
+
             if ($es->driver_id == $driverId) {
                 $errors[] = "El conductor ya está asignado a otra programación en este periodo.";
             }
