@@ -110,6 +110,16 @@ Route::middleware([
     Route::post('admin/schedules/validate-availability', [\App\Http\Controllers\admin\ScheduleController::class, 'validateAvailability'])
         ->name('admin.schedules.validate-availability');
 
+    Route::post('admin/schedules/daily/{id}/status', [\App\Http\Controllers\admin\ScheduleController::class, 'updateDailyStatus'])
+        ->name('admin.schedules.daily-status');
+    Route::post('admin/schedules/daily/{id}/update', [\App\Http\Controllers\admin\ScheduleController::class, 'updateDailyRecord'])
+        ->name('admin.schedules.daily-update');
+
+    Route::post('admin/schedules/preview-mass', [\App\Http\Controllers\admin\ScheduleController::class, 'previewMass'])
+        ->name('admin.schedules.preview-mass');
+    Route::post('admin/schedules/store-mass', [\App\Http\Controllers\admin\ScheduleController::class, 'storeMass'])
+        ->name('admin.schedules.store-mass');
+
     Route::resource('admin/schedules', \App\Http\Controllers\admin\ScheduleController::class)
         ->names('admin.schedules');
 

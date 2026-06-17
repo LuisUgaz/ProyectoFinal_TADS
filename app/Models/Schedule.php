@@ -60,4 +60,9 @@ class Schedule extends Model
     {
         return $this->hasMany(ScheduleWorkday::class);
     }
+
+    public function dailies(): HasMany
+    {
+        return $this->hasMany(ScheduleDaily::class);
+    }
 }
