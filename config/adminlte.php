@@ -14,7 +14,7 @@ return [
     |
     */
 
-    'title' => 'Sistema RSU',
+    'title' => 'CleanRoute',
     'title_prefix' => '',
     'title_postfix' => '',
 
@@ -64,9 +64,9 @@ return [
     */
 
     'logo' => '',
-    'logo_img' => 'img/logo-jlo.png',
+    'logo_img' => 'img/cleanroute-logo.png',
     'logo_img_class' => 'jlo-logo-sidebar',
-    'logo_img_alt' => 'Municipalidad José Leonardo Ortiz',
+    'logo_img_alt' => 'Clean Route',
     'logo_img_xl' => null,
     'logo_img_xl_class' => null,
 
@@ -113,11 +113,11 @@ return [
         'enabled' => true,
         'mode' => 'fullscreen',
         'img' => [
-            'path' => 'img/logo-jlo-icono.png',
-            'alt' => 'Municipalidad José Leonardo Ortiz',
+            'path' => 'img/cleanroute-icon.png',
+            'alt' => 'Clean Route',
             'effect' => 'animation__shake',
-            'width' => 80,
-            'height' => 80,
+            'width' => 100,
+            'height' => 70,
         ],
     ],
 
@@ -332,11 +332,6 @@ return [
                     'url'  => 'admin/vehicles',
                     'icon' => 'fas fa-car-side',
                 ],
-                [
-                    'text' => 'Mantenimientos',
-                    'url'  => '#',
-                    'icon' => 'fas fa-tools',
-                ],
             ],
         ],
 
@@ -410,7 +405,12 @@ return [
             'icon' => 'fas fa-exchange-alt',
             'submenu' => [
                 [
-                    'text' => 'Solicitudes',
+                    'text' => 'Motivos',
+                    'url'  => '#',
+                    'icon' => 'fas fa-file-alt',
+                ],
+                                [
+                    'text' => 'Cambios',
                     'url'  => '#',
                     'icon' => 'fas fa-file-alt',
                 ],
@@ -425,11 +425,6 @@ return [
                     'text' => 'Usuarios',
                     'url'  => '#',
                     'icon' => 'fas fa-user',
-                ],
-                [
-                    'text' => 'Roles',
-                    'url'  => '#',
-                    'icon' => 'fas fa-user-shield',
                 ],
             ],
         ],
@@ -477,6 +472,11 @@ return [
                     'type' => 'css',
                     'asset' => true,
                     'location' => 'css/admin-custom.css',
+                ],
+                [
+                    'type' => 'js',
+                    'asset' => true,
+                    'location' => 'js/admin-custom.js',
                 ],
             ],
         ],
