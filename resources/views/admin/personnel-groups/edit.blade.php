@@ -1,29 +1,16 @@
-<form action="{{ route('admin.personnel-groups.update', $group->id) }}"
-      method="POST">
+<form action="{{ route('admin.personnel-groups.update', $group->id) }}" method="POST">
 
     @csrf
     @method('PUT')
 
     @include('admin.personnel-groups.template.form')
+    
+    <button type="submit" class="btn btn-success btn-sm">
+        <i class="fas fa-pen"></i> Actualizar
+    </button>
 
-    <div class="text-right">
-
-        <button type="submit"
-                class="btn btn-success">
-
-            <i class="fas fa-save"></i>
-            Actualizar
-
-        </button>
-
-        <button type="button"
-                class="btn btn-secondary"
-                data-dismiss="modal">
-
-            Cancelar
-
-        </button>
-
-    </div>
+    <button type="button" class="btn btn-danger btn-sm" data-dismiss="modal">
+        <i class="fas fa-times"></i> Cancelar
+    </button>
 
 </form>

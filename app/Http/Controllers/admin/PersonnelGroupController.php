@@ -60,14 +60,13 @@ class PersonnelGroupController extends Controller
                 })
 
                 ->addColumn('helpers', function ($group) {
-
                     return $group->helpers
                         ->map(function ($detail) {
-
-                            return $detail->personnel->names . ' ' .
-                                $detail->personnel->lastnames;
+                            return '<div class="helper-item">'
+                                . $detail->personnel->names . ' ' . $detail->personnel->lastnames .
+                            '</div>';
                         })
-                        ->implode('<br>');
+                        ->implode('');
                 })
 
                 ->addColumn('workdays', function ($group) {
@@ -92,7 +91,15 @@ class PersonnelGroupController extends Controller
                         return $daysMap[$day] ?? $day;
                     }, $days);
 
-                    return implode(', ', $abbreviated);
+                    $html = '<div class="days-grid">';
+
+                    foreach ($abbreviated as $day) {
+                        $html .= '<span class="badge badge-light border day-badge">'.$day.'</span>';
+                    }
+
+                    $html .= '</div>';
+
+                    return $html;
                 })
 
                 ->addColumn('status_badge', function ($group) {
@@ -111,38 +118,29 @@ class PersonnelGroupController extends Controller
                     return $group->updated_at->format('d/m/Y H:i');
                 })
 
-                ->addColumn('edit', function ($group) {
+                ->addColumn('actions', function ($group) {
 
-                    return '<button
-                            class="btn btn-warning btn-sm btn-editar"
-                            id="' . $group->id . '">
+                    $edit = '<button
+                                class="btn btn-warning btn-sm btn-editar"
+                                id="' . $group->id . '">
+                                <i class="fas fa-pen"></i>
+                            </button>';
 
-                            <i class="fas fa-edit"></i>
+                    $delete = '<button
+                                type="button"
+                                class="btn btn-danger btn-sm btn-delete"
+                                data-url="' . route('admin.personnel-groups.destroy', $group->id) . '">
+                                <i class="fas fa-trash"></i>
+                            </button>';
 
-                        </button>';
-                })
-
-                ->addColumn('delete', function ($group) {
-
-                    return '<button
-                            type="button"
-                            class="btn btn-danger btn-sm btn-delete"
-                            data-url="' . route(
-                        'admin.personnel-groups.destroy',
-                        $group->id
-                    ) . '">
-
-                            <i class="fas fa-trash"></i>
-
-                        </button>';
+                    return $edit . ' ' . $delete;
                 })
 
                 ->rawColumns([
                     'helpers',
                     'workdays',
                     'status_badge',
-                    'edit',
-                    'delete'
+                    'actions'
                 ])
 
                 ->make(true);

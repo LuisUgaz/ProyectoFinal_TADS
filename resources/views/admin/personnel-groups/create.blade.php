@@ -1,28 +1,15 @@
-<form action="{{ route('admin.personnel-groups.store') }}"
-      method="POST">
+<form action="{{ route('admin.personnel-groups.store') }}" method="POST">
 
     @csrf
 
     @include('admin.personnel-groups.template.form')
 
-    <div class="text-right">
+    <button type="submit" class="btn btn-success btn-sm">
+        <i class="fas fa-save"></i> Guardar
+    </button>
 
-        <button type="submit"
-                class="btn btn-success">
-
-            <i class="fas fa-save"></i>
-            Guardar
-
-        </button>
-
-        <button type="button"
-                class="btn btn-secondary"
-                data-dismiss="modal">
-
-            Cancelar
-
-        </button>
-
-    </div>
+    <button type="button" class="btn btn-danger btn-sm" data-dismiss="modal">
+        <i class="fas fa-times"></i> Cancelar
+    </button>
 
 </form>
