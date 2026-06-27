@@ -3,93 +3,99 @@
 @section('title', 'Panel Principal')
 
 @section('content_header')
-    <h1 class="font-weight-bold"></h1>
 @stop
 
 @section('content')
-    <div class="card shadow border-0 mb-4" style="border-radius: 18px;">
-        <div class="card-body p-4">
+    <div class="dashboard-rsu">
+
+        {{-- ENCABEZADO PRINCIPAL --}}
+        <section class="rsu-hero-simple">
             <div class="row align-items-center">
-                <div class="col-md-8">
-                    <h2 class="font-weight-bold text-primary">
-                        Sistema de Gestión de Residuos Sólidos Urbanos
-                    </h2>
-                    <p class="text-muted mb-2">
+                <div class="col-lg-8 col-md-7">
+                    <span class="rsu-kicker">
+                        <i class="fas fa-city mr-2"></i>
                         Municipalidad Distrital de José Leonardo Ortiz
-                    </p>
+                    </span>
+
+                    <h1>Sistema de Gestión de Residuos Sólidos Urbanos</h1>
+
                     <p>
-                        Plataforma institucional orientada a la administración de vehículos,
-                        personal, programación y control de actividades relacionadas con la
-                        recolección de residuos sólidos urbanos.
+                        Plataforma web para administrar vehículos, personal, zonas y programación
+                        del servicio de recolección de residuos sólidos urbanos.
                     </p>
                 </div>
 
-                <div class="col-md-4 text-center">
-                    <img src="{{ asset('img/logo-jlo.png') }}" style="max-width: 230px;">
+                <div class="col-lg-4 col-md-5 text-center">
+                    <img src="{{ asset('img/logo-jlo.png') }}" class="rsu-logo-dashboard"
+                        alt="Municipalidad Distrital de José Leonardo Ortiz">
                 </div>
             </div>
-        </div>
-    </div>
+        </section>
 
-    <div class="row">
-        <div class="col-lg-3 col-md-6">
-            <div class="small-box bg-info">
-                <div class="inner">
-                    <h4>Vehículos</h4>
-                    <p>Colores, marcas, modelos, tipos y vehículos</p>
-                </div>
-                <div class="icon">
-                    <i class="fas fa-truck"></i>
-                </div>
-                <a href="{{ route('admin.vehicles.index') }}" class="small-box-footer">
-                    Acceder <i class="fas fa-arrow-circle-right"></i>
-                </a>
-            </div>
+        {{-- TÍTULO DE MÓDULOS --}}
+        <div class="rsu-section-title">
+            <h3>Módulos principales</h3>
         </div>
 
-        <div class="col-lg-3 col-md-6">
-            <div class="small-box bg-success">
-                <div class="inner">
-                    <h4>Personal</h4>
-                    <p>Tipos, personal, contratos, asistencias y vacaciones</p>
-                </div>
-                <div class="icon">
-                    <i class="fas fa-users"></i>
-                </div>
-                <a href="{{ route('admin.personnels.index') }}" class="small-box-footer">
-                    Acceder <i class="fas fa-arrow-circle-right"></i>
-                </a>
-            </div>
-        </div>
+        {{-- MÓDULOS --}}
+        <div class="row rsu-modules-row">
 
-        <div class="col-lg-3 col-md-6">
-            <div class="small-box bg-warning">
-                <div class="inner">
-                    <h4>Programación</h4>
-                    <p>Turnos, zonas, feriados, grupos de personal y programación</p>
-                </div>
-                <div class="icon">
-                    <i class="fas fa-calendar-alt"></i>
-                </div>
-                <a href="{{ route('admin.schedules.index') }}" class="small-box-footer">
-                    Acceder <i class="fas fa-arrow-circle-right"></i>
+            <div class="col-lg-3 col-md-6 mb-3">
+                <a href="{{ route('admin.vehicles.index') }}" class="rsu-module-card rsu-card-blue">
+                    <div class="rsu-card-content">
+                        <span class="rsu-card-label">Módulo 01</span>
+                        <h4>Vehículos</h4>
+                        <p>Colores, marcas, modelos, tipos de vehículos y vehículos.</p>
+                        <i class="fas fa-truck-moving rsu-card-icon"></i>
+                    </div>
+                    <div class="rsu-card-footer">
+                        Acceder <i class="fas fa-arrow-circle-right ml-1"></i>
+                    </div>
                 </a>
             </div>
-        </div>
 
-        <div class="col-lg-3 col-md-6">
-            <div class="small-box bg-danger">
-                <div class="inner">
-                    <h4>Cambios</h4>
-                    <p>Control y seguimiento operativo, solicitudes</p>
-                </div>
-                <div class="icon">
-                    <i class="fas fa-exchange-alt"></i>
-                </div>
-                <a href="#" class="small-box-footer">
-                    Próximamente <i class="fas fa-clock"></i>
+            <div class="col-lg-3 col-md-6 mb-3">
+                <a href="{{ route('admin.personnels.index') }}" class="rsu-module-card rsu-card-green">
+                    <div class="rsu-card-content">
+                        <span class="rsu-card-label">Módulo 02</span>
+                        <h4>Personal</h4>
+                        <p>Tipos de personal, personal, contratos, asistencias y vacaciones.</p>
+                        <i class="fas fa-users-cog rsu-card-icon"></i>
+                    </div>
+                    <div class="rsu-card-footer">
+                        Acceder <i class="fas fa-arrow-circle-right ml-1"></i>
+                    </div>
                 </a>
             </div>
+
+            <div class="col-lg-3 col-md-6 mb-3">
+                <a href="{{ route('admin.schedules.index') }}" class="rsu-module-card rsu-card-yellow">
+                    <div class="rsu-card-content">
+                        <span class="rsu-card-label">Módulo 03</span>
+                        <h4>Programación</h4>
+                        <p>Turnos, zonas, feriados, grupos de personal y programación.</p>
+                        <i class="fas fa-route rsu-card-icon"></i>
+                    </div>
+                    <div class="rsu-card-footer">
+                        Acceder <i class="fas fa-arrow-circle-right ml-1"></i>
+                    </div>
+                </a>
+            </div>
+
+            <div class="col-lg-3 col-md-6 mb-3">
+                <a href="#" onclick="return false;" class="rsu-module-card rsu-card-red rsu-card-disabled">
+                    <div class="rsu-card-content">
+                        <span class="rsu-card-label">Módulo 04</span>
+                        <h4>Cambios</h4>
+                        <p>Motivos y cambios.</p>
+                        <i class="fas fa-exchange-alt rsu-card-icon"></i>
+                    </div>
+                    <div class="rsu-card-footer">
+                        Próximamente <i class="fas fa-clock ml-1"></i>
+                    </div>
+                </a>
+            </div>
+
         </div>
     </div>
 @stop

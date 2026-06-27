@@ -323,7 +323,7 @@ return [
                     'icon' => 'fas fa-wrench',
                 ],
                 [
-                    'text' => 'Tipo de vehículos',
+                    'text' => 'Tipos de vehículos',
                     'url'  => 'admin/vehicle-types',
                     'icon' => 'fas fa-car',
                 ],
