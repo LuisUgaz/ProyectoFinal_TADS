@@ -1019,3 +1019,26 @@ table.dataTable .btn-danger {
         height: 185px;
     }
 }
+
+/* Menú de usuario */
+.main-header .dropdown-menu,
+.navbar .dropdown-menu {
+    border: 1px solid #dfe7dd !important;
+    border-radius: 10px !important;
+    padding: 8px !important;
+    box-shadow: 0 10px 24px rgba(0, 0, 0, 0.14) !important;
+}
+
+.main-header .dropdown-menu a,
+.navbar .dropdown-menu a {
+    border-radius: 8px !important;
+    padding: 10px 14px !important;
+    font-weight: 700 !important;
+    color: #1f2933 !important;
+}
+
+.main-header .dropdown-menu a:hover,
+.navbar .dropdown-menu a:hover {
+    background: #edf7dd !important;
+    color: #3f6212 !important;
+}
