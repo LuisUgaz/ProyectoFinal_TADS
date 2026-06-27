@@ -15,6 +15,7 @@ use App\Http\Controllers\admin\VacationController;
 use App\Http\Controllers\admin\ZoneController;
 use App\Http\Controllers\admin\HolidayController;
 use App\Http\Controllers\admin\PersonnelGroupController;
+use App\Http\Controllers\admin\ReasonController;
 use Illuminate\Support\Facades\Route;
 
 Route::get('/', function () {
@@ -124,5 +125,8 @@ Route::middleware([
 
     Route::resource('admin/schedules', \App\Http\Controllers\admin\ScheduleController::class)
         ->names('admin.schedules');
+
+    Route::resource('admin/reasons', ReasonController::class)
+        ->names('admin.reasons');
 
 });
