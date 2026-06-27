@@ -406,7 +406,7 @@ return [
             'submenu' => [
                 [
                     'text' => 'Motivos',
-                    'url'  => '#',
+                    'url'  => 'admin/reasons',
                     'icon' => 'fas fa-file-alt',
                 ],
                                 [
