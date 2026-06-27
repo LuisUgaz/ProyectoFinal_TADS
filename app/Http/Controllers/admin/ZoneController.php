@@ -31,11 +31,13 @@ class ZoneController extends Controller
                 ->addColumn('description', function ($zone) {
                     return $zone->description ?: '—';
                 })
+
                 ->addColumn('status_label', function ($zone) {
                     return $zone->status
                         ? '<span class="badge badge-success badge-custom">Activo</span>'
                         : '<span class="badge badge-danger badge-custom">Inactivo</span>';
                 })
+
                 ->addColumn('coordinates_status', function ($zone) {
                     $count = is_array($zone->coordinates) ? count($zone->coordinates) : 0;
 
@@ -45,6 +47,7 @@ class ZoneController extends Controller
 
                     return '<span class="badge badge-warning badge-custom">Pendiente</span>';
                 })
+
                 ->addColumn('created_at_formatted', function ($zone) {
                     return $zone->created_at ? $zone->created_at->format('d/m/Y H:i') : '-';
                 })

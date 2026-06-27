@@ -1042,3 +1042,701 @@ table.dataTable .btn-danger {
     background: #edf7dd !important;
     color: #3f6212 !important;
 }
+
+/* ====================================
+   MODAL SHOW VEHÍCULO
+==================================== */
+
+.vehicle-show-header {
+    background: #ffffff !important;
+    border-bottom: 3px solid #d1d5db !important;
+    padding: 13px 16px !important;
+}
+
+.vehicle-show-header .modal-title {
+    color: #1f2933 !important;
+    font-size: 18px !important;
+    font-weight: 900 !important;
+}
+
+.vehicle-show-header .close {
+    color: #6b7280 !important;
+    opacity: 1 !important;
+}
+
+.vehicle-show-body {
+    background: #f5f6f4 !important;
+    padding: 16px !important;
+}
+
+/* CONTENEDORES */
+.vehicle-gallery-card,
+.vehicle-detail-card {
+    background: #ffffff !important;
+    border: 1px solid #dfe5dc !important;
+    border-radius: 12px !important;
+    padding: 14px !important;
+    margin-bottom: 12px !important;
+    box-shadow: 0 2px 8px rgba(31, 41, 51, 0.04) !important;
+}
+
+/* GALERÍA */
+.vehicle-gallery-card h6 {
+    color: #1f2933 !important;
+    font-size: 15px !important;
+    font-weight: 900 !important;
+    margin-bottom: 12px !important;
+}
+
+.vehicle-main-photo,
+.vehicle-empty-photo {
+    height: 245px !important;
+    border-radius: 10px !important;
+    display: flex !important;
+    align-items: center !important;
+    justify-content: center !important;
+}
+
+.vehicle-main-photo {
+    background: #f8fafc !important;
+    border: 1px solid #d8dee4 !important;
+    padding: 8px !important;
+}
+
+.vehicle-main-photo img {
+    max-width: 100% !important;
+    max-height: 100% !important;
+    object-fit: contain !important;
+}
+
+.vehicle-empty-photo {
+    background: #ffffff !important;
+    border: 1px dashed #cbd5e1 !important;
+    flex-direction: column !important;
+    gap: 8px !important;
+    color: #94a3b8 !important;
+}
+
+.vehicle-empty-photo i {
+    font-size: 34px !important;
+}
+
+/* MINIATURAS */
+.vehicle-mini-gallery {
+    display: grid !important;
+    grid-template-columns: repeat(3, 1fr) !important;
+    gap: 9px !important;
+    margin-top: 13px !important;
+}
+
+.vehicle-mini-gallery img {
+    width: 100% !important;
+    height: 68px !important;
+    object-fit: cover !important;
+    background: #ffffff !important;
+    border: 1px solid #d8dee4 !important;
+    border-radius: 8px !important;
+    padding: 3px !important;
+    cursor: pointer !important;
+    transition: all 0.2s ease !important;
+}
+
+.vehicle-mini-gallery img:hover {
+    transform: scale(1.04) !important;
+    border-color: #0874d1 !important;
+}
+
+.vehicle-mini-gallery img.active {
+    border: 2px solid #8fbf26 !important;
+}
+
+/* SECCIONES DE DATOS */
+.vehicle-detail-title {
+    color: #1f2933 !important;
+    font-size: 15px !important;
+    font-weight: 900 !important;
+    margin-bottom: 11px !important;
+    padding-bottom: 8px !important;
+    border-bottom: 1px solid #edf0ed !important;
+}
+
+.vehicle-detail-title i {
+    color: #0874d1 !important;
+    margin-right: 6px !important;
+}
+
+.vehicle-detail-grid {
+    display: grid !important;
+    grid-template-columns: repeat(2, 1fr) !important;
+    gap: 9px !important;
+}
+
+.vehicle-detail-grid div {
+    min-height: 58px !important;
+    background: #f8fafc !important;
+    border-radius: 9px !important;
+    padding: 9px 11px !important;
+}
+
+.vehicle-detail-grid label {
+    display: block !important;
+    color: #64748b !important;
+    font-size: 12px !important;
+    font-weight: 800 !important;
+    margin-bottom: 4px !important;
+}
+
+.vehicle-detail-grid span {
+    color: #111827 !important;
+    font-size: 14px !important;
+    font-weight: 800 !important;
+}
+
+/* COLOR */
+.vehicle-color-dot {
+    display: inline-block !important;
+    width: 14px !important;
+    height: 14px !important;
+    border-radius: 50% !important;
+    border: 1px solid #cbd5e1 !important;
+    margin-right: 6px !important;
+    vertical-align: middle !important;
+}
+
+/* ====================================
+   BADGES UNIFICADOS DEL SISTEMA
+==================================== */
+
+.badge-custom {
+    display: inline-block !important;
+    padding: 4px 8px !important;
+    border-radius: 7px !important;
+    font-size: 11.5px !important;
+    font-weight: 700 !important;
+    line-height: 1 !important;
+    color: #ffffff !important;
+    min-width: auto !important;
+    text-align: center !important;
+}
+
+.badge-success.badge-custom {
+    background-color: #16a34a !important;
+    color: #ffffff !important;
+}
+
+.badge-danger.badge-custom {
+    background-color: #ef4444 !important;
+    color: #ffffff !important;
+}
+
+.badge-warning.badge-custom {
+    background-color: #f59e0b !important;
+    color: #111827 !important;
+}
+
+.badge-info.badge-custom {
+    background-color: #0ea5e9 !important;
+    color: #ffffff !important;
+}
+
+.badge-primary.badge-custom {
+    background-color: #2563eb !important;
+    color: #ffffff !important;
+}
+
+.badge-secondary.badge-custom {
+    background-color: #6b7280 !important;
+    color: #ffffff !important;
+}
+
+/* DESCRIPCIÓN */
+.vehicle-description {
+    background: #f8fafc !important;
+    border-radius: 9px !important;
+    padding: 11px 13px !important;
+    color: #374151 !important;
+    font-size: 14px !important;
+    line-height: 1.5 !important;
+    margin: 0 !important;
+}
+
+/* RESPONSIVE */
+@media (max-width: 767px) {
+    .vehicle-detail-grid {
+        grid-template-columns: 1fr !important;
+    }
+
+    .vehicle-main-photo,
+    .vehicle-empty-photo {
+        height: 190px !important;
+    }
+
+    .vehicle-mini-gallery {
+        grid-template-columns: repeat(2, 1fr) !important;
+    }
+}
+
+.vehicle-thumb-item {
+    text-align: center !important;
+}
+
+.vehicle-thumb-item img {
+    display: block !important;
+}
+
+.vehicle-main-label {
+    display: inline-block !important;
+    margin-top: 4px !important;
+    background: #16a34a !important;
+    color: #ffffff !important;
+    font-size: 10px !important;
+    font-weight: 800 !important;
+    padding: 2px 6px !important;
+    border-radius: 999px !important;
+}
+
+/* ====================================
+   MODAL SHOW PERSONAL
+==================================== */
+
+.personnel-show-header {
+    background: #ffffff !important;
+    border-bottom: 3px solid #d1d5db !important;
+    padding: 13px 16px !important;
+}
+
+.personnel-show-header .modal-title {
+    color: #1f2933 !important;
+    font-size: 18px !important;
+    font-weight: 900 !important;
+}
+
+.modal-body.personnel-show-body {
+    background: #f5f6f4 !important;
+    padding: 16px !important;
+}
+
+.personnel-photo-card,
+.personnel-detail-card {
+    background: #ffffff !important;
+    border: 1px solid #dfe5dc !important;
+    border-radius: 12px !important;
+    padding: 14px !important;
+    margin-bottom: 12px !important;
+    box-shadow: 0 2px 8px rgba(31, 41, 51, 0.04) !important;
+}
+
+.personnel-photo-card h6 {
+    color: #1f2933 !important;
+    font-size: 15px !important;
+    font-weight: 900 !important;
+    margin-bottom: 12px !important;
+}
+
+.personnel-main-photo,
+.personnel-empty-photo {
+    height: 260px !important;
+    border-radius: 10px !important;
+    display: flex !important;
+    align-items: center !important;
+    justify-content: center !important;
+}
+
+.personnel-main-photo {
+    background: #f8fafc !important;
+    border: 1px solid #d8dee4 !important;
+    padding: 8px !important;
+}
+
+.personnel-main-photo img {
+    max-width: 100% !important;
+    max-height: 100% !important;
+    object-fit: cover !important;
+    border-radius: 8px !important;
+}
+
+.personnel-empty-photo {
+    background: #ffffff !important;
+    border: 1px dashed #cbd5e1 !important;
+    flex-direction: column !important;
+    gap: 8px !important;
+    color: #94a3b8 !important;
+}
+
+.personnel-empty-photo i {
+    font-size: 42px !important;
+}
+
+.personnel-detail-title {
+    color: #1f2933 !important;
+    font-size: 15px !important;
+    font-weight: 900 !important;
+    margin-bottom: 11px !important;
+    padding-bottom: 8px !important;
+    border-bottom: 1px solid #edf0ed !important;
+}
+
+.personnel-detail-title i {
+    color: #0874d1 !important;
+    margin-right: 6px !important;
+}
+
+.personnel-detail-grid {
+    display: grid !important;
+    grid-template-columns: repeat(2, 1fr) !important;
+    gap: 9px !important;
+}
+
+.personnel-detail-grid div {
+    min-height: 58px !important;
+    background: #f8fafc !important;
+    border-radius: 9px !important;
+    padding: 9px 11px !important;
+}
+
+.personnel-detail-grid label {
+    display: block !important;
+    color: #64748b !important;
+    font-size: 12px !important;
+    font-weight: 800 !important;
+    margin-bottom: 4px !important;
+}
+
+.personnel-detail-grid span {
+    color: #111827 !important;
+    font-size: 14px !important;
+    font-weight: 800 !important;
+}
+
+.personnel-full {
+    grid-column: 1 / -1 !important;
+}
+
+@media (max-width: 767px) {
+    .personnel-detail-grid {
+        grid-template-columns: 1fr !important;
+    }
+
+    .personnel-main-photo,
+    .personnel-empty-photo {
+        height: 210px !important;
+    }
+}
+
+/* SHOW VACACIONES */
+.modal-body.vacation-show-body {
+    background: #f5f6f4 !important;
+    padding: 16px !important;
+}
+
+.vacation-detail-card {
+    background: #ffffff !important;
+    border: 1px solid #dfe5dc !important;
+    border-radius: 12px !important;
+    padding: 14px !important;
+    margin-bottom: 12px !important;
+    box-shadow: 0 2px 8px rgba(31, 41, 51, 0.04) !important;
+}
+
+.vacation-detail-title {
+    color: #1f2933 !important;
+    font-size: 15px !important;
+    font-weight: 900 !important;
+    margin-bottom: 11px !important;
+    padding-bottom: 8px !important;
+    border-bottom: 1px solid #edf0ed !important;
+}
+
+.vacation-detail-title i {
+    color: #0874d1 !important;
+    margin-right: 6px !important;
+}
+
+.vacation-detail-grid {
+    display: grid !important;
+    grid-template-columns: repeat(2, 1fr) !important;
+    gap: 9px !important;
+}
+
+.vacation-detail-grid div,
+.vacation-description {
+    background: #f8fafc !important;
+    border-radius: 9px !important;
+    padding: 11px 13px !important;
+}
+
+.vacation-detail-grid label {
+    display: block !important;
+    color: #64748b !important;
+    font-size: 12px !important;
+    font-weight: 800 !important;
+    margin-bottom: 4px !important;
+}
+
+.vacation-detail-grid span,
+.vacation-description {
+    color: #111827 !important;
+    font-size: 14px !important;
+    font-weight: 800 !important;
+}
+
+.vacation-alert {
+    background: #e0f2fe !important;
+    border: 1px solid #7dd3fc !important;
+    color: #075985 !important;
+    border-radius: 9px !important;
+    padding: 11px 13px !important;
+    font-size: 14px !important;
+    font-weight: 700 !important;
+}
+
+@media (max-width: 767px) {
+    .vacation-detail-grid {
+        grid-template-columns: 1fr !important;
+    }
+}
+
+.vacation-show-header {
+    background: #ffffff !important;
+    border-bottom: 3px solid #d1d5db !important;
+    padding: 13px 16px !important;
+}
+
+.vacation-show-header .modal-title {
+    color: #1f2933 !important;
+    font-size: 18px !important;
+    font-weight: 900 !important;
+}
+
+.vacation-show-header .close {
+    color: #6b7280 !important;
+    opacity: 1 !important;
+}
+
+#FormModal .modal-body.vacation-modal-body {
+    background: #f5f6f4 !important;
+    padding: 0 !important;
+}
+
+.vacation-show-body {
+    background: #f5f6f4 !important;
+    padding: 16px !important;
+}
+
+/* MAPAS DE ZONAS */
+.zone-show-layout,
+.zone-general-layout {
+    display: grid !important;
+    grid-template-columns: 320px 1fr !important;
+    gap: 14px !important;
+    background: #f5f6f4 !important;
+}
+
+.zone-left-panel,
+.zone-right-panel {
+    min-width: 0 !important;
+}
+
+.zone-panel-card,
+.zone-map-card {
+    background: #ffffff !important;
+    border: 1px solid #dfe5dc !important;
+    border-radius: 14px !important;
+    padding: 14px !important;
+    margin-bottom: 12px !important;
+    box-shadow: 0 2px 8px rgba(31, 41, 51, 0.05) !important;
+}
+
+.zone-panel-title,
+.zone-map-title {
+    color: #1f2933 !important;
+    font-size: 15px !important;
+    font-weight: 900 !important;
+    margin-bottom: 12px !important;
+    padding-bottom: 8px !important;
+    border-bottom: 1px solid #edf0ed !important;
+}
+
+.zone-panel-title i,
+.zone-map-title i {
+    color: #0874d1 !important;
+    margin-right: 6px !important;
+}
+
+.zone-stats-grid {
+    display: grid !important;
+    grid-template-columns: repeat(3, 1fr) !important;
+    gap: 8px !important;
+    margin-bottom: 14px !important;
+}
+
+.zone-stat-box {
+    background: #f8fafc !important;
+    border: 1px solid #e5e7eb !important;
+    border-radius: 10px !important;
+    padding: 10px 8px !important;
+    text-align: center !important;
+}
+
+.zone-stat-box i {
+    color: #0874d1 !important;
+    font-size: 16px !important;
+}
+
+.zone-stat-box strong {
+    display: block !important;
+    font-size: 15px !important;
+    font-weight: 900 !important;
+    color: #111827 !important;
+    margin-top: 4px !important;
+}
+
+.zone-stat-box span {
+    display: block !important;
+    font-size: 11px !important;
+    color: #64748b !important;
+    font-weight: 700 !important;
+}
+
+.zone-info-list {
+    display: grid !important;
+    gap: 8px !important;
+}
+
+.zone-info-item,
+.zone-description {
+    background: #f8fafc !important;
+    border-radius: 9px !important;
+    padding: 9px 11px !important;
+}
+
+.zone-info-item label {
+    display: block !important;
+    color: #64748b !important;
+    font-size: 12px !important;
+    font-weight: 800 !important;
+    margin-bottom: 3px !important;
+}
+
+.zone-info-item span,
+.zone-description {
+    color: #111827 !important;
+    font-size: 14px !important;
+    font-weight: 800 !important;
+}
+
+.zone-coordinates-table {
+    max-height: 230px !important;
+    overflow-y: auto !important;
+}
+
+.zone-coordinates-table table {
+    width: 100% !important;
+    font-size: 13px !important;
+}
+
+.zone-coordinates-table th {
+    background: #eef1f4 !important;
+    color: #1f2933 !important;
+    font-weight: 800 !important;
+    text-align: center !important;
+}
+
+.zone-coordinates-table td {
+    text-align: center !important;
+    padding: 7px !important;
+    border-bottom: 1px solid #e5e7eb !important;
+}
+
+.zone-map-box {
+    width: 100% !important;
+    height: 530px !important;
+    border-radius: 12px !important;
+    border: 1px solid #d8dee4 !important;
+    overflow: hidden !important;
+}
+
+.zone-map-box-lg {
+    height: 570px !important;
+}
+
+.zone-map-note {
+    color: #64748b !important;
+    font-size: 12px !important;
+    font-weight: 700 !important;
+    margin-top: 8px !important;
+}
+
+.zone-filter-group {
+    margin-bottom: 10px !important;
+}
+
+.zone-filter-group label {
+    color: #374151 !important;
+    font-size: 12px !important;
+    font-weight: 800 !important;
+    margin-bottom: 4px !important;
+}
+
+.zone-filter-group .form-control {
+    height: 34px !important;
+    border-radius: 8px !important;
+    border: 1px solid #ccd3da !important;
+    font-size: 13px !important;
+}
+
+.zone-legend-box {
+    max-height: 230px !important;
+    overflow-y: auto !important;
+}
+
+@media (max-width: 992px) {
+    .zone-show-layout,
+    .zone-general-layout {
+        grid-template-columns: 1fr !important;
+    }
+}
+
+.zone-legend-item {
+    display: flex !important;
+    align-items: center !important;
+    gap: 9px !important;
+    padding: 10px 8px !important;
+    border-bottom: 1px solid #e5e7eb !important;
+}
+
+.zone-legend-color {
+    width: 14px !important;
+    height: 14px !important;
+    border-radius: 4px !important;
+    flex-shrink: 0 !important;
+}
+
+.zone-legend-item strong {
+    display: block !important;
+    color: #111827 !important;
+    font-size: 13px !important;
+    font-weight: 900 !important;
+    line-height: 1.2 !important;
+}
+
+.zone-legend-item small {
+    display: block !important;
+    color: #64748b !important;
+    font-size: 11px !important;
+    font-weight: 700 !important;
+}
+
+.zone-empty-text {
+    color: #64748b !important;
+    text-align: center !important;
+    font-size: 13px !important;
+    font-weight: 700 !important;
+    padding: 18px 10px !important;
+}
+
+/* Fondo gris para los mapas */
+#formModal .modal-body.zone-modal-body {
+    background: #f5f6f4 !important;
+    padding: 16px !important;
+}

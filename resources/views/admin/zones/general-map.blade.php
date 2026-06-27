@@ -1,124 +1,107 @@
-<div class="row">
-    <div class="col-md-4">
+<div class="zone-general-layout">
 
-        <div class="card shadow-sm mb-2">
-            <div class="card-header bg-secondary text-white">
-                <strong>
-                    <i class="fas fa-filter"></i> Filtros de búsqueda
-                </strong>
+    {{-- PANEL IZQUIERDO --}}
+    <div class="zone-left-panel">
+
+        {{-- FILTROS --}}
+        <div class="zone-panel-card">
+            <div class="zone-panel-title">
+                <i class="fas fa-filter"></i>
+                Filtros de búsqueda
             </div>
 
-            <div class="card-body py-2">
-                <div class="form-group mb-2">
-                    <label class="mb-1">Departamento</label>
-                    <select id="filter_department_id" class="form-control form-control-sm">
-                        <option value="">Todos</option>
-                        @foreach ($departments as $department)
-                            <option value="{{ $department->id }}">{{ $department->name }}</option>
-                        @endforeach
-                    </select>
+            <div class="zone-filter-group">
+                <label>Departamento</label>
+                <select id="filter_department_id" class="form-control">
+                    <option value="">Todos</option>
+                    @foreach ($departments as $department)
+                        <option value="{{ $department->id }}">
+                            {{ $department->name }}
+                        </option>
+                    @endforeach
+                </select>
+            </div>
+
+            <div class="zone-filter-group">
+                <label>Provincia</label>
+                <select id="filter_province_id" class="form-control">
+                    <option value="">Todas</option>
+                </select>
+            </div>
+
+            <div class="zone-filter-group mb-0">
+                <label>Distrito</label>
+                <select id="filter_district_id" class="form-control">
+                    <option value="">Todos</option>
+                </select>
+            </div>
+        </div>
+
+        {{-- RESUMEN --}}
+        <div class="zone-panel-card">
+            <div class="zone-panel-title">
+                <i class="fas fa-chart-bar"></i>
+                Resumen de zonas
+            </div>
+
+            <div class="zone-stats-grid">
+                <div class="zone-stat-box">
+                    <i class="fas fa-map-marked-alt"></i>
+                    <strong id="totalZonesBox">0</strong>
+                    <span>Zonas</span>
                 </div>
 
-                <div class="form-group mb-2">
-                    <label class="mb-1">Provincia</label>
-                    <select id="filter_province_id" class="form-control form-control-sm">
-                        <option value="">Todas</option>
-                    </select>
+                <div class="zone-stat-box">
+                    <i class="fas fa-check-circle"></i>
+                    <strong id="activeZonesBox">0</strong>
+                    <span>Activas</span>
                 </div>
 
-                <div class="form-group mb-0">
-                    <label class="mb-1">Distrito</label>
-                    <select id="filter_district_id" class="form-control form-control-sm">
-                        <option value="">Todos</option>
-                    </select>
+                <div class="zone-stat-box">
+                    <i class="fas fa-map-pin"></i>
+                    <strong id="totalPointsBox">0</strong>
+                    <span>Puntos</span>
                 </div>
             </div>
         </div>
 
-        <div class="card shadow-sm mb-2">
-            <div class="card-header bg-light py-2">
-                <strong>
-                    <i class="fas fa-chart-bar"></i>
-                    Resumen de zonas
-                </strong>
+        {{-- LEYENDA --}}
+        <div class="zone-panel-card">
+            <div class="zone-panel-title">
+                <i class="fas fa-list"></i>
+                Leyenda del mapa
             </div>
 
-            <div class="card-body py-2">
-                <div class="row text-center">
-                    <div class="col-4">
-                        <div class="border rounded p-2 bg-light h-100 d-flex flex-column justify-content-center">
-                            <i class="fas fa-map-marked-alt text-primary"></i>
-                            <h5 class="mb-0 mt-1" id="totalZonesBox" style="font-size: 1rem; line-height: 1.2;">
-                                0
-                            </h5>
-                            <small class="text-muted">Zonas</small>
-                        </div>
-                    </div>
-
-                    <div class="col-4">
-                        <div class="border rounded p-2 bg-light h-100 d-flex flex-column justify-content-center">
-                            <i class="fas fa-check-circle text-success"></i>
-                            <h5 class="mb-0 mt-1" id="activeZonesBox" style="font-size: 1rem; line-height: 1.2;">
-                                0
-                            </h5>
-                            <small class="text-muted">Activas</small>
-                        </div>
-                    </div>
-
-                    <div class="col-4">
-                        <div class="border rounded p-2 bg-light h-100 d-flex flex-column justify-content-center">
-                            <i class="fas fa-map-pin text-info"></i>
-                            <h5 class="mb-0 mt-1" id="totalPointsBox" style="font-size: 1rem; line-height: 1.2;">
-                                0
-                            </h5>
-                            <small class="text-muted">Puntos</small>
-                        </div>
-                    </div>
-                </div>
-            </div>
-        </div>
-
-        <div class="card shadow-sm">
-            <div class="card-header bg-light py-2">
-                <strong>
-                    <i class="fas fa-list"></i>
-                    Leyenda del mapa
-                </strong>
-            </div>
-
-            <div class="card-body p-0">
-                <div id="zonesLegend" class="table-responsive" style="max-height: 210px; overflow-y:auto;">
-                    <div class="text-muted text-center py-3">
-                        Cargando zonas...
-                    </div>
+            <div id="zonesLegend" class="zone-legend-box">
+                <div class="zone-empty-text">
+                    Cargando zonas...
                 </div>
             </div>
         </div>
 
     </div>
 
-    <div class="col-md-8">
+    {{-- PANEL DERECHO --}}
+    <div class="zone-right-panel">
 
-        <div class="card shadow-sm">
-            <div class="card-header bg-light">
-                <strong>
-                    Visualización general de zonas
-                </strong>
+        <div class="zone-map-card">
+            <div class="zone-map-title">
+                <i class="fas fa-map"></i>
+                Visualización general de zonas
             </div>
 
-            <div class="card-body py-2">
-                <div id="generalZonesMap"
-                    style="width: 100%; height: 570px; border: 1px solid #dee2e6; border-radius: 4px;">
-                </div>
+            <div id="generalZonesMap" class="zone-map-box zone-map-box-lg"></div>
 
-                <small class="text-muted d-block mt-2">
-                    <i class="fas fa-info-circle"></i>
-                    <span id="zoneCounterText">Cada color representa una zona registrada diferente.</span>
-                </small>
+            <div class="zone-map-note">
+                <i class="fas fa-info-circle"></i>
+                <span id="zoneCounterText">
+                    Cada color representa una zona registrada diferente.
+                </span>
             </div>
         </div>
 
     </div>
+
 </div>
 
 <script>
@@ -136,16 +119,16 @@
         }).addTo(map);
 
         let colors = [
-            '#007bff',
-            '#28a745',
-            '#dc3545',
-            '#ffc107',
-            '#17a2b8',
-            '#6f42c1',
-            '#fd7e14',
-            '#20c997',
-            '#e83e8c',
-            '#343a40'
+            '#0874d1',
+            '#16a34a',
+            '#ef4444',
+            '#f59e0b',
+            '#0ea5e9',
+            '#7c3aed',
+            '#f97316',
+            '#14b8a6',
+            '#db2777',
+            '#374151'
         ];
 
         let allZones = [];
@@ -157,7 +140,6 @@
 
         $.get("{{ route('admin.zones.all-polygons') }}", function(zones) {
             allZones = zones;
-
             setDefaultLocationFilters();
         });
 
@@ -329,35 +311,33 @@
 
                 polygon.bindPopup(`
                     <div style="text-align:center; min-width:170px;">
-                        <div style="font-size:22px; color:${color}; margin-bottom:5px;">
+                        <div style="font-size:22px; color:${color}; margin-bottom:6px;">
                             <i class="fas fa-map-marked-alt"></i>
                         </div>
 
-                        <h6 style="font-weight:bold; margin-bottom:8px;">
+                        <h6 style="font-weight:800; margin-bottom:8px;">
                             ${zone.name}
                         </h6>
 
                         <div style="font-size:13px;">
-                            <div>
+                            <div style="margin-bottom:4px;">
                                 <i class="fas fa-map-marker-alt text-muted"></i>
                                 ${zone.district}
                             </div>
 
-                            <div>
+                            <div style="margin-bottom:4px;">
                                 <i class="fas fa-city text-muted"></i>
                                 ${zone.province}
                             </div>
 
-                            <div>
+                            <div style="margin-bottom:6px;">
                                 <i class="fas fa-trash-alt text-muted"></i>
                                 Residuos: ${zone.average_waste ? zone.average_waste + ' kg' : 'N/A'}
                             </div>
 
-                            <div>
-                                <span class="badge badge-${zone.status ? 'success' : 'danger'} mt-1">
-                                    ${zone.status ? 'Activo' : 'Inactivo'}
-                                </span>
-                            </div>
+                            <span class="badge badge-${zone.status ? 'success' : 'danger'} badge-custom">
+                                ${zone.status ? 'Activo' : 'Inactivo'}
+                            </span>
                         </div>
                     </div>
                 `);
@@ -368,20 +348,12 @@
                 });
 
                 legendHtml += `
-                    <div class="d-flex align-items-center px-2 py-2 border-bottom">
-                        <span style="
-                            width:14px;
-                            height:14px;
-                            background:${color};
-                            display:inline-block;
-                            border-radius:3px;
-                            margin-right:8px;
-                            flex-shrink:0;">
-                        </span>
+                    <div class="zone-legend-item">
+                        <span class="zone-legend-color" style="background:${color};"></span>
 
-                        <div style="line-height:1.2;">
-                            <strong style="font-size: 0.85rem;">${zone.name}</strong><br>
-                            <small class="text-muted">${zone.district}</small>
+                        <div>
+                            <strong>${zone.name}</strong>
+                            <small>${zone.district}</small>
                         </div>
                     </div>
                 `;
@@ -395,7 +367,7 @@
 
             $('#zonesLegend').html(
                 legendHtml ||
-                `<div class="text-center text-muted py-3">
+                `<div class="zone-empty-text">
                     No hay zonas registradas para el filtro seleccionado.
                 </div>`
             );

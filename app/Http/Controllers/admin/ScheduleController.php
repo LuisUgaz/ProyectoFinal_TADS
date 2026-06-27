@@ -35,15 +35,18 @@ class ScheduleController extends Controller
                     return $s->helpers->map(fn($h) => $h->names . ' ' . $h->lastnames)->implode('<br>');
                 })
                 ->addColumn('date_range', fn($s) => $s->start_date->format('d/m/Y') . ' - ' . $s->end_date->format('d/m/Y'))
+                
                 ->addColumn('status_badge', function($s) {
                     $badges = [
-                        'scheduled' => '<span class="badge badge-primary">Programada</span>',
-                        'in_progress' => '<span class="badge badge-info">En Curso</span>',
-                        'completed' => '<span class="badge badge-success">Finalizada</span>',
-                        'cancelled' => '<span class="badge badge-danger">Cancelada</span>',
+                        'scheduled' => '<span class="badge badge-primary badge-custom">Programada</span>',
+                        'in_progress' => '<span class="badge badge-info badge-custom">En curso</span>',
+                        'completed' => '<span class="badge badge-success badge-custom">Finalizada</span>',
+                        'cancelled' => '<span class="badge badge-danger badge-custom">Cancelada</span>',
                     ];
-                    return $badges[$s->status] ?? $s->status;
+
+                    return $badges[$s->status] ?? '<span class="badge badge-secondary badge-custom">' . $s->status . '</span>';
                 })
+
                 ->addColumn('actions', function($s) {
                     return '
                         <div class="btn-group">

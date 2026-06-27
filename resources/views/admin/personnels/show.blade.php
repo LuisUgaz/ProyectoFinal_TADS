@@ -1,71 +1,136 @@
-<div class="row">
-    <div class="col-md-4 text-center">
-        @if ($personnel->photo_path)
-            <img src="{{ asset('storage/' . $personnel->photo_path) }}" class="img-thumbnail"
-                style="width:220px;height:220px;object-fit:cover;">
-        @else
-            <div class="bg-light d-flex align-items-center justify-content-center border rounded mx-auto"
-                style="width:220px;height:220px;">
-                <i class="fas fa-image fa-4x text-muted"></i>
+<div class="modal-header personnel-show-header">
+    <h5 class="modal-title">
+        <i class="fas fa-user"></i>
+        Información del Personal
+    </h5>
+
+    <button type="button" class="close" data-dismiss="modal">
+        <span>&times;</span>
+    </button>
+</div>
+
+<div class="modal-body personnel-show-body">
+
+    <div class="row">
+
+        {{-- FOTO --}}
+        <div class="col-lg-4">
+
+            <div class="personnel-photo-card">
+
+                <h6>Foto del personal</h6>
+
+                @if ($personnel->photo_path)
+                    <div class="personnel-main-photo">
+                        <img src="{{ asset('storage/' . $personnel->photo_path) }}" alt="Foto del personal">
+                    </div>
+                @else
+                    <div class="personnel-empty-photo">
+                        <i class="fas fa-user-slash"></i>
+                        <span>Sin foto registrada</span>
+                    </div>
+                @endif
+
             </div>
-        @endif
-    </div>
 
-    <div class="col-md-8">
-        <table class="table table-bordered table-sm">
-            <tr>
-                <th>DNI</th>
-                <td>{{ $personnel->dni }}</td>
-            </tr>
-            <tr>
-                <th>Tipo de personal</th>
-                <td>{{ $personnel->type->name ?? 'Sin tipo' }}</td>
-            </tr>
+        </div>
 
-            @if (strtolower($personnel->type->name ?? '') == 'conductor')
-                <tr>
-                    <th>N° de licencia</th>
-                    <td>
-                        {{ $personnel->license_number ?: 'No registrada' }}
-                    </td>
-                </tr>
-            @endif
+        {{-- INFORMACIÓN --}}
+        <div class="col-lg-8">
 
-            <tr>
-                <th>Nombres</th>
-                <td>{{ $personnel->names }}</td>
-            </tr>
-            <tr>
-                <th>Apellidos</th>
-                <td>{{ $personnel->lastnames }}</td>
-            </tr>
-            <tr>
-                <th>Fecha de nacimiento</th>
-                <td>{{ \Carbon\Carbon::parse($personnel->birthdate)->format('d/m/Y') }}</td>
-            </tr>
-            <tr>
-                <th>Teléfono</th>
-                <td>{{ $personnel->phone ?: '—' }}</td>
-            </tr>
-            <tr>
-                <th>Email</th>
-                <td>{{ $personnel->email }}</td>
-            </tr>
-            <tr>
-                <th>Dirección</th>
-                <td>{{ $personnel->address }}</td>
-            </tr>
-            <tr>
-                <th>Estado</th>
-                <td>
-                    @if ($personnel->status == 'Activo')
-                        <span class="badge badge-success px-2 py-1" style="font-size: 0.9rem;">Activo</span>
-                    @else
-                        <span class="badge badge-danger px-2 py-1" style="font-size: 0.9rem;">Inactivo</span>
+            {{-- DATOS PERSONALES --}}
+            <div class="personnel-detail-card">
+
+                <div class="personnel-detail-title">
+                    <i class="fas fa-id-card"></i>
+                    Datos personales
+                </div>
+
+                <div class="personnel-detail-grid">
+
+                    <div>
+                        <label>DNI</label>
+                        <span>{{ $personnel->dni }}</span>
+                    </div>
+
+                    <div>
+                        <label>Tipo de personal</label>
+                        <span>{{ $personnel->type->name ?? '-' }}</span>
+                    </div>
+
+                    <div>
+                        <label>Nombres</label>
+                        <span>{{ $personnel->names }}</span>
+                    </div>
+
+                    <div>
+                        <label>Apellidos</label>
+                        <span>{{ $personnel->lastnames }}</span>
+                    </div>
+
+                    <div>
+                        <label>Fecha de nacimiento</label>
+                        <span>{{ \Carbon\Carbon::parse($personnel->birthdate)->format('d/m/Y') }}</span>
+                    </div>
+
+                    <div>
+                        <label>Estado</label>
+                        <span>
+                            @if ($personnel->status == 'Activo')
+                                <span class="badge badge-success badge-custom">Activo</span>
+                            @else
+                                <span class="badge badge-danger badge-custom">Inactivo</span>
+                            @endif
+                        </span>
+                    </div>
+
+                    @if (strtolower($personnel->type->name ?? '') == 'conductor')
+                        <div class="personnel-full">
+                            <label>N° de licencia</label>
+                            <span>{{ $personnel->license_number ?: 'No registrada' }}</span>
+                        </div>
                     @endif
-                </td>
-            </tr>
 
-        </table>
+                </div>
+
+            </div>
+
+            {{-- CONTACTO --}}
+            <div class="personnel-detail-card">
+
+                <div class="personnel-detail-title">
+                    <i class="fas fa-address-book"></i>
+                    Contacto
+                </div>
+
+                <div class="personnel-detail-grid">
+
+                    @if ($personnel->phone)
+                        <div>
+                            <label>Teléfono</label>
+                            <span>{{ $personnel->phone }}</span>
+                        </div>
+                    @endif
+
+                    <div>
+                        <label>Correo electrónico</label>
+                        <span>{{ $personnel->email }}</span>
+                    </div>
+
+                    @if ($personnel->address)
+                        <div class="personnel-full">
+                            <label>Dirección</label>
+                            <span>{{ $personnel->address }}</span>
+                        </div>
+                    @endif
+
+                </div>
+
+            </div>
+
+
+        </div>
+
     </div>
+
 </div>

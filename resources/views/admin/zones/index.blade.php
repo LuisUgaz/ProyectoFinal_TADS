@@ -143,8 +143,13 @@
 
         $('#btnMapaGeneral').on('click', function() {
             $.get("{{ route('admin.zones.general-map') }}", function(response) {
+
                 $('#modalTitle').html('<i class="fas fa-map"></i> Mapa General de Zonas');
-                $('#formModal .modal-body').html(response);
+
+                $('#formModal .modal-body')
+                    .addClass('zone-modal-body')
+                    .html(response);
+
                 $('#formModal').modal('show');
             });
         });
@@ -171,15 +176,21 @@
         });
 
         $(document).on('click', '.btn-ver-mapa', function() {
+
             let id = $(this).attr('id');
 
             $.get("{{ route('admin.zones.show', ':id') }}".replace(':id', id), function(response) {
+
                 $('#modalTitle').html('<i class="fas fa-map"></i> Mapa de la Zona');
-                $('#formModal .modal-body').html(response);
+
+                $('#formModal .modal-body')
+                    .addClass('zone-modal-body')
+                    .html(response);
+
                 $('#formModal').modal('show');
             });
-        });
 
+        });
 
         window.saveZone = function() {
             let form = $('#zoneForm');
@@ -628,12 +639,15 @@
         }
 
         $('#formModal').on('hidden.bs.modal', function() {
+
             if (window.generalZonesMapInstance) {
                 window.generalZonesMapInstance.remove();
                 window.generalZonesMapInstance = null;
             }
 
-            $('#formModal .modal-body').html('');
+            $('#formModal .modal-body')
+                .removeClass('zone-modal-body')
+                .html('');
         });
     </script>
 @endsection

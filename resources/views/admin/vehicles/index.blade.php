@@ -48,6 +48,14 @@
             </div>
         </div>
     </div>
+
+    <div class="modal fade" id="ShowModal" tabindex="-1" role="dialog">
+        <div class="modal-dialog modal-xl modal-dialog-centered" role="document">
+            <div class="modal-content" id="ShowModalContent">
+                {{-- Aquí se cargará el detalle del vehículo --}}
+            </div>
+        </div>
+    </div>
 @stop
 
 @section('js')
@@ -133,6 +141,26 @@
                         e.preventDefault();
                         enviarFormulario(this);
                     });
+                }
+            });
+        });
+
+        $(document).on('click', '.btn-show', function() {
+            let id = $(this).attr("id");
+
+            $.ajax({
+                url: "{{ route('admin.vehicles.show', 'id') }}".replace('id', id),
+                type: "GET",
+                success: function(response) {
+                    $('#ShowModalContent').html(response);
+                    $('#ShowModal').modal("show");
+                },
+                error: function() {
+                    Swal.fire(
+                        'Ocurrió un error',
+                        'No se pudo cargar la información del vehículo.',
+                        'error'
+                    );
                 }
             });
         });

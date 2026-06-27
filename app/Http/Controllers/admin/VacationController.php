@@ -39,7 +39,9 @@ class VacationController extends Controller
                         'Aprobada' => 'success',
                         'Rechazada' => 'danger'
                     ];
+
                     $color = $badges[$vacation->status] ?? 'secondary';
+
                     return '<span class="badge badge-' . $color . ' badge-custom">' . $vacation->status . '</span>';
                 })
                 ->addColumn('actions', function ($vacation) {

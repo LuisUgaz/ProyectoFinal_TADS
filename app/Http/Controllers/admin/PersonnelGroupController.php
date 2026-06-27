@@ -85,7 +85,7 @@ class PersonnelGroupController extends Controller
                     $days = $group->workdays->pluck('day')->toArray();
 
                     if (count($days) === 7) {
-                        return '<span class="badge badge-info">Diario (Lun-Dom)</span>';
+                        return '<span class="badge badge-info badge-custom">Diario</span>';
                     }
 
                     $abbreviated = array_map(function ($day) use ($daysMap) {
@@ -96,10 +96,9 @@ class PersonnelGroupController extends Controller
                 })
 
                 ->addColumn('status_badge', function ($group) {
-
                     return $group->status
-                        ? '<span class="badge badge-success">Activo</span>'
-                        : '<span class="badge badge-danger">Inactivo</span>';
+                        ? '<span class="badge badge-success badge-custom">Activo</span>'
+                        : '<span class="badge badge-danger badge-custom">Inactivo</span>';
                 })
 
                 ->addColumn('created_at_format', function ($group) {

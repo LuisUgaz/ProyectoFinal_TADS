@@ -150,6 +150,7 @@
                             .html('<i class="fas fa-eye"></i> Información de Vacaciones');
 
                         $('#FormModal .modal-body')
+                            .addClass('vacation-modal-body')
                             .html(response);
                     },
                     error: function(xhr) {
@@ -334,7 +335,9 @@
         }
 
         $('#FormModal').on('hidden.bs.modal', function() {
-            $('#FormModal .modal-body').html('');
+            $('#FormModal .modal-body')
+                .removeClass('vacation-modal-body')
+                .html('');
         });
     </script>
 

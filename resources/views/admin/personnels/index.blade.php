@@ -14,6 +14,7 @@
             <button type="button" class="btn btn-primary btn-sm float-right" id="btn-nuevo">
                 <i class="fas fa-plus"></i> Nuevo Personal
             </button>
+
             <h4>
                 <i class="fas fa-user"></i>
                 Lista de Personal
@@ -39,6 +40,7 @@
         </div>
     </div>
 
+    {{-- Modal para crear y editar --}}
     <div class="modal fade" id="FormModal" tabindex="-1" role="dialog">
         <div class="modal-dialog modal-xl modal-dialog-centered" role="document">
             <div class="modal-content">
@@ -46,14 +48,26 @@
                     <h5 class="modal-title">
                         Formulario de Personal
                     </h5>
+
                     <button type="button" class="close text-white" data-dismiss="modal">
                         <span>&times;</span>
                     </button>
                 </div>
+
                 <div class="modal-body"></div>
             </div>
         </div>
     </div>
+
+    {{-- Modal para visualizar información --}}
+    <div class="modal fade" id="ShowModal" tabindex="-1" role="dialog">
+        <div class="modal-dialog modal-xl modal-dialog-centered" role="document">
+            <div class="modal-content" id="ShowModalContent">
+                {{-- Aquí se cargará el detalle del personal --}}
+            </div>
+        </div>
+    </div>
+
 @stop
 
 @section('js')
@@ -114,15 +128,20 @@
                 success: function(response) {
                     $('#FormModal .modal-title')
                         .html('<i class="fas fa-user"></i> Nuevo Personal');
+
                     $('#FormModal .modal-body')
                         .html(response);
+
                     $('#FormModal').modal("show");
+
                     $('#FormModal form').on("submit", function(e) {
                         e.preventDefault();
+
                         if (!this.checkValidity()) {
                             this.reportValidity();
                             return;
                         }
+
                         enviarFormulario(this);
                     });
                 }
@@ -131,38 +150,47 @@
 
         $(document).on('click', '.btn-ver', function() {
             let id = $(this).attr("id");
+
             $.ajax({
-                url: "{{ route('admin.personnels.show', 'id') }}"
-                    .replace('id', id),
+                url: "{{ route('admin.personnels.show', 'id') }}".replace('id', id),
                 type: "GET",
                 success: function(response) {
-                    $('#FormModal .modal-title')
-                        .html('<i class="fas fa-user"></i> Información del Personal');
-                    $('#FormModal .modal-body')
-                        .html(response);
-                    $('#FormModal').modal("show");
+                    $('#ShowModalContent').html(response);
+                    $('#ShowModal').modal("show");
+                },
+                error: function() {
+                    Swal.fire(
+                        'Ocurrió un error',
+                        'No se pudo cargar la información del personal.',
+                        'error'
+                    );
                 }
             });
         });
 
         $(document).on('click', '.btn-editar', function() {
             let id = $(this).attr("id");
+
             $.ajax({
-                url: "{{ route('admin.personnels.edit', 'id') }}"
-                    .replace('id', id),
+                url: "{{ route('admin.personnels.edit', 'id') }}".replace('id', id),
                 type: "GET",
                 success: function(response) {
                     $('#FormModal .modal-title')
                         .html('<i class="fas fa-pen"></i> Modificar Personal');
+
                     $('#FormModal .modal-body')
                         .html(response);
+
                     $('#FormModal').modal("show");
+
                     $('#FormModal form').on("submit", function(e) {
                         e.preventDefault();
+
                         if (!this.checkValidity()) {
                             this.reportValidity();
                             return;
                         }
+
                         enviarFormulario(this);
                     });
                 }
@@ -172,6 +200,7 @@
         function enviarFormulario(formulario) {
             let form = $(formulario);
             let formData = new FormData(formulario);
+
             $.ajax({
                 url: form.attr('action'),
                 type: form.attr('method'),
@@ -181,18 +210,19 @@
                 success: function(response) {
                     $('#FormModal').modal("hide");
                     refreshTable();
+
                     Swal.fire(
                         'Proceso exitoso',
                         response.message,
                         'success'
                     );
                 },
-
                 error: function(xhr) {
                     let response = xhr.responseJSON;
+
                     Swal.fire(
                         'Ocurrió un error',
-                        response.message,
+                        response ? response.message : 'No se pudo procesar la solicitud.',
                         'error'
                     );
                 }
@@ -201,7 +231,9 @@
 
         $(document).on('click', '.btn-delete', function(e) {
             e.preventDefault();
+
             let url = $(this).data('url');
+
             Swal.fire({
                 title: "¿Está seguro de eliminar?",
                 text: "Esta acción es irreversible",
@@ -219,6 +251,7 @@
                         },
                         success: function(response) {
                             refreshTable();
+
                             Swal.fire(
                                 'Proceso exitoso',
                                 response.message,
@@ -227,6 +260,7 @@
                         },
                         error: function(xhr) {
                             let response = xhr.responseJSON;
+
                             Swal.fire(
                                 'Ocurrió un error',
                                 response ? response.message : 'No se pudo eliminar',

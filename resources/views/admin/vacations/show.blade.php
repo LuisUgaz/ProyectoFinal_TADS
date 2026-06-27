@@ -1,38 +1,52 @@
-<div class="row">
-    <div class="col-md-12">
+<div class="vacation-show-body">
 
-        <table class="table table-bordered table-sm">
-            <tr>
-                <th width="35%">DNI</th>
-                <td>{{ $vacation->personnel->dni }}</td>
-            </tr>
+    <div class="vacation-detail-card">
+        <div class="vacation-detail-title">
+            <i class="fas fa-user"></i>
+            Datos del personal
+        </div>
 
-            <tr>
-                <th>Personal</th>
-                <td>
+        <div class="vacation-detail-grid">
+            <div>
+                <label>DNI</label>
+                <span>{{ $vacation->personnel->dni }}</span>
+            </div>
+
+            <div>
+                <label>Personal</label>
+                <span>
                     {{ $vacation->personnel->names }}
                     {{ $vacation->personnel->lastnames }}
-                </td>
-            </tr>
+                </span>
+            </div>
+        </div>
+    </div>
 
-            <tr>
-                <th>Fecha de inicio</th>
-                <td>{{ $vacation->start_date->format('d/m/Y') }}</td>
-            </tr>
+    <div class="vacation-detail-card">
+        <div class="vacation-detail-title">
+            <i class="fas fa-calendar-alt"></i>
+            Información de la solicitud
+        </div>
 
-            <tr>
-                <th>Fecha de fin</th>
-                <td>{{ $vacation->end_date->format('d/m/Y') }}</td>
-            </tr>
+        <div class="vacation-detail-grid">
+            <div>
+                <label>Fecha de inicio</label>
+                <span>{{ $vacation->start_date->format('d/m/Y') }}</span>
+            </div>
 
-            <tr>
-                <th>Días solicitados</th>
-                <td>{{ $vacation->requested_days }} días</td>
-            </tr>
+            <div>
+                <label>Fecha de fin</label>
+                <span>{{ $vacation->end_date->format('d/m/Y') }}</span>
+            </div>
 
-            <tr>
-                <th>Estado</th>
-                <td>
+            <div>
+                <label>Días solicitados</label>
+                <span>{{ $vacation->requested_days }} días</span>
+            </div>
+
+            <div>
+                <label>Estado</label>
+                <span>
                     @php
                         $badges = [
                             'Pendiente' => 'warning',
@@ -43,41 +57,45 @@
                         $color = $badges[$vacation->status] ?? 'secondary';
                     @endphp
 
-                    <span class="badge badge-{{ $color }} px-2 py-1" style="font-size: 0.9rem;">
+                    <span class="badge badge-{{ $color }} badge-custom">
                         {{ $vacation->status }}
                     </span>
-                </td>
-            </tr>
+                </span>
+            </div>
 
-            <tr>
-                <th>Año correspondiente</th>
-                <td>{{ $vacation->start_date->year }}</td>
-            </tr>
+            <div>
+                <label>Año correspondiente</label>
+                <span>{{ $vacation->start_date->year }}</span>
+            </div>
 
-            <tr>
-                <th>Días disponibles</th>
-                <td>
-                    <strong>{{ $availableDays }} días</strong>
-                </td>
-            </tr>
+            <div>
+                <label>Días disponibles</label>
+                <span>{{ $availableDays }} días</span>
+            </div>
+        </div>
+    </div>
 
-            <tr>
-                <th>Notas</th>
-                <td>{{ $vacation->notes ?: 'Sin notas adicionales' }}</td>
-            </tr>
-        </table>
-
-        <div class="alert alert-info mb-0">
-            <i class="fas fa-info-circle"></i>
-            Las vacaciones solo aplican para personal con contrato activo de tipo
-            <strong>Permanente</strong> o <strong>Nombrado</strong>.
+    <div class="vacation-detail-card">
+        <div class="vacation-detail-title">
+            <i class="fas fa-align-left"></i>
+            Notas
         </div>
 
+        <p class="vacation-description">
+            {{ $vacation->notes ?: 'Sin notas adicionales' }}
+        </p>
     </div>
-</div>
 
-<div class="text-right mt-3">
-    <button type="button" class="btn btn-danger btn-sm" data-dismiss="modal">
-        <i class="fas fa-times"></i> Cerrar
-    </button>
+    <div class="vacation-alert">
+        <i class="fas fa-info-circle"></i>
+        Las vacaciones solo aplican para personal con contrato activo de tipo
+        <strong>Permanente</strong> o <strong>Nombrado</strong>.
+    </div>
+
+    <div class="text-right mt-3">
+        <button type="button" class="btn btn-danger btn-sm" data-dismiss="modal">
+            <i class="fas fa-times"></i> Cerrar
+        </button>
+    </div>
+
 </div>

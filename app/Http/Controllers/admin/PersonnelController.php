@@ -43,7 +43,7 @@ class PersonnelController extends Controller
 
                 ->addColumn('status_badge', function ($personnel) {
                     if ($personnel->status == 'Activo') {
-                        return '<span class="badge badge-success badge-custom" >Activo</span>';
+                        return '<span class="badge badge-success badge-custom">Activo</span>';
                     }
 
                     return '<span class="badge badge-danger badge-custom">Inactivo</span>';

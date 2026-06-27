@@ -1,155 +1,139 @@
-<div class="row">
-    <div class="col-md-4">
+<div class="zone-show-layout">
 
-        <div class="card shadow-sm">
-            <div class="card-header bg-secondary text-white">
-                <strong class="mb-0">
-                    <i class="fas fa-map-marker-alt"></i> {{ $zone->name }}
-                </strong>
+    {{-- PANEL IZQUIERDO --}}
+    <div class="zone-left-panel">
+
+        {{-- RESUMEN DE LA ZONA --}}
+        <div class="zone-panel-card">
+            <div class="zone-panel-title">
+                <i class="fas fa-map-marker-alt"></i>
+                {{ $zone->name }}
             </div>
 
-            <div class="card-body">
-
-                <div class="row text-center mb-3">
-                    <div class="col-4">
-                        <div class="border rounded p-2 bg-light h-100 d-flex flex-column justify-content-center">
-                            <i class="fas fa-map-pin text-primary"></i>
-                            <h5 class="mb-0 mt-1" style="font-size: 1rem; line-height: 1.2;">
-                                {{ is_array($zone->coordinates) ? count($zone->coordinates) : 0 }}
-                            </h5>
-                            <small class="text-muted">Puntos</small>
-                        </div>
-                    </div>
-
-                    <div class="col-4">
-                        <div class="border rounded p-2 bg-light h-100 d-flex flex-column justify-content-center">
-                            <i class="fas fa-trash-alt text-warning"></i>
-
-                            <h5 class="mb-0 mt-1" style="font-size: 1rem; line-height: 1.2;">
-                                {{ $zone->average_waste ? number_format($zone->average_waste, 2) : 'N/A' }}
-                            </h5>
-
-                            @if ($zone->average_waste)
-                                <small class="text-muted">kg</small>
-                            @endif
-
-                            <small class="text-muted">Residuos</small>
-                        </div>
-                    </div>
-
-                    <div class="col-4">
-                        <div class="border rounded p-2 bg-light h-100 d-flex flex-column justify-content-center">
-                            <i class="fas fa-ruler-combined text-info"></i>
-                            <h5 class="mb-0 mt-1" id="zoneAreaBox" style="font-size: 1rem; line-height: 1.2;">
-                                -
-                            </h5>
-                            <small class="text-muted">Área</small>
-                        </div>
-                    </div>
+            <div class="zone-stats-grid">
+                <div class="zone-stat-box">
+                    <i class="fas fa-map-pin"></i>
+                    <strong>{{ is_array($zone->coordinates) ? count($zone->coordinates) : 0 }}</strong>
+                    <span>Puntos</span>
                 </div>
 
-                <table class="table table-sm table-borderless mb-2" style="font-size: 0.9rem;">
-                    <tr>
-                        <th>Departamento:</th>
-                        <td>{{ $zone->department->name ?? '-' }}</td>
-                    </tr>
-                    <tr>
-                        <th>Provincia:</th>
-                        <td>{{ $zone->province->name ?? '-' }}</td>
-                    </tr>
-                    <tr>
-                        <th>Distrito:</th>
-                        <td>{{ $zone->district->name ?? '-' }}</td>
-                    </tr>
-                    <tr>
-                        <th>Estado:</th>
-                        <td>
-                            @if ($zone->status)
-                                <span class="badge badge-success badge-custom">Activo</span>
-                            @else
-                                <span class="badge badge-danger badge-custom">Inactivo</span>
-                            @endif
-                        </td>
-                    </tr>
-                </table>
+                <div class="zone-stat-box">
+                    <i class="fas fa-trash-alt"></i>
+                    <strong>
+                        {{ $zone->average_waste ? number_format($zone->average_waste, 2) : 'N/A' }}
+                    </strong>
+                    <span>Residuos</span>
+                </div>
 
-                <hr>
+                <div class="zone-stat-box">
+                    <i class="fas fa-ruler-combined"></i>
+                    <strong id="zoneAreaBox">-</strong>
+                    <span>Área</span>
+                </div>
+            </div>
 
-                <h6>
-                    <b>Descripción</b>
-                </h6>
+            <div class="zone-info-list">
+                <div class="zone-info-item">
+                    <label>Departamento</label>
+                    <span>{{ $zone->department->name ?? '-' }}</span>
+                </div>
 
-                <p class="text-muted mb-0">
-                    {{ $zone->description ?: 'Sin descripción registrada.' }}
-                </p>
+                <div class="zone-info-item">
+                    <label>Provincia</label>
+                    <span>{{ $zone->province->name ?? '-' }}</span>
+                </div>
+
+                <div class="zone-info-item">
+                    <label>Distrito</label>
+                    <span>{{ $zone->district->name ?? '-' }}</span>
+                </div>
+
+                <div class="zone-info-item">
+                    <label>Estado</label>
+                    <span>
+                        @if ($zone->status)
+                            <span class="badge badge-success badge-custom">Activo</span>
+                        @else
+                            <span class="badge badge-danger badge-custom">Inactivo</span>
+                        @endif
+                    </span>
+                </div>
             </div>
         </div>
 
-        <div class="card shadow-sm mt-3">
-            <div class="card-header bg-light">
-                <strong>
-                    <i class="fas fa-list-ol"></i>
-                    Coordenadas del perímetro
-                </strong>
+        {{-- DESCRIPCIÓN --}}
+        <div class="zone-panel-card">
+            <div class="zone-panel-title">
+                <i class="fas fa-align-left"></i>
+                Descripción
             </div>
 
-            <div class="card-body p-0">
-                <div class="table-responsive" style="max-height: 240px;">
-                    <table class="table table-sm table-striped mb-0">
-                        <thead>
+            <p class="zone-description">
+                {{ $zone->description ?: 'Sin descripción registrada.' }}
+            </p>
+        </div>
+
+        {{-- COORDENADAS --}}
+        <div class="zone-panel-card">
+            <div class="zone-panel-title">
+                <i class="fas fa-list-ol"></i>
+                Coordenadas del perímetro
+            </div>
+
+            <div class="zone-coordinates-table">
+                <table>
+                    <thead>
+                        <tr>
+                            <th>#</th>
+                            <th>Latitud</th>
+                            <th>Longitud</th>
+                        </tr>
+                    </thead>
+
+                    <tbody>
+                        @forelse ($zone->coordinates ?? [] as $index => $coordinate)
                             <tr>
-                                <th>#</th>
-                                <th>Latitud</th>
-                                <th>Longitud</th>
+                                <td>{{ $index + 1 }}</td>
+                                <td>
+                                    {{ isset($coordinate['lat']) ? number_format($coordinate['lat'], 6) : '-' }}
+                                </td>
+                                <td>
+                                    {{ isset($coordinate['lng']) ? number_format($coordinate['lng'], 6) : '-' }}
+                                </td>
                             </tr>
-                        </thead>
-                        <tbody>
-                            @forelse ($zone->coordinates ?? [] as $index => $coordinate)
-                                <tr>
-                                    <td>{{ $index + 1 }}</td>
-                                    <td>
-                                        {{ isset($coordinate['lat']) ? number_format($coordinate['lat'], 6) : '-' }}
-                                    </td>
-
-                                    <td>
-                                        {{ isset($coordinate['lng']) ? number_format($coordinate['lng'], 6) : '-' }}
-                                    </td>
-                                </tr>
-                            @empty
-                                <tr>
-                                    <td colspan="3" class="text-center text-muted">
-                                        No hay coordenadas registradas.
-                                    </td>
-                                </tr>
-                            @endforelse
-                        </tbody>
-                    </table>
-                </div>
+                        @empty
+                            <tr>
+                                <td colspan="3">
+                                    No hay coordenadas registradas.
+                                </td>
+                            </tr>
+                        @endforelse
+                    </tbody>
+                </table>
             </div>
         </div>
 
     </div>
 
-    <div class="col-md-8">
-        <div class="card shadow-sm">
-            <div class="card-header bg-light">
-                <strong>
-                    Visualización del perímetro en el mapa
-                </strong>
+    {{-- PANEL DERECHO --}}
+    <div class="zone-right-panel">
+
+        <div class="zone-map-card">
+            <div class="zone-map-title">
+                <i class="fas fa-map"></i>
+                Visualización del perímetro
             </div>
 
-            <div class="card-body">
-                <div id="showZoneMap"
-                    style="width: 100%; height: 530px; border: 1px solid #dee2e6; border-radius: 4px;">
-                </div>
+            <div id="showZoneMap" class="zone-map-box"></div>
 
-                <small class="text-muted d-block mt-2">
-                    <i class="fas fa-info-circle"></i>
-                    El área sombreada corresponde al perímetro registrado de la zona.
-                </small>
+            <div class="zone-map-note">
+                <i class="fas fa-info-circle"></i>
+                El área sombreada corresponde al perímetro registrado de la zona.
             </div>
         </div>
+
     </div>
+
 </div>
 
 <script src="https://cdn.jsdelivr.net/npm/@turf/turf@6/turf.min.js"></script>
@@ -172,8 +156,8 @@
             });
 
             let polygon = L.polygon(latlngs, {
-                color: '#007bff',
-                fillColor: '#007bff',
+                color: '#0874d1',
+                fillColor: '#0874d1',
                 fillOpacity: 0.25,
                 weight: 3
             }).addTo(map);
@@ -195,17 +179,16 @@
             $('#zoneAreaBox').html(areaText);
 
             polygon.bindPopup(`
-                <div style="text-align:center; min-width:160px;">
-                    <div style="font-size:22px; color:#007bff; margin-bottom:5px;">
+                <div style="text-align:center; min-width:170px;">
+                    <div style="font-size:22px; color:#0874d1; margin-bottom:6px;">
                         <i class="fas fa-map-marked-alt"></i>
                     </div>
 
-                    <h6 style="font-weight:bold; margin-bottom:8px;">
+                    <h6 style="font-weight:800; margin-bottom:8px;">
                         {{ $zone->name }}
                     </h6>
 
-                    <div style="text-align:center; font-size:13px;">
-
+                    <div style="font-size:13px;">
                         <div style="margin-bottom:4px;">
                             <i class="fas fa-map-marker-alt text-muted"></i>
                             {{ $zone->district->name ?? '-' }}
@@ -215,7 +198,6 @@
                             <i class="fas fa-trash-alt text-muted"></i>
                             Residuos: {{ $zone->average_waste ? $zone->average_waste . ' kg' : 'N/A' }}
                         </div>
-
                     </div>
                 </div>
             `).openPopup();

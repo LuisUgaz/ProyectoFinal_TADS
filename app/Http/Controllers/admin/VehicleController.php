@@ -62,15 +62,17 @@ class VehicleController extends Controller
                         case 'Mantenimiento':
                             return '<span class="badge badge-warning badge-custom">Mantenimiento</span>';
                         default:
-                            return '<span class="badge badge-secondary badge-custom">'
-                                . $vehicle->status .
-                                '</span>';
+                            return '<span class="badge badge-secondary badge-custom">' . $vehicle->status . '</span>';
                     }
                 })
                 ->addColumn('actions', function ($vehicle) {
                     return '
                         <button class="btn btn-sm btn-warning btn-editar" id="' . $vehicle->id . '">
                             <i class="fas fa-pen"></i>
+                        </button>
+
+                        <button class="btn btn-sm btn-info btn-show" id="' . $vehicle->id . '">
+                            <i class="fas fa-eye"></i>
                         </button>
 
                         <button type="button"
@@ -230,6 +232,20 @@ class VehicleController extends Controller
         } catch (\Throwable $th) {
             return response()->json(['message' => 'Error: ' . $th->getMessage()], 500);
         }
+    }
+
+    public function show(string $id)
+    {
+        $vehicle = Vehicle::with([
+            'model.brand',
+            'type',
+            'color',
+            'images' => function ($query) {
+                $query->orderBy('is_profile', 'desc');
+            }
+        ])->findOrFail($id);
+
+        return view('admin.vehicles.show', compact('vehicle'));
     }
 
     public function destroy(string $id)
