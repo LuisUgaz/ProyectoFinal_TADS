@@ -411,8 +411,8 @@ return [
                 ],
                                 [
                     'text' => 'Cambios',
-                    'url'  => '#',
-                    'icon' => 'fas fa-file-alt',
+                    'url'  => 'admin/changes',
+                    'icon' => 'fas fa-history',
                 ],
             ],
         ],

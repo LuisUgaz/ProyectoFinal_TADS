@@ -65,4 +65,9 @@ class Schedule extends Model
     {
         return $this->hasMany(ScheduleDaily::class);
     }
+
+    public function changes(): HasMany
+    {
+        return $this->hasMany(ScheduleChange::class);
+    }
 }

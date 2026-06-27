@@ -2,17 +2,12 @@
 
     <label for="name">
 
-        Nombre
+        Nombre del Motivo <span class="text-danger">*</span>
 
     </label>
 
-    <input type="text"
-           class="form-control"
-           id="name"
-           name="name"
-           placeholder="Nombre del motivo"
-           value="{{ $reason->name ?? '' }}"
-           required>
+    <input type="text" class="form-control" id="name" name="name" placeholder="Ingrese nombre del motivo"
+        value="{{ $reason->name ?? '' }}" required>
 
 </div>
 
@@ -24,10 +19,7 @@
 
     </label>
 
-    <textarea class="form-control"
-              id="description"
-              name="description"
-              rows="4"
-              placeholder="Ingrese una descripción">{{ $reason->description ?? '' }}</textarea>
+    <textarea class="form-control" id="description" name="description" rows="4"
+        placeholder="Ingrese una descripción del motivo">{{ $reason->description ?? '' }}</textarea>
 
 </div>

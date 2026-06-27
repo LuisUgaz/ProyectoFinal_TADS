@@ -28,28 +28,26 @@ class ReasonController extends Controller
                     return $reason->updated_at->format('d/m/Y H:i');
                 })
 
-                ->addColumn('edit', function ($reason) {
+                ->addColumn('actions', function ($reason) {
 
-                    return '<button
+                    $edit = '<button
                                 class="btn btn-sm btn-warning btn-editar"
                                 id="' . $reason->id . '">
                                 <i class="fas fa-pen"></i>
                             </button>';
-                })
 
-                ->addColumn('delete', function ($reason) {
-
-                    return '<button
+                    $delete = '<button
                                 type="button"
                                 class="btn btn-sm btn-danger btn-delete"
                                 data-url="' . route('admin.reasons.destroy', $reason->id) . '">
                                 <i class="fas fa-trash-alt"></i>
                             </button>';
+
+                    return $edit . ' ' . $delete;
                 })
 
                 ->rawColumns([
-                    'edit',
-                    'delete'
+                    'actions'
                 ])
 
                 ->make(true);

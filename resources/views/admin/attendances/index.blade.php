@@ -53,11 +53,11 @@
                         <label class="d-none d-md-block">&nbsp;</label>
 
                         <div class="d-flex">
-                            <button type="button" id="btn-filtrar" class="btn btn-primary btn-sm flex-fill mr-1">
+                            <button type="button" id="btn-filtrar" class="btn btn-primary mr-1">
                                 <i class="fas fa-filter"></i> Filtrar
                             </button>
 
-                            <button type="button" id="btn-limpiar" class="btn btn-secondary btn-sm flex-fill ml-1">
+                            <button type="button" id="btn-limpiar" class="btn btn-secondary ml-1">
                                 <i class="fas fa-eraser"></i> Limpiar
                             </button>
                         </div>

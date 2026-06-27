@@ -12,6 +12,8 @@ use App\Models\Vehicle;
 use App\Models\Zone;
 use App\Models\Holiday;
 use App\Models\Vacation;
+use App\Models\ScheduleChange;
+use App\Models\Reason;
 use Illuminate\Http\Request;
 use Yajra\DataTables\Facades\DataTables;
 use Carbon\Carbon;
@@ -42,6 +44,7 @@ class ScheduleController extends Controller
                         'in_progress' => '<span class="badge badge-info badge-custom">En curso</span>',
                         'completed' => '<span class="badge badge-success badge-custom">Finalizada</span>',
                         'cancelled' => '<span class="badge badge-danger badge-custom">Cancelada</span>',
+                        'reprogramado' => '<span class="badge badge-warning badge-custom">Reprogramada</span>',
                     ];
 
                     return $badges[$s->status] ?? '<span class="badge badge-secondary badge-custom">' . $s->status . '</span>';
@@ -50,9 +53,25 @@ class ScheduleController extends Controller
                 ->addColumn('actions', function($s) {
                     return '
                         <div class="btn-group">
-                            <button class="btn btn-sm btn-info btn-daily" data-id="'.$s->id.'" title="Ver Detalle Diario"><i class="fas fa-calendar-day"></i></button>
-                            <button class="btn btn-sm btn-warning btn-edit" data-id="'.$s->id.'" title="Modificar"><i class="fas fa-edit"></i></button>
-                            <button class="btn btn-sm btn-danger btn-delete" data-id="'.$s->id.'" title="Eliminar"><i class="fas fa-trash"></i></button>
+                            <button class="btn btn-sm btn-info btn-daily" data-id="'.$s->id.'" title="Ver Detalle Diario">
+                                <i class="fas fa-calendar-day"></i>
+                            </button>
+
+                            <button class="btn btn-sm btn-secondary btn-history" data-id="'.$s->id.'" title="Ver Historial">
+                                <i class="fas fa-history"></i>
+                            </button>
+
+                            <button class="btn btn-sm btn-warning btn-edit" data-id="'.$s->id.'" title="Modificar">
+                                <i class="fas fa-pen"></i>
+                            </button>
+
+                            <button class="btn btn-sm btn-success btn-finish" data-id="'.$s->id.'" title="Finalizar">
+                                <i class="fas fa-check"></i>
+                            </button>
+
+                            <button class="btn btn-sm btn-danger btn-delete" data-id="'.$s->id.'" title="Eliminar">
+                                <i class="fas fa-trash"></i>
+                            </button>
                         </div>
                     ';
                 })
@@ -65,8 +84,19 @@ class ScheduleController extends Controller
         $shifts = Shift::all();
         $vehicles = Vehicle::all();
         $personnels = Personnel::all();
+        $reasons = Reason::orderBy('name')->get();
 
-        return view('admin.schedules.index', compact('groups', 'zones', 'shifts', 'vehicles', 'personnels'));
+        return view(
+            'admin.schedules.index',
+            compact(
+                'groups',
+                'zones',
+                'shifts',
+                'vehicles',
+                'personnels',
+                'reasons'
+            )
+        );
     }
 
     public function store(Request $request)
@@ -190,6 +220,20 @@ class ScheduleController extends Controller
         $endDate = $schedule->end_date;
         $currentDate = $startDate->copy();
 
+        $workdays = $schedule->workdays()
+            ->pluck('day')
+            ->toArray();
+
+        $dayMap = [
+            'Monday' => 'Lu',
+            'Tuesday' => 'Ma',
+            'Wednesday' => 'Mi',
+            'Thursday' => 'Ju',
+            'Friday' => 'Vi',
+            'Saturday' => 'Sá',
+            'Sunday' => 'Do',
+        ];
+
         $holidays = Holiday::where('status', true)
             ->whereBetween('date', [$startDate, $endDate])
             ->pluck('date')
@@ -197,7 +241,14 @@ class ScheduleController extends Controller
             ->toArray();
 
         while ($currentDate->lte($endDate)) {
-            if (!in_array($currentDate->format('Y-m-d'), $holidays)) {
+
+            $dayName = $currentDate->format('l');
+            $shortDay = $dayMap[$dayName] ?? null;
+
+            if (
+                in_array($shortDay, $workdays) &&
+                !in_array($currentDate->format('Y-m-d'), $holidays)
+            ) {
                 $daily = $schedule->dailies()->create([
                     'date' => $currentDate->format('Y-m-d'),
                     'shift_id' => $schedule->shift_id,
@@ -208,6 +259,7 @@ class ScheduleController extends Controller
 
                 $daily->helpers()->attach($schedule->helpers->pluck('id'));
             }
+
             $currentDate->addDay();
         }
     }
@@ -254,16 +306,95 @@ class ScheduleController extends Controller
 
     public function update(Request $request, $id)
     {
-        $schedule = Schedule::findOrFail($id);
-        
+        $schedule = Schedule::with(['shift', 'vehicle', 'driver', 'helpers'])
+            ->findOrFail($id);
+
         $request->validate([
             'shift_id' => 'required',
             'vehicle_id' => 'required',
             'driver_id' => 'required',
-            'reason' => 'required'
+            'reason_id' => 'required|exists:reasons,id',
+            'reason' => 'nullable|max:500'
         ]);
 
-        return DB::transaction(function() use ($request, $schedule) {
+        return DB::transaction(function () use ($request, $schedule) {
+
+            $reason = Reason::findOrFail($request->reason_id);
+
+            $oldShift = $schedule->shift?->name;
+            $newShift = Shift::find($request->shift_id)?->name;
+
+            $oldVehicle = $schedule->vehicle?->plate;
+            $newVehicle = Vehicle::find($request->vehicle_id)?->plate;
+
+            $oldDriver = $schedule->driver
+                ? $schedule->driver->names . ' ' . $schedule->driver->lastnames
+                : null;
+
+            $newDriverModel = Personnel::find($request->driver_id);
+
+            $newDriver = $newDriverModel
+                ? $newDriverModel->names . ' ' . $newDriverModel->lastnames
+                : null;
+
+            $oldHelpers = $schedule->helpers
+                ->map(fn($helper) => $helper->names . ' ' . $helper->lastnames)
+                ->implode(', ');
+
+            $newHelperIds = array_filter($request->helper_ids ?? []);
+
+            $newHelpers = Personnel::whereIn('id', $newHelperIds)
+                ->get()
+                ->map(fn($helper) => $helper->names . ' ' . $helper->lastnames)
+                ->implode(', ');
+
+            $baseData = [
+                'schedule_id' => $schedule->id,
+                'reason_id' => $reason->id,
+                'user_id' => auth()->id(),
+                'description' => $request->reason,
+            ];
+
+            if ($oldShift !== $newShift) {
+                ScheduleChange::create(array_merge($baseData, [
+                    'change_type' => 'Turno',
+                    'previous_value' => $oldShift,
+                    'new_value' => $newShift,
+                    'old_shift' => $oldShift,
+                    'new_shift' => $newShift,
+                ]));
+            }
+
+            if ($oldVehicle !== $newVehicle) {
+                ScheduleChange::create(array_merge($baseData, [
+                    'change_type' => 'Vehículo',
+                    'previous_value' => $oldVehicle,
+                    'new_value' => $newVehicle,
+                    'old_vehicle' => $oldVehicle,
+                    'new_vehicle' => $newVehicle,
+                ]));
+            }
+
+            if ($oldDriver !== $newDriver) {
+                ScheduleChange::create(array_merge($baseData, [
+                    'change_type' => 'Conductor',
+                    'previous_value' => $oldDriver,
+                    'new_value' => $newDriver,
+                    'old_driver' => $oldDriver,
+                    'new_driver' => $newDriver,
+                ]));
+            }
+
+            if ($oldHelpers !== $newHelpers) {
+                ScheduleChange::create(array_merge($baseData, [
+                    'change_type' => 'Ayudantes',
+                    'previous_value' => $oldHelpers,
+                    'new_value' => $newHelpers,
+                    'old_helpers' => $oldHelpers,
+                    'new_helpers' => $newHelpers,
+                ]));
+            }
+
             $schedule->update([
                 'shift_id' => $request->shift_id,
                 'vehicle_id' => $request->vehicle_id,
@@ -272,17 +403,23 @@ class ScheduleController extends Controller
                 'notes' => $request->reason
             ]);
 
-            if ($request->has('helper_ids')) {
-                $schedule->helpers()->sync($request->helper_ids);
-            }
+            $schedule->helpers()->sync($newHelperIds);
 
-            // Al actualizar a nivel general, marcamos todos los días 'pendiente' futuros con la nueva info
-            $schedule->dailies()->where('status', 'pendiente')->where('date', '>=', now()->toDateString())->update([
-                'shift_id' => $request->shift_id,
-                'vehicle_id' => $request->vehicle_id,
-                'driver_id' => $request->driver_id,
-                'status' => 'reprogramado'
-            ]);
+            $futureDailies = $schedule->dailies()
+                ->whereIn('status', ['pendiente', 'reprogramado'])
+                ->where('date', '>=', now()->toDateString())
+                ->get();
+
+            foreach ($futureDailies as $daily) {
+                $daily->update([
+                    'shift_id' => $request->shift_id,
+                    'vehicle_id' => $request->vehicle_id,
+                    'driver_id' => $request->driver_id,
+                    'status' => 'reprogramado'
+                ]);
+
+                $daily->helpers()->sync($newHelperIds);
+            }
 
             return response()->json(['success' => true]);
         });
@@ -349,7 +486,7 @@ class ScheduleController extends Controller
             }
         }
 
-        $existingSchedules = Schedule::whereIn('status', ['scheduled', 'in_progress'])
+        $existingSchedules = Schedule::whereIn('status', ['scheduled', 'in_progress', 'reprogramado'])
             ->when($excludeId, function($q) use ($excludeId) {
                 $q->where('id', '!=', $excludeId);
             })
@@ -388,6 +525,43 @@ class ScheduleController extends Controller
     {
         $result = $this->checkAvailability($request, $request->id);
         return response()->json($result);
+    }
+
+    public function history($id)
+    {
+        $schedule = Schedule::with([
+            'changes.reason',
+            'changes.user'
+        ])->findOrFail($id);
+
+        return view('admin.schedules.history', compact('schedule'));
+    }
+
+    public function finish($id)
+    {
+        try {
+            $schedule = Schedule::findOrFail($id);
+
+            $schedule->update([
+                'status' => 'completed'
+            ]);
+
+            $schedule->dailies()
+                ->whereIn('status', ['pendiente', 'reprogramado'])
+                ->update([
+                    'status' => 'completado'
+                ]);
+
+            return response()->json([
+                'success' => true,
+                'message' => 'Programación finalizada correctamente.'
+            ]);
+        } catch (\Throwable $th) {
+            return response()->json([
+                'success' => false,
+                'message' => $th->getMessage()
+            ], 500);
+        }
     }
 
     public function destroy($id)
