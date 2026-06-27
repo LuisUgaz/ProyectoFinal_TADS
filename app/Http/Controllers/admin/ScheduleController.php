@@ -24,58 +24,83 @@ class ScheduleController extends Controller
     public function index(Request $request)
     {
         if ($request->ajax()) {
-            $schedules = Schedule::with(['personnelGroup', 'zone', 'shift', 'vehicle', 'driver', 'helpers'])
-                ->select('schedules.*');
+            $dailies = ScheduleDaily::with([
+                'schedule.zone',
+                'schedule.personnelGroup',
+                'shift',
+                'vehicle',
+                'driver',
+                'helpers'
+            ])->select('schedule_dailies.*');
 
-            return DataTables::of($schedules)
-                ->addColumn('group_name', fn($s) => $s->personnelGroup?->name)
-                ->addColumn('zone_name', fn($s) => $s->zone?->name)
-                ->addColumn('shift_name', fn($s) => $s->shift?->name)
-                ->addColumn('vehicle_plate', fn($s) => $s->vehicle?->plate)
-                ->addColumn('driver_name', fn($s) => $s->driver?->names . ' ' . $s->driver?->lastnames)
-                ->addColumn('helpers_names', function($s) {
-                    return $s->helpers->map(fn($h) => $h->names . ' ' . $h->lastnames)->implode('<br>');
+            return DataTables::of($dailies)
+                ->addColumn('date_format', fn($d) => $d->date->format('d/m/Y'))
+
+                ->addColumn('group_name', fn($d) => $d->schedule?->personnelGroup?->name ?? 'N/A')
+
+                ->addColumn('zone_name', fn($d) => $d->schedule?->zone?->name ?? 'N/A')
+
+                ->addColumn('shift_name', fn($d) => $d->shift?->name ?? 'N/A')
+
+                ->addColumn('vehicle_plate', fn($d) => $d->vehicle?->plate ?? 'N/A')
+
+                ->addColumn('driver_name', function ($d) {
+                    return $d->driver
+                        ? $d->driver->names . ' ' . $d->driver->lastnames
+                        : 'N/A';
                 })
-                ->addColumn('date_range', fn($s) => $s->start_date->format('d/m/Y') . ' - ' . $s->end_date->format('d/m/Y'))
-                
-                ->addColumn('status_badge', function($s) {
+
+                ->addColumn('helpers_names', function ($d) {
+                    return $d->helpers
+                        ->map(fn($h) => $h->names . ' ' . $h->lastnames)
+                        ->implode('<br>');
+                })
+
+                ->addColumn('status_badge', function ($d) {
                     $badges = [
-                        'scheduled' => '<span class="badge badge-primary badge-custom">Programada</span>',
-                        'in_progress' => '<span class="badge badge-info badge-custom">En curso</span>',
-                        'completed' => '<span class="badge badge-success badge-custom">Finalizada</span>',
-                        'cancelled' => '<span class="badge badge-danger badge-custom">Cancelada</span>',
-                        'reprogramado' => '<span class="badge badge-warning badge-custom">Reprogramada</span>',
+                        'pendiente' => '<span class="badge badge-secondary badge-custom">Pendiente</span>',
+                        'completado' => '<span class="badge badge-success badge-custom">Completado</span>',
+                        'reprogramado' => '<span class="badge badge-warning badge-custom">Reprogramado</span>',
+                        'cancelado' => '<span class="badge badge-danger badge-custom">Cancelado</span>',
                     ];
 
-                    return $badges[$s->status] ?? '<span class="badge badge-secondary badge-custom">' . $s->status . '</span>';
+                    return $badges[$d->status] ?? '<span class="badge badge-info badge-custom">' . $d->status . '</span>';
                 })
 
-                ->addColumn('actions', function($s) {
-                    return '
-                        <div class="btn-group">
-                            <button class="btn btn-sm btn-info btn-daily" data-id="'.$s->id.'" title="Ver Detalle Diario">
-                                <i class="fas fa-calendar-day"></i>
-                            </button>
+                ->addColumn('actions', function ($d) {
 
-                            <button class="btn btn-sm btn-secondary btn-history" data-id="'.$s->id.'" title="Ver Historial">
-                                <i class="fas fa-history"></i>
-                            </button>
-
-                            <button class="btn btn-sm btn-warning btn-edit" data-id="'.$s->id.'" title="Modificar">
-                                <i class="fas fa-pen"></i>
-                            </button>
-
-                            <button class="btn btn-sm btn-success btn-finish" data-id="'.$s->id.'" title="Finalizar">
-                                <i class="fas fa-check"></i>
-                            </button>
-
-                            <button class="btn btn-sm btn-danger btn-delete" data-id="'.$s->id.'" title="Eliminar">
-                                <i class="fas fa-trash"></i>
-                            </button>
-                        </div>
+                    $history = '
+                        <button class="btn btn-sm btn-secondary btn-history" data-id="'.$d->schedule_id.'" title="Ver historial">
+                            <i class="fas fa-history"></i>
+                        </button>
                     ';
+
+                    if ($d->status === 'completado') {
+                        return '<div class="btn-group">' . $history . '</div>';
+                    }
+
+                    $edit = '
+                        <button class="btn btn-sm btn-warning btn-edit" data-id="'.$d->schedule_id.'" title="Modificar programación">
+                            <i class="fas fa-pen"></i>
+                        </button>
+                    ';
+
+                    $finish = '
+                        <button class="btn btn-sm btn-success btn-finish-daily" data-id="'.$d->id.'" title="Finalizar programación">
+                            <i class="fas fa-check"></i>
+                        </button>
+                    ';
+
+                    $delete = '
+                        <button class="btn btn-sm btn-danger btn-delete-daily" data-id="'.$d->id.'" title="Eliminar programación">
+                            <i class="fas fa-trash"></i>
+                        </button>
+                    ';
+
+                    return '<div class="btn-group">' . $history . $edit . $finish . $delete . '</div>';
                 })
-                ->rawColumns(['status_badge', 'actions', 'helpers_names'])
+
+                ->rawColumns(['helpers_names', 'status_badge', 'actions'])
                 ->make(true);
         }
 
@@ -155,7 +180,12 @@ class ScheduleController extends Controller
             ->get();
 
         $preview = [];
-        $personnels = Personnel::all(); // Para el selector de cambios
+
+        $personnels = Personnel::where('status', 'Activo')
+            ->whereHas('contracts', function ($q) {
+                $q->where('is_active', true);
+            })
+            ->get();
 
         foreach ($groups as $group) {
             $tempRequest = new Request([
@@ -170,7 +200,7 @@ class ScheduleController extends Controller
             ]);
 
             $availability = $this->checkAvailability($tempRequest);
-            
+
             $preview[] = [
                 'group' => $group,
                 'availability' => $availability
@@ -186,12 +216,41 @@ class ScheduleController extends Controller
 
     public function storeMass(Request $request)
     {
+        $request->validate([
+            'start_date' => 'required|date',
+            'end_date' => 'required|date|after_or_equal:start_date',
+            'groups' => 'required|array|min:1',
+        ]);
+
         $data = $request->groups;
         $startDate = $request->start_date;
         $endDate = $request->end_date;
 
-        return DB::transaction(function() use ($data, $startDate, $endDate) {
+        return DB::transaction(function () use ($data, $startDate, $endDate) {
+
             foreach ($data as $item) {
+
+                $tempRequest = new Request([
+                    'personnel_group_id' => $item['group_id'],
+                    'start_date' => $startDate,
+                    'end_date' => $endDate,
+                    'zone_id' => $item['zone_id'],
+                    'shift_id' => $item['shift_id'],
+                    'vehicle_id' => $item['vehicle_id'],
+                    'driver_id' => $item['driver_id'],
+                    'helper_ids' => $item['helper_ids'] ?? [],
+                ]);
+
+                $availability = $this->checkAvailability($tempRequest);
+
+                if (!$availability['valid']) {
+                    return response()->json([
+                        'success' => false,
+                        'message' => 'Existen conflictos en uno o más grupos seleccionados.',
+                        'errors' => $availability['errors']
+                    ], 422);
+                }
+
                 $schedule = Schedule::create([
                     'personnel_group_id' => $item['group_id'],
                     'start_date' => $startDate,
@@ -203,8 +262,18 @@ class ScheduleController extends Controller
                     'status' => 'scheduled'
                 ]);
 
-                if (isset($item['helper_ids'])) {
+                if (!empty($item['helper_ids'])) {
                     $schedule->helpers()->attach($item['helper_ids']);
+                }
+
+                $group = PersonnelGroup::with('workdays')->find($item['group_id']);
+
+                if ($group) {
+                    foreach ($group->workdays as $workday) {
+                        $schedule->workdays()->create([
+                            'day' => $workday->day
+                        ]);
+                    }
                 }
 
                 $this->generateDailyRecords($schedule);
@@ -290,18 +359,15 @@ class ScheduleController extends Controller
 
     private function getEligiblePersonnelByRole($roleName)
     {
-        return Personnel::whereHas('type', function($q) use ($roleName) {
-            $q->where('name', $roleName);
-        })
-        ->whereHas('contracts', function($q) {
-            $q->whereIn('type', ['Permanente', 'Nombrado'])->where('is_active', true);
-        })
-        ->whereHas('attendances', function($q) {
-            $q->whereDate('date', now()->toDateString());
-        })
-        ->whereDoesntHave('driverGroups') // No es conductor titular en ningún grupo
-        ->whereDoesntHave('helperGroups') // No es ayudante en ningún grupo
-        ->get();
+        return Personnel::whereHas('type', function ($q) use ($roleName) {
+                $q->where('name', $roleName);
+            })
+            ->where('status', 'Activo')
+            ->whereHas('contracts', function ($q) {
+                $q->where('is_active', true);
+            })
+            ->orderBy('names')
+            ->get();
     }
 
     public function update(Request $request, $id)
@@ -449,74 +515,140 @@ class ScheduleController extends Controller
     {
         $startDate = Carbon::parse($request->start_date);
         $endDate = Carbon::parse($request->end_date);
+
         $groupId = $request->personnel_group_id;
         $driverId = $request->driver_id;
-        $helperIds = $request->helper_ids ?? [];
+        $helperIds = array_filter($request->helper_ids ?? []);
         $vehicleId = $request->vehicle_id;
 
         $errors = [];
         $warnings = [];
 
+        if (!$request->filled('workdays')) {
+            $group = PersonnelGroup::with('workdays')->find($groupId);
+            $workdays = $group ? $group->workdays->pluck('day')->toArray() : [];
+        } else {
+            $workdays = $request->workdays;
+        }
+
+        if (empty($workdays)) {
+            $errors[] = 'Debe seleccionar al menos un día de trabajo.';
+        }
+
+        if (count($helperIds) !== count(array_unique($helperIds))) {
+            $errors[] = 'No puede seleccionar el mismo ayudante más de una vez.';
+        }
+
+        if (in_array($driverId, $helperIds)) {
+            $errors[] = 'El conductor no puede estar registrado también como ayudante.';
+        }
+
         $holidays = Holiday::where('status', true)
             ->whereBetween('date', [$startDate, $endDate])
             ->get();
-        
+
         foreach ($holidays as $holiday) {
-            $warnings[] = "El periodo incluye un feriado: " . $holiday->description . " (" . $holiday->date->format('d/m/Y') . ").";
+            $warnings[] = 'El periodo incluye un feriado activo: '
+                . $holiday->description . ' (' . $holiday->date->format('d/m/Y') . ').';
         }
 
         $allPersonnelIds = array_filter(array_unique(array_merge([$driverId], $helperIds)));
-        foreach ($allPersonnelIds as $pId) {
-            $personnel = Personnel::find($pId);
-            if (!$personnel) continue;
 
-            $vacations = Vacation::where('personnel_id', $pId)
+        foreach ($allPersonnelIds as $personnelId) {
+            $personnel = Personnel::with('type')->find($personnelId);
+
+            if (!$personnel) {
+                $errors[] = 'Uno de los trabajadores seleccionados no existe.';
+                continue;
+            }
+
+            if ($personnel->status !== 'Activo') {
+                $errors[] = "El personal {$personnel->names} {$personnel->lastnames} no está activo.";
+            }
+
+            $hasActiveContract = $personnel->contracts()
+                ->where('is_active', true)
+                ->whereDate('start_date', '<=', $startDate)
+                ->where(function ($q) use ($endDate) {
+                    $q->whereNull('end_date')
+                        ->orWhereDate('end_date', '>=', $endDate);
+                })
+                ->exists();
+
+            if (!$hasActiveContract) {
+                $errors[] = "El personal {$personnel->names} {$personnel->lastnames} no tiene contrato activo para el rango seleccionado.";
+            }
+
+            $vacation = Vacation::where('personnel_id', $personnelId)
                 ->where('status', 'Aprobada')
-                ->where(function($q) use ($startDate, $endDate) {
+                ->where(function ($q) use ($startDate, $endDate) {
                     $q->whereBetween('start_date', [$startDate, $endDate])
-                      ->orWhereBetween('end_date', [$startDate, $endDate])
-                      ->orWhere(function($sub) use ($startDate, $endDate) {
-                          $sub->where('start_date', '<=', $startDate)
-                              ->where('end_date', '>=', $endDate);
-                      });
-                })->first();
+                        ->orWhereBetween('end_date', [$startDate, $endDate])
+                        ->orWhere(function ($sub) use ($startDate, $endDate) {
+                            $sub->where('start_date', '<=', $startDate)
+                                ->where('end_date', '>=', $endDate);
+                        });
+                })
+                ->first();
 
-            if ($vacations) {
-                $errors[] = "El personal {$personnel->names} {$personnel->lastnames} tiene vacaciones aprobadas.";
+            if ($vacation) {
+                $errors[] = "El personal {$personnel->names} {$personnel->lastnames} tiene vacaciones aprobadas del "
+                    . Carbon::parse($vacation->start_date)->format('d/m/Y')
+                    . ' al '
+                    . Carbon::parse($vacation->end_date)->format('d/m/Y') . '.';
             }
         }
 
-        $existingSchedules = Schedule::whereIn('status', ['scheduled', 'in_progress', 'reprogramado'])
-            ->when($excludeId, function($q) use ($excludeId) {
+        $activeScheduleIds = Schedule::whereIn('status', ['scheduled', 'in_progress', 'reprogramado'])
+            ->when($excludeId, function ($q) use ($excludeId) {
                 $q->where('id', '!=', $excludeId);
             })
-            ->where(function($q) use ($startDate, $endDate) {
-                $q->whereBetween('start_date', [$startDate, $endDate])
-                  ->orWhereBetween('end_date', [$startDate, $endDate])
-                  ->orWhere(function($sub) use ($startDate, $endDate) {
-                      $sub->where('start_date', '<=', $startDate)
-                          ->where('end_date', '>=', $endDate);
-                      });
-            })->get();
+            ->pluck('id');
 
-        foreach ($existingSchedules as $es) {
-            if ($es->personnel_group_id == $groupId && $es->shift_id == $request->shift_id) {
-                $errors[] = "El Grupo de Personal ya tiene una programación activa en el turno seleccionado durante este periodo.";
+        $existingDailies = ScheduleDaily::with(['schedule', 'helpers'])
+            ->whereIn('schedule_id', $activeScheduleIds)
+            ->whereBetween('date', [$startDate, $endDate])
+            ->get();
+
+        foreach ($existingDailies as $daily) {
+            $schedule = $daily->schedule;
+
+            if (!$schedule) {
+                continue;
             }
-            if ($es->zone_id == $request->zone_id && $es->shift_id == $request->shift_id) {
-                $errors[] = "La Zona y el Turno ya se encuentran ocupados por otra programación activa.";
+
+            if ($schedule->zone_id == $request->zone_id && $daily->shift_id == $request->shift_id) {
+                $errors[] = 'La zona y el turno ya tienen una programación registrada en el rango seleccionado.';
+                break;
             }
-            if ($es->driver_id == $driverId) {
-                $errors[] = "El conductor ya está asignado.";
+        }
+
+        foreach ($existingDailies as $daily) {
+            if ($daily->vehicle_id == $vehicleId) {
+                $errors[] = 'El vehículo seleccionado ya está asignado en una programación dentro del rango.';
+                break;
             }
-            if ($es->vehicle_id == $vehicleId) {
-                $errors[] = "El vehículo ya está asignado.";
+        }
+
+        foreach ($existingDailies as $daily) {
+            if ($daily->driver_id == $driverId) {
+                $errors[] = 'El conductor seleccionado ya está asignado en una programación dentro del rango.';
+                break;
+            }
+
+            $dailyHelperIds = $daily->helpers->pluck('id')->toArray();
+
+            foreach ($helperIds as $helperId) {
+                if (in_array($helperId, $dailyHelperIds)) {
+                    $errors[] = 'Uno de los ayudantes seleccionados ya está asignado en una programación dentro del rango.';
+                    break 2;
+                }
             }
         }
 
         return [
             'valid' => count($errors) === 0,
-            'errors' => $errors,
+            'errors' => array_values(array_unique($errors)),
             'warnings' => $warnings
         ];
     }
@@ -535,6 +667,42 @@ class ScheduleController extends Controller
         ])->findOrFail($id);
 
         return view('admin.schedules.history', compact('schedule'));
+    }
+
+    public function finishDaily($id)
+    {
+        try {
+            $daily = ScheduleDaily::findOrFail($id);
+
+            $daily->update([
+                'status' => 'completado'
+            ]);
+
+            $schedule = $daily->schedule;
+
+            if ($schedule) {
+                $hasPending = $schedule->dailies()
+                    ->whereIn('status', ['pendiente', 'reprogramado'])
+                    ->exists();
+
+                if (!$hasPending) {
+                    $schedule->update([
+                        'status' => 'completed'
+                    ]);
+                }
+            }
+
+            return response()->json([
+                'success' => true,
+                'message' => 'Día finalizado correctamente.'
+            ]);
+
+        } catch (\Throwable $th) {
+            return response()->json([
+                'success' => false,
+                'message' => $th->getMessage()
+            ], 500);
+        }
     }
 
     public function finish($id)
@@ -556,6 +724,32 @@ class ScheduleController extends Controller
                 'success' => true,
                 'message' => 'Programación finalizada correctamente.'
             ]);
+        } catch (\Throwable $th) {
+            return response()->json([
+                'success' => false,
+                'message' => $th->getMessage()
+            ], 500);
+        }
+    }
+
+    public function destroyDaily($id)
+    {
+        try {
+            $daily = ScheduleDaily::findOrFail($id);
+            $schedule = $daily->schedule;
+
+            $daily->helpers()->detach();
+            $daily->delete();
+
+            if ($schedule && $schedule->dailies()->count() === 0) {
+                $schedule->delete();
+            }
+
+            return response()->json([
+                'success' => true,
+                'message' => 'Programación eliminada correctamente.'
+            ]);
+
         } catch (\Throwable $th) {
             return response()->json([
                 'success' => false,

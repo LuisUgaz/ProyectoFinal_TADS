@@ -134,6 +134,12 @@ Route::middleware([
     Route::post('admin/schedules/{id}/finish', [ScheduleController::class, 'finish'])
         ->name('admin.schedules.finish');
 
+    Route::post('admin/schedules/daily/{id}/finish', [ScheduleController::class, 'finishDaily'])
+        ->name('admin.schedules.daily-finish');
+
+    Route::delete('admin/schedules/daily/{id}', [ScheduleController::class, 'destroyDaily'])
+        ->name('admin.schedules.daily-destroy');
+
     Route::resource('admin/schedules', \App\Http\Controllers\admin\ScheduleController::class)
         ->names('admin.schedules');
 
@@ -143,6 +149,15 @@ Route::middleware([
     Route::get('admin/changes', [ScheduleChangeController::class, 'index'])
         ->name('admin.changes.index');
 
+    Route::get('admin/changes-mass/create', [ScheduleChangeController::class, 'createMass'])
+        ->name('admin.changes.mass.create');
+
+    Route::post('admin/changes-mass/store', [ScheduleChangeController::class, 'storeMass'])
+        ->name('admin.changes.mass.store');
+
     Route::get('admin/changes/{id}', [ScheduleChangeController::class, 'show'])
         ->name('admin.changes.show');
+
+    Route::delete('admin/changes/{id}', [ScheduleChangeController::class, 'destroy'])
+        ->name('admin.changes.destroy');
 });

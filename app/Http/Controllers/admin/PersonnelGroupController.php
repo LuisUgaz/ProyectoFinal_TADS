@@ -530,10 +530,9 @@ class PersonnelGroupController extends Controller
 
             $group = PersonnelGroup::findOrFail($id);
 
-            PersonnelGroupDetail::where(
-                'personnel_group_id',
-                $group->id
-            )->delete();
+            PersonnelGroupDetail::where('personnel_group_id', $group->id)->delete();
+
+            PersonnelGroupWorkday::where('personnel_group_id', $group->id)->delete();
 
             $group->delete();
 

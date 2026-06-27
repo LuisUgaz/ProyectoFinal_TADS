@@ -83,15 +83,15 @@
             </div>
 
             <div class="col-lg-3 col-md-6 mb-3">
-                <a href="#" onclick="return false;" class="rsu-module-card rsu-card-red rsu-card-disabled">
+                <a href="{{ route('admin.changes.index') }}" class="rsu-module-card rsu-card-red">
                     <div class="rsu-card-content">
                         <span class="rsu-card-label">Módulo 04</span>
                         <h4>Cambios</h4>
                         <p>Motivos y cambios.</p>
-                        <i class="fas fa-exchange-alt rsu-card-icon"></i>
+                        <i class="fas fa-route rsu-card-icon"></i>
                     </div>
                     <div class="rsu-card-footer">
-                        Próximamente <i class="fas fa-clock ml-1"></i>
+                        Acceder <i class="fas fa-arrow-circle-right ml-1"></i>
                     </div>
                 </a>
             </div>

@@ -26,13 +26,13 @@
                 <table id="schedules-table" class="table table-bordered table-striped w-100">
                     <thead>
                         <tr>
+                            <th>Fecha</th>
                             <th>Grupo</th>
                             <th>Zona</th>
                             <th>Turno</th>
                             <th>Vehículo</th>
                             <th>Conductor</th>
                             <th>Ayudantes</th>
-                            <th>Periodo</th>
                             <th>Estado</th>
                             <th>Acciones</th>
                         </tr>
@@ -570,6 +570,10 @@
                 responsive: true,
                 ajax: '{{ route('admin.schedules.index') }}',
                 columns: [{
+                        data: 'date_format',
+                        name: 'date'
+                    },
+                    {
                         data: 'group_name',
                         name: 'group_name'
                     },
@@ -592,10 +596,6 @@
                     {
                         data: 'helpers_names',
                         name: 'helpers_names'
-                    },
-                    {
-                        data: 'date_range',
-                        name: 'date_range'
                     },
                     {
                         data: 'status_badge',
@@ -1233,6 +1233,98 @@
                                     'Error',
                                     xhr.responseJSON?.message ??
                                     'No se pudo finalizar.',
+                                    'error'
+                                );
+                            }
+                        });
+
+                    }
+
+                });
+
+            });
+
+            $(document).on('click', '.btn-finish-daily', function() {
+
+                let id = $(this).data('id');
+
+                Swal.fire({
+                    title: '¿Finalizar este día?',
+                    text: 'Solo se marcará como completada esta programación diaria.',
+                    icon: 'warning',
+                    showCancelButton: true,
+                    confirmButtonText: 'Sí, finalizar',
+                    cancelButtonText: 'Cancelar'
+                }).then((result) => {
+
+                    if (result.isConfirmed || result.value) {
+
+                        $.ajax({
+                            url: `/admin/schedules/daily/${id}/finish`,
+                            type: 'POST',
+                            data: {
+                                _token: '{{ csrf_token() }}'
+                            },
+                            success: function(response) {
+                                table.ajax.reload(null, false);
+
+                                Swal.fire(
+                                    'Proceso exitoso',
+                                    response.message,
+                                    'success'
+                                );
+                            },
+                            error: function(xhr) {
+                                Swal.fire(
+                                    'Error',
+                                    xhr.responseJSON?.message ??
+                                    'No se pudo finalizar.',
+                                    'error'
+                                );
+                            }
+                        });
+
+                    }
+
+                });
+
+            });
+
+            $(document).on('click', '.btn-delete-daily', function() {
+
+                let id = $(this).data('id');
+
+                Swal.fire({
+                    title: '¿Eliminar programación?',
+                    text: 'Se eliminará solo esta programación diaria.',
+                    icon: 'warning',
+                    showCancelButton: true,
+                    confirmButtonText: 'Sí, eliminar',
+                    cancelButtonText: 'Cancelar'
+                }).then((result) => {
+
+                    if (result.isConfirmed || result.value) {
+
+                        $.ajax({
+                            url: `/admin/schedules/daily/${id}`,
+                            type: 'DELETE',
+                            data: {
+                                _token: '{{ csrf_token() }}'
+                            },
+                            success: function(response) {
+                                table.ajax.reload(null, false);
+
+                                Swal.fire(
+                                    'Proceso exitoso',
+                                    response.message,
+                                    'success'
+                                );
+                            },
+                            error: function(xhr) {
+                                Swal.fire(
+                                    'Error',
+                                    xhr.responseJSON?.message ??
+                                    'No se pudo eliminar.',
                                     'error'
                                 );
                             }
