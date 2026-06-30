@@ -499,7 +499,6 @@ class ScheduleController extends Controller
 
             $futureDailies = $schedule->dailies()
                 ->whereIn('status', ['pendiente', 'reprogramado'])
-                ->where('date', '>=', now()->toDateString())
                 ->get();
 
             foreach ($futureDailies as $daily) {
