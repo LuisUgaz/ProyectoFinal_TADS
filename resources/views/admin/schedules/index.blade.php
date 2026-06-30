@@ -12,6 +12,9 @@
     <div class="card">
         <div class="card-header">
             <div class="float-right">
+                <a href="{{ route('dashboard') }}" class="btn btn-secondary btn-sm">
+                    <i class="fas fa-tachometer-alt"></i> Dashboard
+                </a>
                 <button type="button" class="btn btn-primary btn-sm" id="btn-nueva-programacion">
                     <i class="fas fa-plus"></i> Nueva Programación
                 </button>

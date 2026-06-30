@@ -37,6 +37,12 @@ Route::middleware([
 
     Route::get('/admin', [AdminController::class, 'index'])
         ->name('admin.index');
+
+    Route::get('/dashboard/daily/{daily}', [AdminController::class, 'showDaily'])
+        ->name('dashboard.daily.show');
+
+    Route::post('/dashboard/daily/{daily}', [AdminController::class, 'updateDaily'])
+        ->name('dashboard.daily.update');
     
     Route::resource('admin/colors', VehicleColorController::class)
     ->names('admin.colors');

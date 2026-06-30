@@ -21,6 +21,7 @@ class DatabaseSeeder extends Seeder
             ZoneSeeder::class,
             ReasonSeeder::class,
             PersonnelGroupSeeder::class,
+            DashboardScheduleSeeder::class,
         ]);
     }
 }
