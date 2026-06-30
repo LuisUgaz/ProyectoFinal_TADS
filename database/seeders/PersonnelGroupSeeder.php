@@ -2,20 +2,20 @@
 
 namespace Database\Seeders;
 
-use Illuminate\Database\Seeder;
 use App\Models\Personnel;
-use App\Models\Shift;
-use App\Models\Zone;
-use App\Models\Vehicle;
 use App\Models\PersonnelGroup;
-use App\Models\PersonnelGroupWorkday;
 use App\Models\PersonnelGroupDetail;
+use App\Models\PersonnelGroupWorkday;
+use App\Models\Shift;
+use App\Models\Vehicle;
+use App\Models\Zone;
+use Illuminate\Database\Seeder;
 
 class PersonnelGroupSeeder extends Seeder
 {
     public function run(): void
     {
-        $groupData = [
+        $groups = [
             [
                 'name' => 'Grupo Norte A',
                 'zone' => 'Norte',
@@ -54,7 +54,7 @@ class PersonnelGroupSeeder extends Seeder
             ],
         ];
 
-        foreach ($groupData as $data) {
+        foreach ($groups as $data) {
             $zone = Zone::where('name', $data['zone'])->first();
             $shift = Shift::where('name', $data['shift'])->first();
             $vehicle = Vehicle::where('plate', $data['vehicle'])->first();
@@ -75,15 +75,8 @@ class PersonnelGroupSeeder extends Seeder
                 ]
             );
 
-            PersonnelGroupWorkday::where('personnel_group_id', $group->id)->delete();
             PersonnelGroupDetail::where('personnel_group_id', $group->id)->delete();
-
-            foreach ($data['days'] as $day) {
-                PersonnelGroupWorkday::create([
-                    'personnel_group_id' => $group->id,
-                    'day' => $day,
-                ]);
-            }
+            PersonnelGroupWorkday::where('personnel_group_id', $group->id)->delete();
 
             foreach ($data['helpers_dni'] as $helperDni) {
                 $helper = Personnel::where('dni', $helperDni)->first();
@@ -94,6 +87,13 @@ class PersonnelGroupSeeder extends Seeder
                         'personnel_id' => $helper->id,
                     ]);
                 }
+            }
+
+            foreach ($data['days'] as $day) {
+                PersonnelGroupWorkday::create([
+                    'personnel_group_id' => $group->id,
+                    'day' => $day,
+                ]);
             }
         }
     }

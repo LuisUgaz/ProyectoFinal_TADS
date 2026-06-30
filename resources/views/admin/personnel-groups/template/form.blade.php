@@ -106,7 +106,31 @@
         $diasSeleccionados = [];
 
         if (isset($group)) {
-            $diasSeleccionados = $group->workdays->pluck('day')->toArray();
+            $diasSeleccionados = $group->workdays
+                ->pluck('day')
+                ->map(function ($day) {
+                    $map = [
+                        'Lu' => 'Lunes',
+                        'Lun' => 'Lunes',
+                        'Ma' => 'Martes',
+                        'Mar' => 'Martes',
+                        'Mi' => 'Miércoles',
+                        'Mie' => 'Miércoles',
+                        'Miercoles' => 'Miércoles',
+                        'Ju' => 'Jueves',
+                        'Jue' => 'Jueves',
+                        'Vi' => 'Viernes',
+                        'Vie' => 'Viernes',
+                        'Sa' => 'Sábado',
+                        'Sab' => 'Sábado',
+                        'Sabado' => 'Sábado',
+                        'Do' => 'Domingo',
+                        'Dom' => 'Domingo',
+                    ];
+
+                    return $map[$day] ?? $day;
+                })
+                ->toArray();
         }
 
     @endphp

@@ -72,6 +72,7 @@ class ContractController extends Controller
     public function store(Request $request)
     {
         try {
+            
             $data = $request->validate([
                 'personnel_id' => 'required|exists:personnels,id',
                 'type' => 'required|in:Permanente,Nombrado,Temporal',
@@ -80,6 +81,18 @@ class ContractController extends Controller
                 'salary' => 'required|numeric|min:0',
                 'probation_period' => 'nullable|string',
                 'is_active' => 'boolean'
+            ], [
+                'personnel_id.required' => 'Debe seleccionar un personal.',
+                'personnel_id.exists' => 'El personal seleccionado no existe.',
+                'type.required' => 'Debe seleccionar el tipo de contrato.',
+                'type.in' => 'El tipo de contrato seleccionado no es válido.',
+                'start_date.required' => 'Debe ingresar la fecha de inicio.',
+                'start_date.date' => 'La fecha de inicio no tiene un formato válido.',
+                'end_date.date' => 'La fecha de fin no tiene un formato válido.',
+                'end_date.after_or_equal' => 'La fecha de fin debe ser igual o posterior a la fecha de inicio.',
+                'salary.required' => 'Debe ingresar el salario.',
+                'salary.numeric' => 'El salario debe ser un número válido.',
+                'salary.min' => 'El salario no puede ser negativo.',
             ]);
 
             $personnelId = $data['personnel_id'];
@@ -144,6 +157,18 @@ class ContractController extends Controller
                 'salary' => 'required|numeric|min:0',
                 'probation_period' => 'nullable|string',
                 'is_active' => 'boolean'
+            ], [
+                'personnel_id.required' => 'Debe seleccionar un personal.',
+                'personnel_id.exists' => 'El personal seleccionado no existe.',
+                'type.required' => 'Debe seleccionar el tipo de contrato.',
+                'type.in' => 'El tipo de contrato seleccionado no es válido.',
+                'start_date.required' => 'Debe ingresar la fecha de inicio.',
+                'start_date.date' => 'La fecha de inicio no tiene un formato válido.',
+                'end_date.date' => 'La fecha de fin no tiene un formato válido.',
+                'end_date.after_or_equal' => 'La fecha de fin debe ser igual o posterior a la fecha de inicio.',
+                'salary.required' => 'Debe ingresar el salario.',
+                'salary.numeric' => 'El salario debe ser un número válido.',
+                'salary.min' => 'El salario no puede ser negativo.',
             ]);
 
             $data['is_active'] = $request->boolean('is_active');

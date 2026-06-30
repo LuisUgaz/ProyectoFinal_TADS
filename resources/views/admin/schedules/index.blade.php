@@ -61,25 +61,44 @@
                         <div class="row">
                             <div class="col-md-4">
                                 <div class="form-group">
-                                    <label>Grupo de Personal (Plantilla)</label>
-                                    <select name="personnel_group_id" id="personnel_group_id" class="form-control select2"
-                                        style="width: 100%" required>
-                                        <option value="">Seleccione un grupo...</option>
+                                    <label>Grupo de Personal <span class="text-danger">*</span></label>
+
+                                    <input type="hidden" name="personnel_group_id" id="personnel_group_id">
+
+                                    <div class="position-relative">
+                                        <input type="text" id="group_search_input" class="form-control pr-5"
+                                            placeholder="Busque o seleccione un grupo..." autocomplete="off" required>
+
+                                        <button type="button" id="clear_group_search" class="btn btn-sm text-muted"
+                                            style="position:absolute; right:8px; top:50%; transform:translateY(-50%); display:none;">
+                                            <i class="fas fa-times"></i>
+                                        </button>
+                                    </div>
+
+                                    <div id="group_results" class="list-group shadow-sm d-none"
+                                        style="position:absolute; z-index:9999; left:15px; right:15px; max-height:220px; overflow-y:auto;">
+
                                         @foreach ($groups as $group)
-                                            <option value="{{ $group->id }}">{{ $group->name }}</option>
+                                            <button type="button"
+                                                class="list-group-item list-group-item-action group-option"
+                                                data-id="{{ $group->id }}" data-text="{{ $group->name }}">
+                                                {{ $group->name }}
+                                            </button>
                                         @endforeach
-                                    </select>
+
+                                    </div>
+
                                 </div>
                             </div>
                             <div class="col-md-4">
                                 <div class="form-group">
-                                    <label>Fecha Inicio</label>
+                                    <label>Fecha Inicio <span class="text-danger">*</span></label>
                                     <input type="date" name="start_date" id="start_date" class="form-control" required>
                                 </div>
                             </div>
                             <div class="col-md-4">
                                 <div class="form-group">
-                                    <label>Fecha Fin</label>
+                                    <label>Fecha Fin <span class="text-danger">*</span></label>
                                     <input type="date" name="end_date" id="end_date" class="form-control" required>
                                 </div>
                             </div>
@@ -89,44 +108,58 @@
                         <div class="row">
                             <div class="col-md-3">
                                 <div class="form-group">
-                                    <label>Zona</label>
-                                    <select name="zone_id" id="zone_id" class="form-control select2" style="width: 100%">
+                                    <label>Zona <span class="text-danger">*</span></label>
+
+                                    <select name="zone_id_visual" id="zone_id" class="form-control select2"
+                                        style="width: 100%" disabled>
                                         @foreach ($zones as $zone)
                                             <option value="{{ $zone->id }}">{{ $zone->name }}</option>
                                         @endforeach
                                     </select>
+
+                                    <input type="hidden" name="zone_id" id="zone_id_hidden">
                                 </div>
                             </div>
+
                             <div class="col-md-3">
                                 <div class="form-group">
-                                    <label>Turno</label>
-                                    <select name="shift_id" id="shift_id" class="form-control select2" style="width: 100%">
+                                    <label>Turno <span class="text-danger">*</span></label>
+
+                                    <select name="shift_id_visual" id="shift_id" class="form-control select2"
+                                        style="width: 100%" disabled>
                                         @foreach ($shifts as $shift)
                                             <option value="{{ $shift->id }}">{{ $shift->name }}</option>
                                         @endforeach
                                     </select>
+
+                                    <input type="hidden" name="shift_id" id="shift_id_hidden">
                                 </div>
                             </div>
+
                             <div class="col-md-3">
                                 <div class="form-group">
-                                    <label>Vehículo</label>
-                                    <select name="vehicle_id" id="vehicle_id" class="form-control select2"
-                                        style="width: 100%">
+                                    <label>Vehículo <span class="text-danger">*</span></label>
+
+                                    <select name="vehicle_id_visual" id="vehicle_id" class="form-control select2"
+                                        style="width: 100%" disabled>
                                         @foreach ($vehicles as $vehicle)
                                             <option value="{{ $vehicle->id }}">{{ $vehicle->plate }}</option>
                                         @endforeach
                                     </select>
+
+                                    <input type="hidden" name="vehicle_id" id="vehicle_id_hidden">
                                 </div>
                             </div>
+
                             <div class="col-md-3">
                                 <div class="form-group">
-                                    <label>Días de la Semana</label>
+                                    <label>Días de la Semana <span class="text-danger">*</span></label>
                                     <div class="d-flex flex-wrap border p-1 rounded bg-white">
                                         @foreach (['Lu', 'Ma', 'Mi', 'Ju', 'Vi', 'Sá', 'Do'] as $day)
                                             <div class="custom-control custom-checkbox mr-2">
                                                 <input class="custom-control-input workday-checkbox" type="checkbox"
                                                     name="workdays[]" id="day_{{ $day }}"
-                                                    value="{{ $day }}">
+                                                    value="{{ $day }}" onclick="return false;">
                                                 <label for="day_{{ $day }}"
                                                     class="custom-control-label font-weight-normal">{{ $day }}</label>
                                             </div>
@@ -144,18 +177,18 @@
                                     <div class="p-3 border rounded bg-light text-muted small">Sin asignar</div>
                                 </div>
                             </div>
-                            <div class="col-md-4 text-center">
-                                <label class="font-weight-bold text-muted small text-uppercase">Ayudante 1</label>
-                                <input type="hidden" name="helper_ids[]" id="helper_id_1">
-                                <div id="helper-card-1">
-                                    <div class="p-3 border rounded bg-light text-muted small">Sin asignar</div>
-                                </div>
-                            </div>
-                            <div class="col-md-4 text-center">
-                                <label class="font-weight-bold text-muted small text-uppercase">Ayudante 2</label>
-                                <input type="hidden" name="helper_ids[]" id="helper_id_2">
-                                <div id="helper-card-2">
-                                    <div class="p-3 border rounded bg-light text-muted small">Sin asignar</div>
+
+                            <div class="col-md-8">
+                                <label class="font-weight-bold text-muted small text-uppercase d-block text-center">
+                                    Ayudantes
+                                </label>
+
+                                <div class="row" id="helpers-cards-container">
+                                    <div class="col-md-12">
+                                        <div class="p-3 border rounded bg-light text-muted small text-center">
+                                            Sin ayudantes asignados
+                                        </div>
+                                    </div>
                                 </div>
                             </div>
                         </div>
@@ -208,12 +241,35 @@
                         <div class="col-md-4">
                             <div class="form-group">
                                 <label>Filtrar por Turno</label>
-                                <select id="mass_shift_id" class="form-control select2" style="width: 100%">
-                                    <option value="">Todos los turnos</option>
+                                <input type="hidden" id="mass_shift_id" value="">
+
+                                <div class="position-relative">
+                                    <input type="text" id="mass_shift_search_input" class="form-control pr-5"
+                                        placeholder="Busque o seleccione un turno..." autocomplete="off">
+
+                                    <button type="button" id="clear_mass_shift_search" class="btn btn-sm text-muted"
+                                        style="position:absolute; right:8px; top:50%; transform:translateY(-50%); display:none;">
+                                        <i class="fas fa-times"></i>
+                                    </button>
+                                </div>
+
+                                <div id="mass_shift_results" class="list-group shadow-sm d-none"
+                                    style="position:absolute; z-index:99999; left:0; right:0; max-height:220px; overflow-y:auto;">
+
+                                    <button type="button"
+                                        class="list-group-item list-group-item-action mass-shift-option" data-id=""
+                                        data-text="Todos los turnos">
+                                        Todos los turnos
+                                    </button>
+
                                     @foreach ($shifts as $shift)
-                                        <option value="{{ $shift->id }}">{{ $shift->name }}</option>
+                                        <button type="button"
+                                            class="list-group-item list-group-item-action mass-shift-option"
+                                            data-id="{{ $shift->id }}" data-text="{{ $shift->name }}">
+                                            {{ $shift->name }}
+                                        </button>
                                     @endforeach
-                                </select>
+                                </div>
                             </div>
                         </div>
                     </div>
@@ -1049,49 +1105,60 @@
 
             function updatePersonnelCards(group) {
                 let form = $('#schedule-form');
-                if (!group) {
-                    form.find('#driver_id').val('');
-                    form.find('#helper_id_1').val('');
-                    form.find('#helper_id_2').val('');
-                    form.find('#driver-card').html(
-                        '<div class="p-3 border rounded bg-light text-muted small text-center">Sin asignar</div>'
-                    );
-                    form.find('#helper-card-1').html(
-                        '<div class="p-3 border rounded bg-light text-muted small text-center">Sin asignar</div>'
-                    );
-                    form.find('#helper-card-2').html(
-                        '<div class="p-3 border rounded bg-light text-muted small text-center">Sin asignar</div>'
-                    );
-                    return;
-                }
+
+                form.find('#driver_id').val('');
+                form.find('input[name="helper_ids[]"]').remove();
+
+                form.find('#driver-card').html(
+                    '<div class="p-3 border rounded bg-light text-muted small text-center">Sin asignar</div>'
+                );
+
+                $('#helpers-cards-container').html(`
+        <div class="col-md-12">
+            <div class="p-3 border rounded bg-light text-muted small text-center">
+                Sin ayudantes asignados
+            </div>
+        </div>
+    `);
+
+                if (!group) return;
+
                 if (group.driver) {
                     form.find('#driver_id').val(group.driver.id);
-                    form.find('#driver-card').html(createPersonnelCard(group.driver.id,
-                        `${group.driver.names} ${group.driver.lastnames}`, 'Conductor'));
+
+                    form.find('#driver-card').html(
+                        createPersonnelCard(
+                            group.driver.id,
+                            `${group.driver.names} ${group.driver.lastnames}`,
+                            'Conductor'
+                        )
+                    );
                 }
+
                 if (group.helpers && group.helpers.length > 0) {
-                    let h1 = group.helpers[0].personnel;
-                    if (h1) {
-                        form.find('#helper_id_1').val(h1.id);
-                        form.find('#helper-card-1').html(createPersonnelCard(h1.id, `${h1.names} ${h1.lastnames}`,
-                            'Ayudante 1'));
-                    }
-                } else {
-                    form.find('#helper-card-1').html(
-                        '<div class="p-3 border rounded bg-light text-muted small text-center">Sin asignar</div>'
-                    );
-                }
-                if (group.helpers && group.helpers.length > 1) {
-                    let h2 = group.helpers[1].personnel;
-                    if (h2) {
-                        form.find('#helper_id_2').val(h2.id);
-                        form.find('#helper-card-2').html(createPersonnelCard(h2.id, `${h2.names} ${h2.lastnames}`,
-                            'Ayudante 2'));
-                    }
-                } else {
-                    form.find('#helper-card-2').html(
-                        '<div class="p-3 border rounded bg-light text-muted small text-center">Sin asignar</div>'
-                    );
+                    let helpersHtml = '';
+
+                    group.helpers.forEach(function(detail, index) {
+                        let helper = detail.personnel;
+
+                        if (helper) {
+                            form.append(`
+                    <input type="hidden" name="helper_ids[]" value="${helper.id}">
+                `);
+
+                            helpersHtml += `
+                    <div class="col-md-6">
+                        ${createPersonnelCard(
+                            helper.id,
+                            `${helper.names} ${helper.lastnames}`,
+                            `Ayudante ${index + 1}`
+                        )}
+                    </div>
+                `;
+                        }
+                    });
+
+                    $('#helpers-cards-container').html(helpersHtml);
                 }
             }
 
@@ -1104,30 +1171,130 @@
                 $('#btn-save').prop('disabled', true);
                 $('#modalScheduleLabel').html('<i class="fas fa-calendar-plus"></i> Nueva Programación');
                 $('#modal-schedule').modal('show');
+
+                $('#group_search_input').val('');
+                $('#personnel_group_id').val('');
+                $('#group_results').addClass('d-none');
+                $('#clear_group_search').hide();
+
+                $('#zone_id_hidden').val('');
+                $('#shift_id_hidden').val('');
+                $('#vehicle_id_hidden').val('');
             });
 
-            $('#personnel_group_id').on('change', function() {
-                let groupId = $(this).val();
+            function cargarDatosGrupo(groupId) {
                 if (!groupId || $('#schedule_id').val()) return;
+
                 $.get("{{ route('admin.personnel-groups.index') }}/" + groupId, function(group) {
                     let form = $('#schedule-form');
+
                     form.find('#zone_id').val(group.zone_id).trigger('change');
                     form.find('#shift_id').val(group.shift_id).trigger('change');
                     form.find('#vehicle_id').val(group.vehicle_id).trigger('change');
+
+                    $('#zone_id_hidden').val(group.zone_id);
+                    $('#shift_id_hidden').val(group.shift_id);
+                    $('#vehicle_id_hidden').val(group.vehicle_id);
+
                     form.find('.workday-checkbox').prop('checked', false);
+
                     if (group.workdays) {
                         group.workdays.forEach(wd => {
                             let shortDay = wd.day.substring(0, 2);
+
                             if (wd.day == 'Miércoles') shortDay = 'Mi';
                             if (wd.day == 'Sábado') shortDay = 'Sá';
                             if (wd.day == 'Domingo') shortDay = 'Do';
-                            form.find(`.workday-checkbox[value="${shortDay}"]`).prop(
-                                'checked', true);
+
+                            form.find(`.workday-checkbox[value="${shortDay}"]`).prop('checked',
+                                true);
                         });
                     }
+
                     $('#btn-save').prop('disabled', true);
                     updatePersonnelCards(group);
                 });
+            }
+
+            $('#group_search_input').on('keyup focus', function() {
+                let value = $(this).val().toLowerCase();
+                let hasResults = false;
+
+                $('.group-option').each(function() {
+                    let text = $(this).data('text').toLowerCase();
+
+                    if (text.includes(value)) {
+                        $(this).removeClass('d-none');
+                        hasResults = true;
+                    } else {
+                        $(this).addClass('d-none');
+                    }
+                });
+
+                if (hasResults) {
+                    $('#group_results').removeClass('d-none');
+                } else {
+                    $('#group_results').addClass('d-none');
+                }
+            });
+
+            $(document).on('click', '.group-option', function() {
+                let groupId = $(this).data('id');
+                let groupText = $(this).data('text');
+
+                $('#personnel_group_id').val(groupId);
+                $('#group_search_input').val(groupText);
+                $('#group_results').addClass('d-none');
+                $('#clear_group_search').show();
+
+                cargarDatosGrupo(groupId);
+            });
+
+            $('#group_search_input').on('input', function() {
+                $('#personnel_group_id').val('');
+
+                $('#zone_id').val('').trigger('change');
+                $('#shift_id').val('').trigger('change');
+                $('#vehicle_id').val('').trigger('change');
+
+                $('#zone_id_hidden').val('');
+                $('#shift_id_hidden').val('');
+                $('#vehicle_id_hidden').val('');
+
+                $('.workday-checkbox').prop('checked', false);
+                updatePersonnelCards(null);
+                $('#btn-save').prop('disabled', true);
+
+                if ($(this).val().trim() !== '') {
+                    $('#clear_group_search').show();
+                } else {
+                    $('#clear_group_search').hide();
+                }
+            });
+
+            $('#clear_group_search').on('click', function() {
+                $('#personnel_group_id').val('');
+                $('#group_search_input').val('');
+                $('#group_results').addClass('d-none');
+                $('#clear_group_search').hide();
+
+                $('#zone_id').val('').trigger('change');
+                $('#shift_id').val('').trigger('change');
+                $('#vehicle_id').val('').trigger('change');
+
+                $('#zone_id_hidden').val('');
+                $('#shift_id_hidden').val('');
+                $('#vehicle_id_hidden').val('');
+
+                $('.workday-checkbox').prop('checked', false);
+                updatePersonnelCards(null);
+                $('#btn-save').prop('disabled', true);
+            });
+
+            $(document).on('click', function(e) {
+                if (!$(e.target).closest('#group_search_input, #group_results').length) {
+                    $('#group_results').addClass('d-none');
+                }
             });
 
             $('input, select').on('change', function() {
@@ -1366,6 +1533,103 @@
             $('.select2').select2({
                 theme: 'bootstrap4'
             });
+
+            // ===============================
+            // VALIDACIÓN FECHAS PROGRAMACIÓN
+            // ===============================
+            function actualizarFechaFin() {
+                let inicio = $('#start_date').val();
+
+                if (inicio) {
+                    $('#end_date').attr('min', inicio);
+
+                    if ($('#end_date').val() && $('#end_date').val() < inicio) {
+                        $('#end_date').val('');
+                    }
+                } else {
+                    $('#end_date').removeAttr('min');
+                }
+            }
+
+            $('#start_date').on('change input', actualizarFechaFin);
+            actualizarFechaFin();
+
+
+            // ===============================
+            // VALIDACIÓN FECHAS MASIVAS
+            // ===============================
+            function actualizarFechaFinMasiva() {
+                let inicio = $('#mass_start_date').val();
+
+                if (inicio) {
+                    $('#mass_end_date').attr('min', inicio);
+
+                    if ($('#mass_end_date').val() && $('#mass_end_date').val() < inicio) {
+                        $('#mass_end_date').val('');
+                    }
+                } else {
+                    $('#mass_end_date').removeAttr('min');
+                }
+            }
+
+            $('#mass_start_date').on('change input', actualizarFechaFinMasiva);
+            actualizarFechaFinMasiva();
+
+            // ===============================
+            // BUSCADOR TURNO MASIVO
+            // ===============================
+            $('#mass_shift_search_input').on('keyup focus', function() {
+                let value = $(this).val().toLowerCase();
+                let hasResults = false;
+
+                $('.mass-shift-option').each(function() {
+                    let text = $(this).data('text').toLowerCase();
+
+                    if (text.includes(value)) {
+                        $(this).removeClass('d-none');
+                        hasResults = true;
+                    } else {
+                        $(this).addClass('d-none');
+                    }
+                });
+
+                if (hasResults) {
+                    $('#mass_shift_results').removeClass('d-none');
+                } else {
+                    $('#mass_shift_results').addClass('d-none');
+                }
+            });
+
+            $(document).on('click', '.mass-shift-option', function() {
+                $('#mass_shift_id').val($(this).data('id'));
+                $('#mass_shift_search_input').val($(this).data('text'));
+                $('#mass_shift_results').addClass('d-none');
+                $('#clear_mass_shift_search').show();
+            });
+
+            $('#mass_shift_search_input').on('input', function() {
+                $('#mass_shift_id').val('');
+
+                if ($(this).val().trim() !== '') {
+                    $('#clear_mass_shift_search').show();
+                } else {
+                    $('#clear_mass_shift_search').hide();
+                }
+            });
+
+            $('#clear_mass_shift_search').on('click', function() {
+                $('#mass_shift_id').val('');
+                $('#mass_shift_search_input').val('');
+                $('#mass_shift_results').addClass('d-none');
+                $('#clear_mass_shift_search').hide();
+            });
+
+            $(document).on('click', function(e) {
+                if (!$(e.target).closest('#mass_shift_search_input, #mass_shift_results').length) {
+                    $('#mass_shift_results').addClass('d-none');
+                }
+            });
+
         });
     </script>
 @stop

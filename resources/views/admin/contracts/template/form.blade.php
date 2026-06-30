@@ -193,4 +193,24 @@
     if ($('#personnel_search_input').val().trim() !== '') {
         $('#clear_personnel_search').show();
     }
+
+    function actualizarFechaMinimaFin() {
+        let startDate = $('#start_date').val();
+
+        if (startDate) {
+            $('#end_date').attr('min', startDate);
+
+            if ($('#end_date').val() && $('#end_date').val() < startDate) {
+                $('#end_date').val('');
+            }
+        } else {
+            $('#end_date').removeAttr('min');
+        }
+    }
+
+    $('#start_date').on('change input', function() {
+        actualizarFechaMinimaFin();
+    });
+
+    actualizarFechaMinimaFin();
 </script>

@@ -201,6 +201,12 @@ class PersonnelGroupController extends Controller
                 'driver_id' => 'required|exists:personnels,id',
                 'workdays' => 'required|array|min:1',
                 'helpers' => 'required|array'
+            ], [
+                'workdays.required' => 'Debe seleccionar al menos un día de trabajo.',
+                'workdays.array' => 'Los días de trabajo no tienen un formato válido.',
+                'workdays.min' => 'Debe seleccionar al menos un día de trabajo.',
+                'helpers.required' => 'Debe seleccionar los ayudantes requeridos.',
+                'helpers.array' => 'Los ayudantes no tienen un formato válido.',
             ]);
 
             if ($request->filled('helpers')) {
@@ -425,6 +431,12 @@ class PersonnelGroupController extends Controller
                 'driver_id' => 'required|exists:personnels,id',
                 'workdays' => 'required|array|min:1',
                 'helpers' => 'required|array'
+            ], [
+                'workdays.required' => 'Debe seleccionar al menos un día de trabajo.',
+                'workdays.array' => 'Los días de trabajo no tienen un formato válido.',
+                'workdays.min' => 'Debe seleccionar al menos un día de trabajo.',
+                'helpers.required' => 'Debe seleccionar los ayudantes requeridos.',
+                'helpers.array' => 'Los ayudantes no tienen un formato válido.',
             ]);
 
             if ($request->filled('helpers')) {

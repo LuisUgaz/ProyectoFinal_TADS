@@ -134,6 +134,21 @@ class ScheduleController extends Controller
             'shift_id' => 'required',
             'vehicle_id' => 'required',
             'driver_id' => 'required',
+        ],[
+            'personnel_group_id.required' => 'Debe seleccionar un grupo de personal.',
+            'personnel_group_id.exists' => 'El grupo seleccionado no existe.',
+
+            'start_date.required' => 'Debe ingresar la fecha de inicio.',
+            'start_date.date' => 'La fecha de inicio no es válida.',
+
+            'end_date.required' => 'Debe ingresar la fecha de fin.',
+            'end_date.date' => 'La fecha de fin no es válida.',
+            'end_date.after_or_equal' => 'La fecha de fin debe ser igual o posterior a la fecha de inicio.',
+
+            'zone_id.required' => 'Debe seleccionar una zona.',
+            'shift_id.required' => 'Debe seleccionar un turno.',
+            'vehicle_id.required' => 'Debe seleccionar un vehículo.',
+            'driver_id.required' => 'Debe seleccionar un conductor.',
         ]);
 
         $availability = $this->checkAvailability($request);
@@ -220,6 +235,17 @@ class ScheduleController extends Controller
             'start_date' => 'required|date',
             'end_date' => 'required|date|after_or_equal:start_date',
             'groups' => 'required|array|min:1',
+        ],[
+            'start_date.required' => 'Debe ingresar la fecha de inicio.',
+            'start_date.date' => 'La fecha de inicio no es válida.',
+
+            'end_date.required' => 'Debe ingresar la fecha de fin.',
+            'end_date.date' => 'La fecha de fin no es válida.',
+            'end_date.after_or_equal' => 'La fecha de fin debe ser igual o posterior a la fecha de inicio.',
+
+            'groups.required' => 'Debe seleccionar al menos un grupo.',
+            'groups.array' => 'El formato de los grupos no es válido.',
+            'groups.min' => 'Debe seleccionar al menos un grupo.',
         ]);
 
         $data = $request->groups;

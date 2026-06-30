@@ -1776,3 +1776,25 @@ table.dataTable .btn-danger {
     margin-right: 4px;
     font-size: 12px;
 }
+
+#modal-mass .modal-dialog {
+    max-width: 95% !important;
+}
+
+#modal-mass .modal-body {
+    min-height: 420px !important;
+    overflow: visible !important;
+}
+
+#modal-mass .modal-content {
+    overflow: visible !important;
+}
+
+#mass_shift_results {
+    left: 0 !important;
+    right: 0 !important;
+    width: 100% !important;
+    max-height: 220px !important;
+    overflow-y: auto !important;
+    z-index: 99999 !important;
+}
